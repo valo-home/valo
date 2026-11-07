@@ -39,6 +39,18 @@ class DemoModelTest(unittest.TestCase):
         ]
         self.assertIn("Kettle", llm.plan(msgs)[1])
 
+    def test_named_plug_and_batteries(self) -> None:
+        msgs = [{"role": "user", "content": "Make a dashboard with the voltage of the PC plug"}]
+        plugs = {
+            "devices": [
+                {"id": "p1", "name": "Kettle", "state": {"v": 230}},
+                {"id": "p2", "name": "PC plug", "state": {"v": 229}},
+            ]
+        }
+        msgs += [{"role": "assistant", "content": None}, {"role": "tool", "content": json.dumps(plugs)}]
+        self.assertEqual(llm.plan(msgs)[1][1]["widgets"][0]["device"], "p2")
+        self.assertEqual(llm.intent("which batteries are low?"), "battery")
+
     def test_language_and_command(self) -> None:
         self.assertEqual(llm.lang_of("Увімкни розетку"), "uk")
         self.assertEqual(llm.intent("включи розетку"), "command")

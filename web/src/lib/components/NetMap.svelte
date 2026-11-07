@@ -28,6 +28,8 @@
 	});
 	const col = (q) => (q >= 120 ? 'var(--ok)' : q >= 60 ? 'var(--warn)' : 'var(--crit)');
 	const r = (n) => (n.type === 'Coordinator' ? 14 : n.type === 'Router' ? 9 : 6);
+	const anchor = (n) => (n.x < 110 ? 'start' : n.x > W - 110 ? 'end' : 'middle');
+	const lx = (n) => (n.x < 110 ? n.x - r(n) : n.x > W - 110 ? n.x + r(n) : n.x);
 </script>
 
 <svg viewBox="0 0 {W} {H}" style="width:100%;height:auto;display:block" role="img" aria-label="Zigbee">
@@ -37,7 +39,7 @@
 	{#each graph.nodes as n (n.id)}
 		<g role="button" tabindex="0" style="cursor:pointer" onclick={() => onpick?.(n.id)} onkeydown={(e) => e.key === 'Enter' && onpick?.(n.id)}>
 			<circle cx={n.x} cy={n.y} r={r(n)} fill={n.failed ? 'transparent' : n.type === 'Coordinator' ? 'var(--amber)' : n.type === 'Router' ? 'var(--frost)' : 'var(--ink-3)'} stroke={n.failed ? 'var(--crit)' : picked === n.id ? 'var(--ink)' : 'var(--panel)'} stroke-width="2" stroke-dasharray={n.failed ? '3 3' : null} />
-			<text x={n.x} y={n.y + r(n) + 12} text-anchor="middle" style="font:500 10.5px var(--f-d);fill:var(--ink-2)">{n.name}</text>
+			<text x={lx(n)} y={n.y + r(n) + 12} text-anchor={anchor(n)} style="font:500 10.5px var(--f-d);fill:var(--ink-2)">{n.name}</text>
 		</g>
 	{/each}
 </svg>

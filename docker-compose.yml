@@ -317,6 +317,7 @@ services:
       DATABASE_URL: postgresql://valo@postgres:5432/valo
       MOCKS_SPEED: ${MOCKS_SPEED:-1}
       MOCKS_HISTORY_DAYS: ${MOCKS_HISTORY_DAYS:-10}
+      MOCKS_LANG: ${MOCKS_LANG:-}
     volumes:
       - mocks:/data
       - secrets:/secrets:ro

@@ -32,7 +32,12 @@ secrets_env()
 
 
 def scenario() -> dict[str, Any]:
-    path = os.environ.get("MOCKS_SCENARIO") or pathlib.Path(__file__).with_name("scenario.json")
+    lang = os.environ.get("MOCKS_LANG", "").strip().lower()
+    own = pathlib.Path(__file__).with_name(f"scenario.{lang}.json")
+    if lang and not own.is_file():
+        log.warning("no demo scenario for language %s, using the default one", lang)
+    default = own if lang and own.is_file() else pathlib.Path(__file__).with_name("scenario.json")
+    path = os.environ.get("MOCKS_SCENARIO") or default
     return json.loads(pathlib.Path(path).read_text("utf-8"))
 
 

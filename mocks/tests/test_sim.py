@@ -1,6 +1,7 @@
 import asyncio
 import json
 import pathlib
+import re
 import unittest
 
 from valo_mocks import sim
@@ -23,6 +24,21 @@ class ScenarioTest(unittest.TestCase):
     def test_owner_and_home(self) -> None:
         self.assertEqual(SCENARIO["owner"]["username"], "mikko")
         self.assertTrue(SCENARIO["home"]["timezone"])
+
+    def test_english_scenario_matches(self) -> None:
+        text = (pathlib.Path(sim.__file__).with_name("scenario.en.json")).read_text("utf-8")
+        self.assertIsNone(re.search(r"[А-Яа-яЁё]", text))
+
+        def shape(v: object) -> object:
+            if isinstance(v, dict):
+                return {k: shape(x) for k, x in v.items()}
+            if isinstance(v, list):
+                return [shape(x) for x in v]
+            return type(v).__name__
+
+        self.assertEqual(shape(json.loads(text)), shape(SCENARIO))
+        ids = lambda sc: [r["id"] for r in sc["rooms"]] + [d["key"] for d in sc["zigbee"]]
+        self.assertEqual(ids(json.loads(text)), ids(SCENARIO))
 
 
 class ConvertTest(unittest.TestCase):

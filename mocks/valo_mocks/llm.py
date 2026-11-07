@@ -61,7 +61,7 @@ def intent(text: str) -> str:
         return "board"
     if re.search(r"включи|увімкни|turn on|switch on", t):
         return "command"
-    if re.search(r"заряд|батар|battery", t):
+    if re.search(r"заряд|батар|batter", t):
         return "battery"
     return "overview"
 
@@ -103,7 +103,9 @@ def plan(messages: list[dict[str, Any]]) -> tuple[str, Any]:
     if step == 0:
         return "tool", ("list_devices", {"kind": "plug"})
     plugs = (results[0].get("devices") if results and isinstance(results[0], dict) else None) or []
-    plug = next((d for d in plugs if want != "board" or "v" in (d.get("state") or {})), None)
+    fit = [d for d in plugs if want != "board" or "v" in (d.get("state") or {})]
+    named = [d for d in fit if str(d.get("name") or "").lower() in question.lower()]
+    plug = next(iter(named or fit), None)
     if plug is None:
         return "text", say("missing", lang)
     if step == 1 and want == "board":

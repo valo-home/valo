@@ -126,3 +126,7 @@ All services have `restart: unless-stopped`, Docker starts them on boot. After a
 ## Development
 
 The repository contains the `./valo` script that runs two environments side by side as separate compose projects: `./valo demo up` with simulated devices on port 3000 and `./valo real up` with real hardware on port 3100. See CONTRIBUTING.md.
+
+The demo home has Russian names by default. `MOCKS_LANG=en ./valo demo up` fills it with English names, the variable works on the first start of the demo, when its database is empty.
+
+Screenshots for the README come from the English demo: `cd web && node scripts/screenshots.mjs http://localhost:3000 <folder>` takes every page in the list, `SHOTS_SETUP=1` against a hub without an owner takes the setup wizard.
