@@ -562,3 +562,24 @@ def test_ntp_reply_and_thingino_settings() -> None:
     assert tl.tz_posix("../etc/passwd") == "" and tl.tz_posix("No/Such") == ""
     if os.path.exists("/usr/share/zoneinfo/Europe/Kyiv"):
         assert tl.tz_posix("Europe/Kyiv").startswith("EET-2EEST")
+
+
+async def test_moved_camera_reaches_the_driver_with_new_host(
+    client: httpx.AsyncClient, owner: dict, driver: list
+) -> None:
+    body = {"driver": DRIVER, "name": "Pt", "config": {"host": "10.0.0.7", "password": "p"}}
+    assert (await client.post("/api/v1/cameras", json=body, headers=owner)).status_code == 201
+    driver.clear()
+    async with session() as s:
+        res = await extensions.core_call(s, DRIVER, "cameras.moved", {"camera": "pt", "host": "10.0.0.1"})
+        await commit(s)
+    assert res["changed"] is True
+    await cameras.reprobe("pt")
+    syncs = [c for c in driver if c["method"] == "camera.sync"]
+    assert syncs and syncs[-1]["cameras"][0]["config"]["host"] == "10.0.0.1"
+    driver.clear()
+    async with session() as s:
+        res = await extensions.core_call(s, DRIVER, "cameras.moved", {"camera": "pt", "host": "10.0.0.1"})
+        await commit(s)
+    assert res["changed"] is False
+    assert [c["method"] for c in driver] == ["camera.sync"]

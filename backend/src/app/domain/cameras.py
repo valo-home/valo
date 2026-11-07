@@ -12,7 +12,7 @@ import msgspec
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.base import after, now, session
+from app.db.base import after, commit, now, rollback, session
 from app.db.models import Camera, CameraEvent, Device, Extension, Media
 from app.domain import devices, events, extensions, media
 from app.domain.common import Principal, S, iso, slug
@@ -787,12 +787,14 @@ async def reprobe(camera_id: str) -> None:
         x = await s.get(Extension, c.driver)
         if d is None or x is None:
             return
+        drv = c.driver
         try:
             await reprobe_now(s, c, d, x)
         except ApplicationError as e:
             _log.warning("camera_reprobe_failed", camera=camera_id, code=e.code)
-            return
-        await s.commit()
+            await rollback(s)
+            _changed(s, drv)
+        await commit(s)
 
 
 async def test(s: AsyncSession, p: Principal, camera_id: str, data: TestIn) -> dict[str, Any]:
@@ -935,6 +937,8 @@ async def moved(s: AsyncSession, ext_id: str, params: dict[str, Any]) -> dict[st
     if d is None or x is None:
         raise ApplicationError("camera_not_found", 404)
     if (c.config or {}).get("host") == host:
+        _log.warning("camera_moved_again", camera=c.id, host=host)
+        _changed(s, c.driver)
         return {"ok": True, "changed": False}
     await _relocate(s, c, d, x, host, f"ext:{ext_id}")
     cid = c.id

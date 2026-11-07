@@ -307,6 +307,9 @@ async def relocate(cid: str, cfg: dict[str, Any], state: dict[str, Any]) -> None
     if match and match != tl.host_of(cfg):
         ext.log.warning("camera %s found at %s, was %s", cid, match, tl.host_of(cfg))
         await ext.camera_moved(cid, match)
+        cfg["host"] = match
+        state["fails"] = 0
+        ext.log.info("camera %s now watched at %s", cid, match)
 
 
 async def streamer_ok(cfg: dict[str, Any]) -> bool | None:
