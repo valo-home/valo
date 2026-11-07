@@ -1,0 +1,81 @@
+{
+  "id": "fi.valo.vision",
+  "version": "1.0.2",
+  "trust": "official",
+  "module": "vision",
+  "author": "Valo",
+  "icon": "spark",
+  "level": "declarative",
+  "name": {
+    "uk": "Розпізнавання на камерах",
+    "en": "Camera recognition",
+    "ru": "Распознавание на камерах",
+    "ja": "カメラ認識",
+    "fr": "Reconnaissance sur caméras",
+    "de": "Kameraerkennung",
+    "es": "Reconocimiento en cámaras"
+  },
+  "description": {
+    "uk": "Розпізнає людей, машини та тварин на кадрах камер під час руху, на процесорі вузла без хмари. Зони на кадрі задаються в налаштуваннях камери",
+    "en": "Recognises people, cars and animals in camera frames during motion, on the node processor without a cloud. Frame zones are set in the camera settings",
+    "ru": "Распознает людей, машины и животных на кадрах камер во время движения, на процессоре узла без облака. Зоны на кадре задаются в настройках камеры",
+    "ja": "動きがあるときにカメラ映像から人、車、動物をクラウドなしでノードのプロセッサで認識します。画面のゾーンはカメラ設定で指定します",
+    "fr": "Reconnaît les personnes, voitures et animaux dans les images des caméras lors d'un mouvement, sur le processeur du nœud sans cloud. Les zones se règlent dans les paramètres de la caméra",
+    "de": "Erkennt Personen, Autos und Tiere in Kamerabildern bei Bewegung, auf dem Prozessor des Knotens ohne Cloud. Bildzonen werden in den Kameraeinstellungen festgelegt",
+    "es": "Reconoce personas, coches y animales en las imágenes de las cámaras durante el movimiento, en el procesador del nodo sin nube. Las zonas se ajustan en la configuración de la cámara"
+  },
+  "perms": [
+    "cameras.stream",
+    "cameras.events",
+    "media.write",
+    "devices.read"
+  ],
+  "runtime": {
+    "memory": 320,
+    "cpu": 40
+  },
+  "settings": [
+    {
+      "key": "fps",
+      "type": "number",
+      "default": 1,
+      "name": {
+        "uk": "Кадрів за секунду під час руху",
+        "ru": "Кадров в секунду во время движения",
+        "en": "Frames per second during motion",
+        "ja": "動き中の毎秒フレーム数",
+        "fr": "Images par seconde pendant le mouvement",
+        "de": "Bilder pro Sekunde bei Bewegung",
+        "es": "Fotogramas por segundo durante el movimiento"
+      }
+    },
+    {
+      "key": "hold_s",
+      "type": "number",
+      "default": 6,
+      "name": {
+        "uk": "Кінець події після зникнення, с",
+        "ru": "Конец события после пропадания, с",
+        "en": "Event ends after disappearing, s",
+        "ja": "消えてからイベント終了まで、秒",
+        "fr": "Fin de l'événement après disparition, s",
+        "de": "Ereignisende nach Verschwinden, s",
+        "es": "Fin del evento tras desaparecer, s"
+      }
+    },
+    {
+      "key": "max_s",
+      "type": "number",
+      "default": 300,
+      "name": {
+        "uk": "Найдовший аналіз за один рух, с",
+        "ru": "Наибольший анализ за одно движение, с",
+        "en": "Longest analysis per motion, s",
+        "ja": "1回の動きの最長解析、秒",
+        "fr": "Analyse la plus longue par mouvement, s",
+        "de": "Längste Analyse pro Bewegung, s",
+        "es": "Análisis más largo por movimiento, s"
+      }
+    }
+  ]
+}

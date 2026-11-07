@@ -1,0 +1,91 @@
+{
+  "id": "dev.local.simulator",
+  "version": "0.5.0-dev",
+  "trust": "local",
+  "module": "simulator",
+  "author": "local",
+  "icon": "terminal",
+  "level": "trusted",
+  "dev": true,
+  "name": {
+    "uk": "Симулятор пристроїв",
+    "en": "Device simulator",
+    "ru": "Симулятор устройств",
+    "ja": "デバイスシミュレーター",
+    "fr": "Simulateur d'appareils",
+    "de": "Gerätesimulator",
+    "es": "Simulador de dispositivos"
+  },
+  "description": {
+    "uk": "Віртуальні датчики для налагодження сценаріїв без заліза",
+    "en": "Virtual sensors to debug automations without hardware",
+    "ru": "Виртуальные датчики для отладки сценариев без железа",
+    "ja": "ハードウェアなしでオートメーションを検証する仮想センサー",
+    "fr": "Capteurs virtuels pour tester les automatisations sans matériel",
+    "de": "Virtuelle Sensoren zum Testen von Automatisierungen ohne Hardware",
+    "es": "Sensores virtuales para depurar automatizaciones sin hardware"
+  },
+  "perms": [
+    "devices.virtual",
+    "cameras.provide"
+  ],
+  "settings": [
+    {
+      "key": "period",
+      "type": "number",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "key": "simulate",
+      "kind": "act",
+      "icon": "terminal",
+      "name": {
+        "uk": "Імітувати подію",
+        "en": "Simulate event",
+        "ru": "Сымитировать событие",
+        "ja": "イベントを模擬",
+        "fr": "Simuler un événement",
+        "de": "Ereignis simulieren",
+        "es": "Simular evento"
+      },
+      "params": [
+        {
+          "key": "occ",
+          "type": "bool",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "camera": {
+    "fields": [
+      {
+        "key": "pattern",
+        "type": "select",
+        "default": "yard",
+        "options": [
+          "yard",
+          "door"
+        ],
+        "name": {
+          "uk": "Тестова картинка",
+          "en": "Test picture",
+          "ru": "Тестовая картинка",
+          "ja": "テスト映像",
+          "fr": "Image de test",
+          "de": "Testbild",
+          "es": "Imagen de prueba"
+        }
+      }
+    ],
+    "features": [
+      "settings",
+      "actions",
+      "diagnose",
+      "discover",
+      "ptz"
+    ]
+  }
+}

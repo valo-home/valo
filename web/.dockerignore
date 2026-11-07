@@ -1,0 +1,9 @@
+node_modules
+build
+.svelte-kit
+.env
+e2e
+test-results
+playwright-report
+playwright.config.js
+e2e/.auth.json

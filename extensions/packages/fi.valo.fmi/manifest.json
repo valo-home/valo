@@ -1,0 +1,17 @@
+{
+  "id": "fi.valo.fmi",
+  "version": "0.8.1",
+  "trust": "official",
+  "module": "fmi",
+  "author": "Valo",
+  "icon": "cloud",
+  "level": "declarative",
+  "name": {"uk": "Погода FMI", "en": "FMI weather", "ru": "Погода FMI", "ja": "FMI 天気", "fr": "Météo FMI", "de": "FMI-Wetter", "es": "Tiempo FMI"},
+  "description": {"uk": "Прогноз Фінського метеорологічного інституту для міста будинку", "en": "Forecast from the Finnish Meteorological Institute for the home location", "ru": "Прогноз Финского метеорологического института для города дома", "ja": "フィンランド気象研究所による自宅地点の予報", "fr": "Prévisions de l'Institut météorologique finlandais pour le lieu du domicile", "de": "Vorhersage des Finnischen Meteorologischen Instituts für den Wohnort", "es": "Pronóstico del Instituto Meteorológico de Finlandia para la ubicación de la casa"},
+  "perms": ["network.outbound:opendata.fmi.fi", "devices.virtual"],
+  "settings": [{"key": "place", "type": "text", "default": "Espoo"}, {"key": "source", "type": "select", "options": ["api", "demo"], "default": "api"}],
+  "blocks": [
+    {"key": "rain_expected", "kind": "cond", "icon": "cloud", "name": {"uk": "Очікується дощ", "en": "Rain expected", "ru": "Ожидается дождь", "ja": "雨の予報", "fr": "Pluie prévue", "de": "Regen erwartet", "es": "Se espera lluvia"}, "params": [{"key": "hours", "type": "number", "default": 3}]},
+    {"key": "frost_expected", "kind": "cond", "icon": "cloud", "name": {"uk": "Очікується мороз", "en": "Frost expected", "ru": "Ожидается мороз", "ja": "霜の予報", "fr": "Gel prévu", "de": "Frost erwartet", "es": "Se espera helada"}, "params": [{"key": "hours", "type": "number", "default": 12}]}
+  ]
+}

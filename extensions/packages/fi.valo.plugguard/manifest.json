@@ -1,0 +1,320 @@
+{
+  "id": "fi.valo.plugguard",
+  "version": "1.0.1",
+  "trust": "official",
+  "module": "plugguard",
+  "author": "Valo",
+  "icon": "plug",
+  "level": "declarative",
+  "name": {
+    "uk": "Контроль розеток",
+    "en": "Plug guard",
+    "ru": "Контроль розеток"
+  },
+  "description": {
+    "uk": "Захист розеток від перевантаження, вимкнення приладів у режимі очікування, споживання кожної розетки за сьогодні і по годинах",
+    "en": "Overload protection for plugs, switching off devices left in standby, usage of every plug today and by hour",
+    "ru": "Защита розеток от перегрузки, отключение приборов в режиме ожидания, потребление каждой розетки за сегодня и по часам"
+  },
+  "perms": [
+    "devices.read",
+    "devices.control",
+    "notifications.send",
+    "devices.virtual",
+    "ui.page",
+    "ui.widget"
+  ],
+  "runtime": {
+    "memory": 64,
+    "cpu": 15
+  },
+  "settings": [
+    {
+      "key": "limit_w",
+      "type": "number",
+      "default": 2500,
+      "name": {
+        "uk": "Межа потужності, Вт",
+        "ru": "Предел мощности, Вт",
+        "en": "Power limit, W"
+      }
+    },
+    {
+      "key": "delay_s",
+      "type": "number",
+      "default": 10,
+      "name": {
+        "uk": "Затримка вимкнення, с",
+        "ru": "Задержка отключения, с",
+        "en": "Switch off delay, s"
+      }
+    },
+    {
+      "key": "standby",
+      "type": "devices",
+      "default": "",
+      "name": {
+        "uk": "Вимикати в режимі очікування",
+        "ru": "Отключать в режиме ожидания",
+        "en": "Switch off in standby"
+      },
+      "caps": [
+        "w"
+      ]
+    },
+    {
+      "key": "standby_w",
+      "type": "number",
+      "default": 3,
+      "name": {
+        "uk": "Очікування нижче, Вт",
+        "ru": "Ожидание ниже, Вт",
+        "en": "Standby below, W"
+      }
+    },
+    {
+      "key": "standby_min",
+      "type": "number",
+      "default": 30,
+      "name": {
+        "uk": "Очікування довше, хв",
+        "ru": "Ожидание дольше, мин",
+        "en": "Standby longer than, min"
+      }
+    },
+    {
+      "key": "keep_on",
+      "type": "devices",
+      "default": "",
+      "name": {
+        "uk": "Не вимикати при перевантаженні",
+        "ru": "Не отключать при перегрузке",
+        "en": "Never switch off on overload"
+      },
+      "caps": [
+        "w"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "key": "overload",
+      "kind": "trig",
+      "icon": "warn",
+      "name": {
+        "uk": "Перевантаження розетки",
+        "en": "Plug overload",
+        "ru": "Перегрузка розетки"
+      },
+      "params": [
+        {
+          "key": "device",
+          "type": "device",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "key": "standby_off",
+      "kind": "trig",
+      "icon": "plug",
+      "name": {
+        "uk": "Вимкнено після очікування",
+        "en": "Switched off after standby",
+        "ru": "Отключено после ожидания"
+      },
+      "params": [
+        {
+          "key": "device",
+          "type": "device",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "key": "power_above",
+      "kind": "cond",
+      "icon": "bolt",
+      "name": {
+        "uk": "Потужність розетки вище",
+        "en": "Plug power above",
+        "ru": "Мощность розетки выше"
+      },
+      "params": [
+        {
+          "key": "device",
+          "type": "device"
+        },
+        {
+          "key": "value",
+          "type": "number",
+          "default": 1000
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "key": "plugs",
+      "icon": "plug",
+      "level": "declarative",
+      "name": {
+        "uk": "Розетки",
+        "en": "Plugs",
+        "ru": "Розетки"
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "key": "now",
+      "level": "declarative",
+      "kind": "plug",
+      "name": {
+        "uk": "Розетки зараз",
+        "en": "Plugs now",
+        "ru": "Розетки сейчас"
+      }
+    }
+  ],
+  "templates": [
+    {
+      "key": "overload",
+      "name": {
+        "uk": "Перевантаження розетки, повідомити",
+        "ru": "Перегрузка розетки, уведомить",
+        "en": "Plug overload, notify"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "fi.valo.plugguard:overload",
+            "params": {
+              "device": ""
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "{name} выключена: {w} Вт при пределе {limit} Вт. Проверьте, что включено в розетку",
+              "level": "warn",
+              "push": true
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "standby",
+      "name": {
+        "uk": "Прилад вимкнено після очікування",
+        "ru": "Прибор выключен после ожидания",
+        "en": "Device switched off after standby"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "fi.valo.plugguard:standby_off",
+            "params": {
+              "device": ""
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "{name} выключена после {minutes} мин в режиме ожидания",
+              "level": "info",
+              "push": false
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "night_load",
+      "name": {
+        "uk": "Велике навантаження вночі",
+        "ru": "Большая нагрузка ночью",
+        "en": "High load at night"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 1 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.plugguard:power_above",
+            "params": {
+              "device": "",
+              "value": 500
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Ночью {plug} потребляет {power} Вт. Выберите розетку в условии",
+              "level": "info",
+              "push": true
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    }
+  ]
+}

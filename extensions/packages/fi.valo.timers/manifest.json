@@ -1,0 +1,49 @@
+{
+  "id": "fi.valo.timers",
+  "version": "1.0.2",
+  "trust": "official",
+  "module": "timers",
+  "author": "Valo",
+  "icon": "clock",
+  "level": "declarative",
+  "name": {"uk": "Будильники і таймери", "en": "Alarms and timers", "ru": "Будильники и таймеры", "ja": "アラームとタイマー", "fr": "Réveils et minuteurs", "de": "Wecker und Timer", "es": "Alarmas y temporizadores"},
+  "description": {
+    "uk": "Іменовані таймери і будильники як пристрої: запуск з панелі або сценарію, будильник за днями тижня або лише в робочі дні",
+    "en": "Named timers and alarms as devices: start from a dashboard or flow, alarms by weekday or on workdays only",
+    "ru": "Именованные таймеры и будильники как устройства: запуск с панели или сценария, будильник по дням недели или только в рабочие дни",
+    "ja": "名前付きタイマーとアラームをデバイスとして: ダッシュボードやフローから開始、曜日または勤務日のみのアラーム",
+    "fr": "Minuteurs et réveils nommés comme appareils: lancement depuis un tableau de bord ou un scénario, réveil par jour ou seulement les jours ouvrés",
+    "de": "Benannte Timer und Wecker als Geräte: Start vom Dashboard oder Ablauf, Wecker nach Wochentagen oder nur an Arbeitstagen",
+    "es": "Temporizadores y alarmas con nombre como dispositivos: inicio desde un panel o flujo, alarmas por día o solo en días laborables"
+  },
+  "perms": ["devices.virtual", "devices.read", "ui.page", "ui.widget"],
+  "runtime": {"memory": 64, "cpu": 15},
+  "settings": [
+    {"key": "timers", "type": "textarea", "default": "Чайник=4\nСтирка=90\nСауна=60"},
+    {"key": "alarms", "type": "textarea", "default": "Подъем=07:00 рабочие\nВыходные=09:30 сб,вс"}
+  ],
+  "blocks": [
+    {"key": "timer_finished", "kind": "trig", "icon": "clock", "name": {"uk": "Таймер завершився", "en": "Timer finished", "ru": "Таймер закончился", "ja": "タイマー終了", "fr": "Minuteur terminé", "de": "Timer abgelaufen", "es": "Temporizador terminado"}, "params": [{"key": "timer", "type": "text", "required": false, "default": ""}]},
+    {"key": "timer_started", "kind": "trig", "icon": "clock", "name": {"uk": "Таймер запущено", "en": "Timer started", "ru": "Таймер запущен", "ja": "タイマー開始", "fr": "Minuteur lancé", "de": "Timer gestartet", "es": "Temporizador iniciado"}, "params": [{"key": "timer", "type": "text", "required": false, "default": ""}]},
+    {"key": "alarm", "kind": "trig", "icon": "clock", "name": {"uk": "Будильник", "en": "Alarm", "ru": "Будильник", "ja": "アラーム", "fr": "Réveil", "de": "Wecker", "es": "Alarma"}, "params": [{"key": "alarm", "type": "text", "required": false, "default": ""}]},
+    {"key": "timer_running", "kind": "cond", "icon": "clock", "name": {"uk": "Таймер іде", "en": "Timer running", "ru": "Таймер идет", "ja": "タイマー作動中", "fr": "Minuteur en cours", "de": "Timer läuft", "es": "Temporizador en marcha"}, "params": [{"key": "timer", "type": "text"}]},
+    {"key": "start_timer", "kind": "act", "icon": "clock", "name": {"uk": "Запустити таймер", "en": "Start timer", "ru": "Запустить таймер", "ja": "タイマー開始", "fr": "Lancer le minuteur", "de": "Timer starten", "es": "Iniciar temporizador"}, "params": [{"key": "timer", "type": "text"}, {"key": "minutes", "type": "number", "required": false}]},
+    {"key": "cancel_timer", "kind": "act", "icon": "clock", "name": {"uk": "Зупинити таймер", "en": "Stop timer", "ru": "Остановить таймер", "ja": "タイマー停止", "fr": "Arrêter le minuteur", "de": "Timer stoppen", "es": "Detener temporizador"}, "params": [{"key": "timer", "type": "text"}]}
+  ],
+  "pages": [{"key": "timers", "icon": "clock", "level": "declarative", "name": {"uk": "Таймери", "en": "Timers", "ru": "Таймеры", "ja": "タイマー", "fr": "Minuteurs", "de": "Timer", "es": "Temporizadores"}}],
+  "widgets": [{"key": "timers", "level": "declarative", "kind": "timer", "name": {"uk": "Таймери і будильники", "en": "Timers and alarms", "ru": "Таймеры и будильники", "ja": "タイマーとアラーム", "fr": "Minuteurs et réveils", "de": "Timer und Wecker", "es": "Temporizadores y alarmas"}}],
+  "templates": [
+    {"key": "finished", "name": {"uk": "Таймер завершився, сповістити", "ru": "Таймер закончился, уведомить", "en": "Timer finished, notify"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.timers:timer_finished", "params": {"timer": ""}, "x": 24, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Таймер {timer} закончился ({minutes} мин)", "level": "info", "push": true}, "x": 260, "y": 60}
+    ], "edges": [{"from": "t", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "wakeup", "name": {"uk": "Будильник: світло і повідомлення", "ru": "Будильник: свет и сообщение", "en": "Alarm: light and message"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.timers:alarm", "params": {"alarm": "Подъем"}, "x": 24, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Доброе утро, {alarm} {at}. Добавьте команду включения света", "level": "info", "push": true}, "x": 260, "y": 60}
+    ], "edges": [{"from": "t", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "sauna", "name": {"uk": "Сауна: вимкнути після таймера", "ru": "Сауна: выключить по таймеру", "en": "Sauna: turn off after timer"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.timers:timer_finished", "params": {"timer": "Сауна"}, "x": 24, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Время сауны вышло. Добавьте команду выключения печи", "level": "warn", "push": true}, "x": 260, "y": 60}
+    ], "edges": [{"from": "t", "out": 0, "to": "n", "in": 0}]}}
+  ]
+}

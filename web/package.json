@@ -1,0 +1,33 @@
+{
+	"name": "valo-web",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev --port 3000",
+		"build": "vite build",
+		"preview": "vite preview --port 3000",
+		"start": "node build",
+		"e2e": "playwright test",
+		"audit": "AUDIT_OUT=test-results/audit playwright test e2e/audit.spec.js --workers=4"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.64.1",
+		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/kit": "^3.0.1",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@xyflow/svelte": "^1.7.0",
+		"d3-force": "^3.0.0",
+		"socket.io-client": "^4.8.4",
+		"svelte": "^5.57.2",
+		"svelte-dnd-action": "^0.9.80",
+		"uplot": "^1.6.32",
+		"vite": "^8.3.4"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"imports": {
+		"#lib/*": "./src/lib/*"
+	}
+}

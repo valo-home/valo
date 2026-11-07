@@ -1,0 +1,489 @@
+{
+  "id": "fi.valo.openmeteo",
+  "version": "1.0.5",
+  "trust": "official",
+  "module": "openmeteo",
+  "author": "Valo",
+  "icon": "cloud",
+  "level": "declarative",
+  "name": {
+    "uk": "Погода Open-Meteo",
+    "en": "Open-Meteo weather",
+    "ru": "Погода Open-Meteo",
+    "ja": "Open-Meteo 天気",
+    "fr": "Météo Open-Meteo",
+    "de": "Open-Meteo Wetter",
+    "es": "Tiempo Open-Meteo"
+  },
+  "description": {
+    "uk": "Прогноз для будь-якої точки світу без ключа: температура, опади, вітер, якість повітря і пилок, умови для сценаріїв",
+    "en": "Forecast for any place in the world without a key: temperature, precipitation, wind, air quality and pollen, flow conditions",
+    "ru": "Прогноз для любой точки мира без ключа: температура, осадки, ветер, качество воздуха и пыльца, условия для сценариев",
+    "ja": "キー不要の世界中の予報: 気温、降水、風、大気質、花粉、フロー条件",
+    "fr": "Prévisions partout dans le monde sans clé: température, précipitations, vent, qualité de l'air et pollen, conditions de scénarios",
+    "de": "Vorhersage für jeden Ort ohne Schlüssel: Temperatur, Niederschlag, Wind, Luftqualität und Pollen, Bedingungen für Abläufe",
+    "es": "Pronóstico para cualquier lugar sin clave: temperatura, precipitación, viento, calidad del aire y polen, condiciones de flujos"
+  },
+  "perms": [
+    "network.outbound:api.open-meteo.com",
+    "network.outbound:air-quality-api.open-meteo.com",
+    "network.outbound:geocoding-api.open-meteo.com",
+    "devices.virtual",
+    "ui.page",
+    "ui.widget"
+  ],
+  "runtime": {
+    "memory": 96,
+    "cpu": 20
+  },
+  "settings": [
+    {
+      "key": "lat",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "lon",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "air",
+      "type": "select",
+      "options": [
+        "on",
+        "off"
+      ],
+      "default": "on"
+    },
+    {
+      "key": "source",
+      "type": "select",
+      "options": [
+        "api",
+        "demo"
+      ],
+      "default": "api"
+    }
+  ],
+  "blocks": [
+    {
+      "key": "rain_expected",
+      "kind": "cond",
+      "icon": "cloud",
+      "name": {
+        "uk": "Очікуються опади",
+        "en": "Precipitation expected",
+        "ru": "Ожидаются осадки",
+        "ja": "降水の予報",
+        "fr": "Précipitations prévues",
+        "de": "Niederschlag erwartet",
+        "es": "Se espera precipitación"
+      },
+      "params": [
+        {
+          "key": "hours",
+          "type": "number",
+          "default": 3
+        },
+        {
+          "key": "prob",
+          "type": "number",
+          "default": 50
+        }
+      ]
+    },
+    {
+      "key": "frost_expected",
+      "kind": "cond",
+      "icon": "cloud",
+      "name": {
+        "uk": "Очікується мороз",
+        "en": "Frost expected",
+        "ru": "Ожидается мороз",
+        "ja": "霜の予報",
+        "fr": "Gel prévu",
+        "de": "Frost erwartet",
+        "es": "Se espera helada"
+      },
+      "params": [
+        {
+          "key": "hours",
+          "type": "number",
+          "default": 12
+        },
+        {
+          "key": "value",
+          "type": "number",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "key": "heat_expected",
+      "kind": "cond",
+      "icon": "sun",
+      "name": {
+        "uk": "Очікується спека",
+        "en": "Heat expected",
+        "ru": "Ожидается жара",
+        "ja": "猛暑の予報",
+        "fr": "Chaleur prévue",
+        "de": "Hitze erwartet",
+        "es": "Se espera calor"
+      },
+      "params": [
+        {
+          "key": "hours",
+          "type": "number",
+          "default": 24
+        },
+        {
+          "key": "value",
+          "type": "number",
+          "default": 27
+        }
+      ]
+    },
+    {
+      "key": "wind_above",
+      "kind": "cond",
+      "icon": "wind",
+      "name": {
+        "uk": "Сильний вітер",
+        "en": "Strong wind",
+        "ru": "Сильный ветер",
+        "ja": "強風",
+        "fr": "Vent fort",
+        "de": "Starker Wind",
+        "es": "Viento fuerte"
+      },
+      "params": [
+        {
+          "key": "hours",
+          "type": "number",
+          "default": 6
+        },
+        {
+          "key": "value",
+          "type": "number",
+          "default": 15
+        }
+      ]
+    },
+    {
+      "key": "air_bad",
+      "kind": "cond",
+      "icon": "wind",
+      "name": {
+        "uk": "Погане повітря",
+        "en": "Poor air quality",
+        "ru": "Плохой воздух",
+        "ja": "大気質が悪い",
+        "fr": "Air de mauvaise qualité",
+        "de": "Schlechte Luft",
+        "es": "Aire de mala calidad"
+      },
+      "params": [
+        {
+          "key": "value",
+          "type": "number",
+          "default": 60
+        }
+      ]
+    },
+    {
+      "key": "pollen_high",
+      "kind": "cond",
+      "icon": "wind",
+      "name": {
+        "uk": "Багато пилку",
+        "en": "High pollen",
+        "ru": "Много пыльцы",
+        "ja": "花粉が多い",
+        "fr": "Pollen élevé",
+        "de": "Hoher Pollenflug",
+        "es": "Polen alto"
+      },
+      "params": [
+        {
+          "key": "value",
+          "type": "number",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "key": "weather",
+      "icon": "cloud",
+      "level": "declarative",
+      "name": {
+        "uk": "Погода",
+        "en": "Weather",
+        "ru": "Погода",
+        "ja": "天気",
+        "fr": "Météo",
+        "de": "Wetter",
+        "es": "Tiempo"
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "key": "now",
+      "level": "declarative",
+      "kind": "weather",
+      "name": {
+        "uk": "Погода зараз",
+        "en": "Weather now",
+        "ru": "Погода сейчас",
+        "ja": "現在の天気",
+        "fr": "Météo actuelle",
+        "de": "Wetter jetzt",
+        "es": "Tiempo ahora"
+      },
+      "params": [
+        {
+          "key": "place",
+          "type": "place",
+          "name": {
+            "uk": "Місце",
+            "en": "Place",
+            "ru": "Место",
+            "ja": "場所",
+            "fr": "Lieu",
+            "de": "Ort",
+            "es": "Lugar"
+          }
+        }
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "key": "rain",
+      "name": {
+        "uk": "Дощ найближчими годинами, закрити вікна",
+        "ru": "Дождь в ближайшие часы, закрыть окна",
+        "en": "Rain in the next hours, close windows"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 8,13,18 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.openmeteo:rain_expected",
+            "params": {
+              "hours": 3,
+              "prob": 60
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "В ближайшие 3 часа дождь, около {mm} мм. Проверьте окна",
+              "level": "info",
+              "push": true
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "frost",
+      "name": {
+        "uk": "Нічний мороз",
+        "ru": "Ночной мороз",
+        "en": "Night frost"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 18 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.openmeteo:frost_expected",
+            "params": {
+              "hours": 14,
+              "value": 0
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Ночью до {min} °C. Уберите растения и проверьте подогрев",
+              "level": "warn",
+              "push": true
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "wind",
+      "name": {
+        "uk": "Штормовий вітер",
+        "ru": "Штормовой ветер",
+        "en": "Storm wind"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 7,19 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.openmeteo:wind_above",
+            "params": {
+              "hours": 12,
+              "value": 17
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Порывы ветра до {gust} м/с в ближайшие 12 часов",
+              "level": "warn",
+              "push": true
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "air",
+      "name": {
+        "uk": "Погане повітря, вимкнути припливну вентиляцію",
+        "ru": "Плохой воздух, выключить приточную вентиляцию",
+        "en": "Poor air, turn off supply ventilation"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "15 * * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.openmeteo:air_bad",
+            "params": {
+              "value": 60
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Качество воздуха снаружи {aqi} EAQI, проветривание лучше отложить",
+              "level": "info",
+              "push": false
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "fi.valo.telegram",
+  "version": "2.0.1",
+  "trust": "official",
+  "module": "telegram_ext",
+  "author": "Valo",
+  "icon": "send",
+  "level": "declarative",
+  "name": {
+    "uk": "Сповіщення Telegram",
+    "en": "Telegram notifications",
+    "ru": "Telegram уведомления",
+    "ja": "Telegram 通知",
+    "fr": "Notifications Telegram",
+    "de": "Telegram-Benachrichtigungen",
+    "es": "Notificaciones de Telegram"
+  },
+  "description": {
+    "uk": "Повідомлення в чати Telegram",
+    "en": "Messages to Telegram chats",
+    "ru": "Сообщения в чаты Telegram",
+    "ja": "Telegram チャットへのメッセージ",
+    "fr": "Messages vers des discussions Telegram",
+    "de": "Nachrichten an Telegram-Chats",
+    "es": "Mensajes a chats de Telegram"
+  },
+  "perms": [
+    "network.outbound:api.telegram.org",
+    "notifications.send"
+  ],
+  "services": [
+    "notify.telegram"
+  ],
+  "settings": [
+    {
+      "key": "token",
+      "type": "secret",
+      "default": ""
+    },
+    {
+      "key": "chats",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "blocks": [
+    {
+      "key": "message",
+      "kind": "act",
+      "icon": "send",
+      "name": {
+        "uk": "Повідомлення в Telegram",
+        "en": "Telegram message",
+        "ru": "Сообщение в Telegram",
+        "ja": "Telegram メッセージ",
+        "fr": "Message Telegram",
+        "de": "Telegram-Nachricht",
+        "es": "Mensaje de Telegram"
+      },
+      "params": [
+        {
+          "key": "text",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}

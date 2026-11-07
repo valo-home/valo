@@ -1,0 +1,178 @@
+{
+  "id": "fi.valo.thingino",
+  "version": "1.1.4",
+  "trust": "official",
+  "module": "thingino",
+  "author": "Valo",
+  "icon": "camera",
+  "level": "declarative",
+  "name": {
+    "uk": "Камери Thingino",
+    "en": "Thingino cameras",
+    "ru": "Камеры Thingino",
+    "ja": "Thingino カメラ",
+    "fr": "Caméras Thingino",
+    "de": "Thingino Kameras",
+    "es": "Cámaras Thingino"
+  },
+  "description": {
+    "uk": "Камери на відкритій прошивці Thingino (Sonoff CAM Slim Gen2, CAM-PT2 та інші): відео, знімки, рух від камери без хмари",
+    "en": "Cameras on the open Thingino firmware (Sonoff CAM Slim Gen2, CAM-PT2 and others): video, snapshots and motion from the camera without a cloud",
+    "ru": "Камеры на открытой прошивке Thingino (Sonoff CAM Slim Gen2, CAM-PT2 и другие): видео, снимки, движение от камеры без облака",
+    "ja": "オープンファームウェア Thingino のカメラ (Sonoff CAM Slim Gen2、CAM-PT2 など): クラウドなしで映像、スナップショット、動き検知",
+    "fr": "Caméras sous micrologiciel libre Thingino (Sonoff CAM Slim Gen2, CAM-PT2 et autres) : vidéo, instantanés et mouvement sans cloud",
+    "de": "Kameras mit der offenen Firmware Thingino (Sonoff CAM Slim Gen2, CAM-PT2 und andere): Video, Schnappschüsse und Bewegung ohne Cloud",
+    "es": "Cámaras con el firmware abierto Thingino (Sonoff CAM Slim Gen2, CAM-PT2 y otras): vídeo, instantáneas y movimiento sin nube"
+  },
+  "perms": [
+    "cameras.provide",
+    "network.outbound:lan"
+  ],
+  "runtime": {
+    "memory": 64,
+    "cpu": 15
+  },
+  "camera": {
+    "fields": [
+      {
+        "key": "host",
+        "type": "text",
+        "required": true,
+        "default": "",
+        "name": {
+          "uk": "Адреса камери",
+          "en": "Camera address",
+          "ru": "Адрес камеры",
+          "ja": "カメラのアドレス",
+          "fr": "Adresse de la caméra",
+          "de": "Kameraadresse",
+          "es": "Dirección de la cámara"
+        },
+        "hint": {
+          "uk": "IP або ім'я в мережі, наприклад 192.168.0.105",
+          "en": "IP or network name, for example 192.168.0.105",
+          "ru": "IP или имя в сети, например 192.168.0.105",
+          "ja": "IP またはネットワーク名、例 192.168.0.105",
+          "fr": "IP ou nom réseau, par exemple 192.168.0.105",
+          "de": "IP oder Netzwerkname, zum Beispiel 192.168.0.105",
+          "es": "IP o nombre de red, por ejemplo 192.168.0.105"
+        }
+      },
+      {
+        "key": "user",
+        "type": "text",
+        "default": "thingino",
+        "name": {
+          "uk": "Користувач потоку",
+          "en": "Stream user",
+          "ru": "Пользователь потока",
+          "ja": "ストリームのユーザー",
+          "fr": "Utilisateur du flux",
+          "de": "Stream-Benutzer",
+          "es": "Usuario del flujo"
+        },
+        "hint": {
+          "uk": "Користувач RTSP і ONVIF, за замовчуванням thingino",
+          "en": "RTSP and ONVIF user, thingino by default",
+          "ru": "Пользователь RTSP и ONVIF, по умолчанию thingino",
+          "ja": "RTSP と ONVIF のユーザー、既定は thingino",
+          "fr": "Utilisateur RTSP et ONVIF, thingino par défaut",
+          "de": "RTSP- und ONVIF-Benutzer, standardmäßig thingino",
+          "es": "Usuario RTSP y ONVIF, thingino por defecto"
+        }
+      },
+      {
+        "key": "password",
+        "type": "secret",
+        "required": true,
+        "default": "",
+        "name": {
+          "uk": "Пароль потоку",
+          "en": "Stream password",
+          "ru": "Пароль потока",
+          "ja": "ストリームのパスワード",
+          "fr": "Mot de passe du flux",
+          "de": "Stream-Passwort",
+          "es": "Contraseña del flujo"
+        }
+      },
+      {
+        "key": "token",
+        "type": "secret",
+        "required": true,
+        "default": "",
+        "name": {
+          "uk": "Ключ API",
+          "en": "API key",
+          "ru": "Ключ API",
+          "ja": "API キー",
+          "fr": "Clé API",
+          "de": "API-Schlüssel",
+          "es": "Clave API"
+        },
+        "hint": {
+          "uk": "Веб інтерфейс камери, Settings, Web UI. Потрібен для знімків і руху",
+          "en": "Camera web UI, Settings, Web UI. Needed for snapshots and motion",
+          "ru": "Веб интерфейс камеры, Settings, Web UI. Нужен для снимков и движения",
+          "ja": "カメラの Web UI、Settings、Web UI。スナップショットと動き検知に必要",
+          "fr": "Interface web de la caméra, Settings, Web UI. Nécessaire pour les instantanés et le mouvement",
+          "de": "Weboberfläche der Kamera, Settings, Web UI. Nötig für Schnappschüsse und Bewegung",
+          "es": "Interfaz web de la cámara, Settings, Web UI. Necesaria para instantáneas y movimiento"
+        }
+      },
+      {
+        "key": "main",
+        "type": "text",
+        "default": "ch0",
+        "name": {
+          "uk": "Основний потік",
+          "en": "Main stream",
+          "ru": "Основной поток",
+          "ja": "メインストリーム",
+          "fr": "Flux principal",
+          "de": "Hauptstream",
+          "es": "Flujo principal"
+        },
+        "hint": {
+          "uk": "ch0, 1080p для перегляду і запису",
+          "en": "ch0, 1080p for viewing and recording",
+          "ru": "ch0, 1080p для просмотра и записи",
+          "ja": "ch0、視聴と録画用の 1080p",
+          "fr": "ch0, 1080p pour la vue et l'enregistrement",
+          "de": "ch0, 1080p zum Ansehen und Aufnehmen",
+          "es": "ch0, 1080p para ver y grabar"
+        }
+      },
+      {
+        "key": "sub",
+        "type": "text",
+        "default": "ch1",
+        "name": {
+          "uk": "Додатковий потік",
+          "en": "Sub stream",
+          "ru": "Дополнительный поток",
+          "ja": "サブストリーム",
+          "fr": "Flux secondaire",
+          "de": "Nebenstream",
+          "es": "Flujo secundario"
+        },
+        "hint": {
+          "uk": "ch1, 360p для плиток і розпізнавання",
+          "en": "ch1, 360p for tiles and detection",
+          "ru": "ch1, 360p для плиток и распознавания",
+          "ja": "ch1、タイルと認識用の 360p",
+          "fr": "ch1, 360p pour les tuiles et la détection",
+          "de": "ch1, 360p für Kacheln und Erkennung",
+          "es": "ch1, 360p para mosaicos y detección"
+        }
+      }
+    ],
+    "features": [
+      "settings",
+      "actions",
+      "diagnose",
+      "discover",
+      "ptz"
+    ]
+  }
+}

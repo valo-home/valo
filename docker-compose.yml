@@ -1,0 +1,466 @@
+# Valo, установка одной командой: docker compose up -d
+# Секреты создает служба init в томе secrets при первом старте, файл переменных не нужен.
+# Необязательные настройки (порт веб клиента, папка записей камер) задаются в .env рядом с этим файлом.
+# Образы берутся из ghcr.io/valo-home, без них собираются из исходников этого репозитория.
+# HTTPS в Valo не настраивается, его дает внешний прокси. Caddy доверяет X-Forwarded-* от адресов EDGE_TRUSTED_PROXIES.
+# Для разработки скрипт ./valo поднимает среды demo и real отдельными проектами со своими томами.
+
+name: valo
+
+x-core: &core
+  image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-core:${VALO_VERSION:-latest}
+  build: &core-build
+    context: ./backend
+    target: core
+    additional_contexts:
+      extensions: ./extensions
+      docs: ./ops
+      help: ./docs
+  restart: unless-stopped
+  volumes:
+    - data:/data
+    - ${BACKUP_MIRROR_HOST:-./backups}:/backup-mirror
+    - secrets:/secrets:ro
+  environment: &core-env
+    APP_ENV: prod
+    BACKUP_MIRROR: /backup-mirror
+    VALO_ENV: ${VALO_ENV:-real}
+    DATABASE_URL: postgresql+asyncpg://valo@postgres:5432/valo
+    REDIS_URL: redis://redis:6379/0
+    RABBITMQ_URL: amqp://valo@rabbitmq:5672/
+    VALO_SECRET_KEY: ${VALO_SECRET_KEY:-}
+    SESSION_TTL: ${SESSION_TTL:-2592000}
+    MQTT_HOST: mosquitto
+    MQTT_PORT: 1883
+    MQTT_USER: ${MQTT_USER:-valo-core}
+    Z2M_BASE_TOPIC: ${Z2M_BASE_TOPIC:-zigbee2mqtt}
+    Z2M_MQTT_USER: zigbee2mqtt
+    MOCKS_MQTT_USER: valo-mocks
+    COMMAND_TIMEOUT: ${COMMAND_TIMEOUT:-5}
+    WS_PUBLIC_URL: ${WS_PUBLIC_URL:-}
+    WS_CORS: ${WS_CORS:-*}
+    VALO_DEMO: ${VALO_DEMO:-false}
+    VALO_PEERS: ${VALO_PEERS:-}
+    TRUSTED_PROXIES: ${TRUSTED_PROXIES:-172.16.0.0/12,127.0.0.1/32}
+    BACKUP_KEEP: ${BACKUP_KEEP:-7}
+    EXT_MEM_LIMIT: ${EXT_MEM_LIMIT:-256}
+    EXT_CPU_LIMIT: ${EXT_CPU_LIMIT:-80}
+    UPDATE_URL: ${UPDATE_URL:-}
+    LOG_LEVEL: ${LOG_LEVEL:-info}
+    LOG_JSON: ${LOG_JSON:-true}
+    TZ: ${TZ:-Europe/Helsinki}
+    MEDIA_DIR: /media-root
+    ZIGBEE_ADAPTER: ${ZIGBEE_ADAPTER:-}
+    ZIGBEE_ADAPTER_TYPE: ${ZIGBEE_ADAPTER_TYPE:-}
+    MEDIA_ROOT_HOST: ${MEDIA_ROOT:-}
+    VALO_NTP_ADDR: ${VALO_NTP_ADDR:-}
+  depends_on:
+    init:
+      condition: service_completed_successfully
+    migrator:
+      condition: service_completed_successfully
+    redis:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+    mosquitto:
+      condition: service_healthy
+
+x-media: &media-volumes
+  - data:/data
+  - ${BACKUP_MIRROR_HOST:-./backups}:/backup-mirror
+  - secrets:/secrets:ro
+  - ${MEDIA_ROOT:-./media}:/media-root
+
+x-heartbeat: &heartbeat
+  interval: 15s
+  timeout: 5s
+  start_period: 30s
+  retries: 5
+
+x-secret-env: &secret-env
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-}
+  JWT_SECRET: ${JWT_SECRET:-}
+  MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+  Z2M_MQTT_PASSWORD: ${Z2M_MQTT_PASSWORD:-}
+  MOCKS_MQTT_PASSWORD: ${MOCKS_MQTT_PASSWORD:-}
+
+x-after-init: &after-init
+  init:
+    condition: service_completed_successfully
+
+services:
+  init:
+    image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-core:${VALO_VERSION:-latest}
+    build: *core-build
+    user: "0"
+    command: ["sh", "-ec", "python -m app.lib.bootstrap && mkdir -p /media-root /backup-mirror && chown 1000:1000 /media-root /backup-mirror"]
+    environment: *secret-env
+    volumes:
+      - secrets:/secrets
+      - ${MEDIA_ROOT:-./media}:/media-root
+      - ${BACKUP_MIRROR_HOST:-./backups}:/backup-mirror
+    restart: "no"
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: valo
+      POSTGRES_PASSWORD_FILE: /secrets/postgres_password
+      POSTGRES_DB: valo
+    volumes:
+      - pg:/var/lib/postgresql/data
+      - secrets:/secrets:ro
+    depends_on: *after-init
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "valo", "-d", "valo"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+
+  rabbitmq:
+    image: rabbitmq:4-alpine
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: valo
+    entrypoint: ["sh", "-ec", "export RABBITMQ_DEFAULT_PASS=$$(cat /secrets/rabbitmq_password); exec docker-entrypoint.sh rabbitmq-server"]
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+      - secrets:/secrets:ro
+    depends_on: *after-init
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5672"]
+      interval: 10s
+      start_period: 20s
+      retries: 20
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0.22
+    restart: unless-stopped
+    environment:
+      MQTT_USER: ${MQTT_USER:-valo-core}
+    configs:
+      - source: mosquitto
+        target: /mosquitto/config/mosquitto.conf
+    volumes:
+      - mosquitto:/mosquitto/data
+      - secrets:/secrets:ro
+    depends_on: *after-init
+    ports:
+      - ${MQTT_BIND:-0.0.0.0}:${MQTT_PORT:-1883}:1883
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        MQTT_PASSWORD=$$(cat /secrets/mqtt_password)
+        f=/mosquitto/data/dynsec.json
+        if [ ! -f $$f ]; then
+          mosquitto_ctrl dynsec init $$f "$$MQTT_USER" "$$MQTT_PASSWORD" > /dev/null
+          sed -i 's/"acls":[[:space:]]*\[{/"acls": [{"acltype": "publishClientSend", "topic": "#", "allow": true}, {/' $$f
+          echo "dynsec created for $$MQTT_USER"
+        fi
+        chown -R mosquitto:mosquitto /mosquitto/data
+        exec /docker-entrypoint.sh mosquitto -c /mosquitto/config/mosquitto.conf
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -u \"$$MQTT_USER\" -P \"$$(cat /secrets/mqtt_password)\" -t '$$SYS/broker/uptime' -C 1 -W 5 > /dev/null"]
+      interval: 5s
+      retries: 20
+
+  migrator:
+    image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-core:${VALO_VERSION:-latest}
+    command:
+      - sh
+      - -ec
+      - exec atlas migrate apply --dir file:///app/migrations --url "postgres://valo:$$(cat /secrets/postgres_password)@postgres:5432/valo?sslmode=disable"
+    volumes:
+      - secrets:/secrets:ro
+    restart: "no"
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+  backend:
+    <<: *core
+    volumes:
+      - data:/data
+      - ${BACKUP_MIRROR_HOST:-./backups}:/backup-mirror
+      - secrets:/secrets:ro
+      - ${MEDIA_ROOT:-./media}:/media-root
+      - zconf:/valo-zigbee
+      - /dev:/host-dev:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/api/v1/health', timeout=3)"]
+      interval: 5s
+      start_period: 10s
+      retries: 20
+
+  ws:
+    <<: *core
+    command: ["granian", "--interface", "asgi", "--host", "0.0.0.0", "--port", "8001", "app.ws.main:app"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8001/socket.io/?EIO=4&transport=polling', timeout=3)"]
+      <<: *heartbeat
+
+  mqtt:
+    <<: *core
+    command: ["python", "-m", "app.mqtt.main"]
+    volumes: *media-volumes
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.lib.alive", "mqtt"]
+      <<: *heartbeat
+
+  ext:
+    <<: *core
+    command: ["python", "-m", "app.ext.main"]
+    mem_limit: ${EXT_CONTAINER_MEM:-1g}
+    cpus: ${EXT_CONTAINER_CPUS:-1.5}
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.lib.alive", "ext"]
+      <<: *heartbeat
+
+  agent:
+    <<: *core
+    command: ["python", "-m", "app.agent.main"]
+    mem_limit: ${AGENT_CONTAINER_MEM:-512m}
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.lib.alive", "agent"]
+      <<: *heartbeat
+
+  worker:
+    <<: *core
+    command: ["taskiq", "worker", "app.lib.tasks:broker", "app.domain.tasks"]
+    volumes: *media-volumes
+
+  cameras:
+    <<: *core
+    image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-media:${VALO_VERSION:-latest}
+    build:
+      <<: *core-build
+      target: media
+    command: ["python", "-m", "app.cameras.main"]
+    volumes: *media-volumes
+    environment:
+      <<: *core-env
+      NTP_PORT: "1123"
+    ports:
+      - ${NTP_BIND:-127.0.0.1:0}:1123/udp
+    tmpfs:
+      - /buffer:size=${CAMERAS_BUFFER_SIZE:-512m},uid=1000,gid=1000,mode=0700
+    mem_limit: ${CAMERAS_CONTAINER_MEM:-1g}
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.lib.alive", "cameras"]
+      <<: *heartbeat
+
+  scheduler:
+    <<: *core
+    command: ["taskiq", "scheduler", "app.lib.tasks:scheduler", "app.domain.tasks"]
+
+  web:
+    image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-web:${VALO_VERSION:-latest}
+    build: ./web
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://backend:8000
+      BODY_SIZE_LIMIT: 1G
+      ADDRESS_HEADER: x-forwarded-for
+      XFF_DEPTH: 1
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      <<: *heartbeat
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  edge:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    configs:
+      - source: caddy
+        target: /etc/caddy/Caddyfile
+    ports:
+      - ${WEB_BIND:-0.0.0.0}:${WEB_PORT:-80}:80
+    depends_on:
+      web:
+        condition: service_started
+      ws:
+        condition: service_started
+      cameras:
+        condition: service_started
+
+  mocks:
+    image: ${VALO_IMAGE:-ghcr.io/valo-home/valo}-mocks:${VALO_VERSION:-latest}
+    build: ./mocks
+    profiles: [demo]
+    restart: unless-stopped
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+      MOCKS_MQTT_USER: valo-mocks
+      Z2M_BASE_TOPIC: ${Z2M_BASE_TOPIC:-zigbee2mqtt}
+      VALO_API: http://backend:8000/api/v1
+      DATABASE_URL: postgresql://valo@postgres:5432/valo
+      MOCKS_SPEED: ${MOCKS_SPEED:-1}
+      MOCKS_HISTORY_DAYS: ${MOCKS_HISTORY_DAYS:-10}
+    volumes:
+      - mocks:/data
+      - secrets:/secrets:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:2.13.0
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Europe/Helsinki}
+      ZIGBEE_ADAPTER: ${ZIGBEE_ADAPTER:-}
+      ZIGBEE_ADAPTER_TYPE: ${ZIGBEE_ADAPTER_TYPE:-}
+      ZIGBEE_DISABLED: ${ZIGBEE_DISABLED:-}
+    configs:
+      - source: zigbee2mqtt
+        target: /etc/valo/configuration.yaml
+    volumes:
+      - z2m:/app/data
+      - zconf:/valo-zigbee:ro
+      - secrets:/secrets:ro
+      - /run/udev:/run/udev:ro
+      - /dev:/dev
+    device_cgroup_rules:
+      - "c 188:* rmw"
+      - "c 166:* rmw"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        if [ -n "$$ZIGBEE_DISABLED" ]; then echo "zigbee disabled"; exec sleep infinity; fi
+        export ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$$(cat /secrets/z2m_mqtt_password)
+        [ -f /app/data/configuration.yaml ] || cp /etc/valo/configuration.yaml /app/data/configuration.yaml
+        conf=/valo-zigbee/adapter.env
+        sum() { if [ -f $$conf ]; then md5sum $$conf | cut -c1-32; else echo none; fi; }
+        while :; do
+          port="$$ZIGBEE_ADAPTER"; adapter="$$ZIGBEE_ADAPTER_TYPE"
+          if [ -z "$$port" ] && [ -s $$conf ]; then
+            port=$$(sed -n 's/^port=//p' $$conf); adapter=$$(sed -n 's/^adapter=//p' $$conf)
+          fi
+          if [ -n "$$port" ] && [ -e "$$port" ]; then break; fi
+          echo "waiting for the Zigbee adapter: choose it in Valo (Setup or Zigbee), now '$$port'"
+          sleep 10
+        done
+        export ZIGBEE2MQTT_CONFIG_SERIAL_PORT="$$port"
+        if [ -n "$$adapter" ]; then export ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER="$$adapter"; fi
+        echo "zigbee adapter $$port ($${adapter:-auto})"
+        s0=$$(sum)
+        docker-entrypoint.sh node index.js &
+        pid=$$!
+        trap 'kill -TERM $$pid; wait $$pid; exit 0' TERM INT
+        while kill -0 $$pid 2>/dev/null; do
+          sleep 5
+          if [ -z "$$ZIGBEE_ADAPTER" ] && [ "$$(sum)" != "$$s0" ]; then
+            echo "zigbee adapter changed in Valo, restarting"; kill -TERM $$pid; wait $$pid; exit 0
+          fi
+        done
+        wait $$pid
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+
+configs:
+  mosquitto:
+    content: |
+      listener 1883
+      allow_anonymous false
+      plugin /usr/lib/mosquitto_dynamic_security.so
+      plugin_opt_config_file /mosquitto/data/dynsec.json
+      persistence true
+      persistence_location /mosquitto/data/
+      log_dest stdout
+      log_timestamp_format %Y-%m-%dT%H:%M:%S
+  caddy:
+    content: |
+      {
+        admin off
+        auto_https off
+        servers {
+          trusted_proxies static ${EDGE_TRUSTED_PROXIES:-172.16.0.0/12 127.0.0.1/32}
+        }
+      }
+      (app) {
+        encode zstd gzip
+        header {
+          X-Content-Type-Options nosniff
+          Referrer-Policy same-origin
+          X-Frame-Options SAMEORIGIN
+          Permissions-Policy "camera=(), microphone=(), geolocation=()"
+          -Server
+        }
+        handle /rtc/* {
+          forward_auth backend:8000 {
+            uri /api/v1/cameras/rtc-auth
+            header_up -Upgrade
+            header_up -Connection
+            copy_headers Authorization
+          }
+          reverse_proxy cameras:1984
+        }
+        reverse_proxy /socket.io/* ws:8001
+        reverse_proxy /api/v1/media/* backend:8000
+        reverse_proxy web:3000
+      }
+      :80 {
+        import app
+      }
+  zigbee2mqtt:
+    content: |
+      version: 5
+      homeassistant:
+        enabled: false
+      mqtt:
+        base_topic: ${Z2M_BASE_TOPIC:-zigbee2mqtt}
+        server: mqtt://mosquitto:1883
+        user: zigbee2mqtt
+      serial:
+        port: /dev/ttyACM0
+        adapter: ${ZIGBEE_ADAPTER_TYPE:-ember}
+        baudrate: ${ZIGBEE_BAUDRATE:-115200}
+        rtscts: ${ZIGBEE_RTSCTS:-false}
+      availability:
+        enabled: true
+      frontend:
+        enabled: false
+      advanced:
+        log_level: info
+        log_output: [console]
+        channel: ${ZIGBEE_CHANNEL:-15}
+        network_key: ${ZIGBEE_NETWORK_KEY:-GENERATE}
+        pan_id: ${ZIGBEE_PAN_ID:-GENERATE}
+        ext_pan_id: ${ZIGBEE_EXT_PAN_ID:-GENERATE}
+
+volumes:
+  pg:
+  redis:
+  rabbitmq:
+  mosquitto:
+  data:
+  mocks:
+  z2m:
+  secrets:
+  zconf:

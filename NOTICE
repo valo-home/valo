@@ -1,0 +1,29 @@
+Valo
+Copyright 2026 Valo contributors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The Docker images built from this repository include or use the following third party software.
+Each component keeps its own license.
+
+Bundled into the images
+- go2rtc 1.9.15, MIT License, https://github.com/AlexxIT/go2rtc
+- FFmpeg 7.1.1 static build by mwader/static-ffmpeg, GNU GPL version 3 or later because the build
+  enables GPL components, https://ffmpeg.org, sources https://github.com/wader/static-ffmpeg.
+  FFmpeg runs as a separate program, Valo calls it as a command.
+- Atlas community edition 0.38.0, Apache License 2.0, https://github.com/ariga/atlas
+- YOLOX tiny model, Apache License 2.0, Megvii, https://github.com/Megvii-BaseDetection/YOLOX
+  (extensions/packages/fi.valo.vision/model)
+- Python packages listed in backend/uv.lock and mocks/uv.lock, JavaScript packages listed in
+  web/package-lock.json, under their own licenses
+
+Run as separate containers from their official images
+- Zigbee2MQTT, GNU GPL version 3, https://github.com/Koenkk/zigbee2mqtt
+- Eclipse Mosquitto, EPL 2.0 and EDL 1.0, https://mosquitto.org
+- PostgreSQL, PostgreSQL License, https://www.postgresql.org
+- Redis 8, tri licensed RSALv2, SSPLv1 or AGPLv3, https://redis.io
+- RabbitMQ, Mozilla Public License 2.0, https://www.rabbitmq.com
+- Caddy, Apache License 2.0, https://caddyserver.com
+
+Thingino is an independent open firmware project for IP cameras, https://thingino.com.
+Valo talks to cameras running it over the network and does not include its code.

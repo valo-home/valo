@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# Управление средами Valo. Каждая среда это отдельный проект compose со своими томами
+#   ./valo demo up         поднять демо (моки, база valo-demo_pg)
+#   ./valo real up         поднять реальную среду (Zigbee2MQTT со стиком, база valo-real_pg)
+#   ./valo all up          поднять обе
+#   ./valo demo init       создать envs/demo.env со случайными секретами, если файла нет
+#   ./valo real logs -f mqtt zigbee2mqtt
+#   ./valo demo ctl <device> key=value ...   отправить состояние в моки
+#   ./valo real reset      остановить среду и удалить ее тома (база, брокер, данные Z2M)
+#   ./valo <env> <любая команда docker compose>
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENVS=(demo real)
+
+usage() {
+  sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+  exit 2
+}
+
+secret() { head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 32; }
+
+init() {
+  local env="$1" file="$ROOT/envs/$1.env" example="$ROOT/envs/$1.env.example"
+  [ -f "$file" ] && return 0
+  [ -f "$example" ] || { echo "нет $example" >&2; exit 1; }
+  local tmp
+  tmp="$(mktemp)"
+  while IFS= read -r line; do
+    if [[ "$line" == *"=__secret__" ]]; then
+      echo "${line%=__secret__}=$(secret)"
+    else
+      echo "$line"
+    fi
+  done < "$example" > "$tmp"
+  install -m 600 "$tmp" "$file"
+  rm -f "$tmp"
+  echo "создан $file"
+}
+
+mirror() {
+  local dir
+  dir=$(grep -E '^BACKUP_MIRROR_HOST=' "$ROOT/envs/$1.env" | tail -1 | cut -d= -f2- || true)
+  dir="${dir:-$ROOT/backups/$1}"
+  case "$dir" in /*) ;; *) dir="$ROOT/$dir" ;; esac
+  mkdir -p "$dir"
+  export BACKUP_MIRROR_HOST="$dir"
+}
+
+media() {
+  local dir
+  dir=$(grep -E '^MEDIA_ROOT=' "$ROOT/envs/$1.env" | tail -1 | cut -d= -f2- || true)
+  dir="${dir:-$ROOT/media/$1}"
+  case "$dir" in /*) ;; *) dir="$ROOT/$dir" ;; esac
+  mkdir -p "$dir"
+  export MEDIA_ROOT="$dir"
+}
+
+lan() {
+  local ip bind
+  ip=$(grep -E '^VALO_LAN_IP=' "$ROOT/envs/$1.env" | tail -1 | cut -d= -f2- || true)
+  if [ -z "$ip" ]; then
+    ip=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i < NF; i++) if ($i == "src") print $(i + 1)}' | head -1)
+  fi
+  bind=$(grep -E '^NTP_BIND=' "$ROOT/envs/$1.env" | tail -1 | cut -d= -f2- || true)
+  if [ -z "$bind" ]; then
+    if [ "$1" = real ]; then bind="0.0.0.0:123"; else bind="127.0.0.1:0"; fi
+  fi
+  export NTP_BIND="$bind"
+  case "$bind" in
+    127.0.0.1:*) export VALO_NTP_ADDR="" ;;
+    *) export VALO_NTP_ADDR="${ip:-}" ;;
+  esac
+}
+
+run() {
+  local env="$1"
+  shift
+  export VALO_IMAGE="${VALO_IMAGE:-valo}" VALO_VERSION="${VALO_VERSION:-local}"
+  if [ "$env" = demo ]; then export ZIGBEE_DISABLED=1; else unset ZIGBEE_DISABLED; fi
+  init "$env"
+  mirror "$env"
+  media "$env"
+  lan "$env"
+  case "${1:-}" in
+    init) return 0 ;;
+    ctl)
+      shift
+      docker compose -p "valo-$env" --env-file "$ROOT/envs/$env.env" -f "$ROOT/docker-compose.yml" \
+        exec mocks python -m valo_mocks ctl "$@"
+      ;;
+    reset)
+      docker compose -p "valo-$env" --env-file "$ROOT/envs/$env.env" -f "$ROOT/docker-compose.yml" down -v --remove-orphans
+      ;;
+    up)
+      shift
+      local build=--build
+      for a in "$@"; do [ "$a" = "--no-build" ] && build=""; done
+      docker compose -p "valo-$env" --env-file "$ROOT/envs/$env.env" -f "$ROOT/docker-compose.yml" up -d $build "$@"
+      ;;
+    "")
+      usage
+      ;;
+    *)
+      docker compose -p "valo-$env" --env-file "$ROOT/envs/$env.env" -f "$ROOT/docker-compose.yml" "$@"
+      ;;
+  esac
+}
+
+[ $# -ge 1 ] || usage
+target="$1"
+shift
+case "$target" in
+  demo | real) run "$target" "$@" ;;
+  all) for e in "${ENVS[@]}"; do run "$e" "$@"; done ;;
+  *) usage ;;
+esac

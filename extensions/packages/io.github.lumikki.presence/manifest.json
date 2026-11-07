@@ -1,0 +1,16 @@
+{
+  "id": "io.github.lumikki.presence",
+  "version": "0.9.3",
+  "trust": "community",
+  "module": "presence",
+  "author": "lumikki",
+  "icon": "motion",
+  "level": "declarative",
+  "name": {"uk": "Присутність по кімнатах", "en": "Room presence", "ru": "Присутствие по комнатам", "ja": "部屋ごとの在室", "fr": "Présence par pièce", "de": "Anwesenheit pro Raum", "es": "Presencia por habitación"},
+  "description": {"uk": "Зайнятість кімнат за датчиками руху і дверей", "en": "Room occupancy from motion and door sensors", "ru": "Занятость комнат по датчикам движения и дверям", "ja": "人感センサーとドアセンサーによる在室判定", "fr": "Occupation des pièces selon les capteurs de mouvement et de porte", "de": "Raumbelegung aus Bewegungs- und Türsensoren", "es": "Ocupación de habitaciones por sensores de movimiento y puertas"},
+  "perms": ["devices.read", "devices.virtual"],
+  "settings": [{"key": "timeout", "type": "number", "default": 10}],
+  "blocks": [
+    {"key": "empty", "kind": "trig", "icon": "motion", "name": {"uk": "Кімната звільнилась", "en": "Room became empty", "ru": "Комната освободилась", "ja": "部屋が空いた", "fr": "La pièce est vide", "de": "Raum ist leer", "es": "La habitación quedó vacía"}, "params": [{"key": "room", "type": "room"}]}
+  ]
+}

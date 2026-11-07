@@ -1,0 +1,2049 @@
+{
+  "home": {
+    "name": "Дом Виртанен",
+    "lat": 60.2055,
+    "lon": 24.6559,
+    "timezone": "Europe/Helsinki",
+    "currency": "EUR",
+    "settings": {
+      "lang": "ru",
+      "pushLevels": [
+        "crit"
+      ],
+      "historyDays": 10,
+      "autoBackup": true
+    }
+  },
+  "owner": {
+    "username": "mikko",
+    "name": "Микко Виртанен",
+    "password": "valo-demo"
+  },
+  "users": [
+    {
+      "username": "aino",
+      "name": "Айно Виртанен",
+      "password": "valo-demo",
+      "role": "admin"
+    },
+    {
+      "username": "elias",
+      "name": "Элиас Виртанен",
+      "password": "valo-demo",
+      "role": "member",
+      "rooms": [
+        "kids",
+        "living",
+        "kitchen"
+      ]
+    },
+    {
+      "username": "siiri",
+      "name": "Сиири Лахти",
+      "password": "valo-demo",
+      "role": "guest",
+      "rooms": [
+        "living",
+        "kitchen"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": "living",
+      "name": "Гостиная",
+      "floor": 1,
+      "geom": {
+        "x": 20,
+        "y": 20,
+        "w": 310,
+        "h": 210
+      },
+      "outdoor": false
+    },
+    {
+      "id": "kitchen",
+      "name": "Кухня",
+      "floor": 1,
+      "geom": {
+        "x": 330,
+        "y": 20,
+        "w": 190,
+        "h": 210
+      },
+      "outdoor": false
+    },
+    {
+      "id": "terrace",
+      "name": "Терраса",
+      "floor": 1,
+      "geom": {
+        "x": 520,
+        "y": 20,
+        "w": 100,
+        "h": 210
+      },
+      "outdoor": true
+    },
+    {
+      "id": "hall",
+      "name": "Прихожая",
+      "floor": 1,
+      "geom": {
+        "x": 20,
+        "y": 230,
+        "w": 150,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "tech",
+      "name": "Техническое",
+      "floor": 1,
+      "geom": {
+        "x": 170,
+        "y": 230,
+        "w": 120,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "bath",
+      "name": "Ванная",
+      "floor": 1,
+      "geom": {
+        "x": 290,
+        "y": 230,
+        "w": 120,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "sauna",
+      "name": "Сауна",
+      "floor": 1,
+      "geom": {
+        "x": 410,
+        "y": 230,
+        "w": 110,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "bed",
+      "name": "Спальня",
+      "floor": 2,
+      "geom": {
+        "x": 20,
+        "y": 20,
+        "w": 230,
+        "h": 210
+      },
+      "outdoor": false
+    },
+    {
+      "id": "kids",
+      "name": "Детская",
+      "floor": 2,
+      "geom": {
+        "x": 250,
+        "y": 20,
+        "w": 190,
+        "h": 210
+      },
+      "outdoor": false
+    },
+    {
+      "id": "office",
+      "name": "Кабинет",
+      "floor": 2,
+      "geom": {
+        "x": 440,
+        "y": 20,
+        "w": 180,
+        "h": 210
+      },
+      "outdoor": false
+    },
+    {
+      "id": "uphall",
+      "name": "Холл",
+      "floor": 2,
+      "geom": {
+        "x": 20,
+        "y": 230,
+        "w": 240,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "wc",
+      "name": "Санузел",
+      "floor": 2,
+      "geom": {
+        "x": 260,
+        "y": 230,
+        "w": 120,
+        "h": 150
+      },
+      "outdoor": false
+    },
+    {
+      "id": "ward",
+      "name": "Гардероб",
+      "floor": 2,
+      "geom": {
+        "x": 380,
+        "y": 230,
+        "w": 140,
+        "h": 150
+      },
+      "outdoor": false
+    }
+  ],
+  "coordinator": {
+    "model": "Sonoff ZBDongle-E",
+    "type": "EmberZNet",
+    "ieee": "0xe0798dfffe3a12bc",
+    "revision": "7.4.4.0",
+    "channel": 20,
+    "pan": 6754,
+    "port": "/dev/ttyUSB0"
+  },
+  "zigbee": [
+    {
+      "key": "living-light",
+      "name": "Люстра гостиной",
+      "room": "living",
+      "ieee": "0x000b57ff2fb44d09",
+      "nwk": 46189,
+      "vendor": "IKEA",
+      "model": "LED1545G12",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "c",
+      "lqi": 182,
+      "state": {
+        "on": true,
+        "bri": 72,
+        "ct": 2700
+      }
+    },
+    {
+      "key": "living-lamp",
+      "name": "Торшер",
+      "room": "living",
+      "ieee": "0x00178801f79be3bd",
+      "nwk": 60401,
+      "vendor": "Philips",
+      "model": "7146060PH",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "living-light",
+      "lqi": 151,
+      "state": {
+        "on": true,
+        "bri": 40,
+        "ct": 2200
+      },
+      "ota": {
+        "installed": "1.93.11",
+        "latest": "1.104.2"
+      }
+    },
+    {
+      "key": "living-clim",
+      "name": "Климат гостиной",
+      "room": "living",
+      "ieee": "0x00158d00f9fb822a",
+      "nwk": 29564,
+      "vendor": "Aqara",
+      "model": "WSDCGQ11LM",
+      "kind": "clim",
+      "router": false,
+      "parent": "living-light",
+      "lqi": 141,
+      "state": {
+        "t": 21.6,
+        "h": 38,
+        "bat": 76
+      }
+    },
+    {
+      "key": "living-trv",
+      "name": "Термоголовка гостиной",
+      "room": "living",
+      "ieee": "0x847127ff8d7bbd8d",
+      "nwk": 60009,
+      "vendor": "Danfoss",
+      "model": "014G2461",
+      "kind": "trv",
+      "router": false,
+      "parent": "living-lamp",
+      "lqi": 120,
+      "state": {
+        "sp": 21.5,
+        "t": 21.2,
+        "bat": 64
+      }
+    },
+    {
+      "key": "living-remote",
+      "name": "Пульт гостиной",
+      "room": "living",
+      "ieee": "0x000b57ff91cf847d",
+      "nwk": 42769,
+      "vendor": "IKEA",
+      "model": "E2001/E2002",
+      "kind": "remote",
+      "router": false,
+      "parent": "living-light",
+      "lqi": 160,
+      "state": {
+        "bat": 81
+      }
+    },
+    {
+      "key": "living-air",
+      "name": "Воздух гостиной",
+      "room": "living",
+      "ieee": "0x000b57ff0185ac51",
+      "nwk": 17413,
+      "vendor": "IKEA",
+      "model": "E2112",
+      "kind": "air",
+      "router": false,
+      "parent": "living-light",
+      "lqi": 148,
+      "state": {
+        "t": 21.4,
+        "h": 39,
+        "pm25": 6,
+        "voc": 92
+      }
+    },
+    {
+      "key": "kitchen-light",
+      "name": "Свет кухни",
+      "room": "kitchen",
+      "ieee": "0x00124b00a7840b6a",
+      "nwk": 38548,
+      "vendor": "Sonoff",
+      "model": "ZBMINI",
+      "kind": "relay_light",
+      "router": true,
+      "parent": "c",
+      "lqi": 171,
+      "state": {
+        "on": false
+      }
+    },
+    {
+      "key": "kitchen-plug",
+      "name": "Кофемашина",
+      "room": "kitchen",
+      "ieee": "0x00158d00199e293e",
+      "nwk": 13032,
+      "vendor": "Xiaomi",
+      "model": "ZNCZ02LM",
+      "kind": "plug",
+      "router": true,
+      "parent": "kitchen-light",
+      "lqi": 158,
+      "state": {
+        "on": true,
+        "w": 3.1,
+        "kwh": 182.4
+      }
+    },
+    {
+      "key": "kitchen-leak",
+      "name": "Протечка под мойкой",
+      "room": "kitchen",
+      "ieee": "0x00158d00f1d10d91",
+      "nwk": 14493,
+      "vendor": "Aqara",
+      "model": "SJCGQ11LM",
+      "kind": "leak",
+      "router": false,
+      "parent": "kitchen-plug",
+      "lqi": 130,
+      "state": {
+        "leak": false,
+        "bat": 88
+      }
+    },
+    {
+      "key": "kitchen-motion",
+      "name": "Движение кухни",
+      "room": "kitchen",
+      "ieee": "0x00158d006546c864",
+      "nwk": 8134,
+      "vendor": "Aqara",
+      "model": "RTCGQ11LM",
+      "kind": "motion",
+      "router": false,
+      "parent": "kitchen-light",
+      "lqi": 117,
+      "state": {
+        "occ": false,
+        "lux": 126,
+        "bat": 71
+      }
+    },
+    {
+      "key": "terrace-temp",
+      "name": "Уличный датчик",
+      "room": "terrace",
+      "ieee": "0x00124b003f75a05e",
+      "nwk": 62952,
+      "vendor": "Sonoff",
+      "model": "SNZB-02",
+      "kind": "clim",
+      "router": false,
+      "parent": "terrace-light",
+      "lqi": 74,
+      "state": {
+        "t": 3.4,
+        "h": 86,
+        "bat": 52
+      }
+    },
+    {
+      "key": "terrace-light",
+      "name": "Свет террасы",
+      "room": "terrace",
+      "ieee": "0x00124b008eb43e8c",
+      "nwk": 35966,
+      "vendor": "Sonoff",
+      "model": "ZBMINI",
+      "kind": "relay_light",
+      "router": true,
+      "parent": "kitchen-light",
+      "lqi": 96,
+      "state": {
+        "on": false
+      }
+    },
+    {
+      "key": "hall-light",
+      "name": "Свет прихожей",
+      "room": "hall",
+      "ieee": "0x000b57ff5c4d9ef7",
+      "nwk": 46363,
+      "vendor": "IKEA",
+      "model": "LED1545G12",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "c",
+      "lqi": 166,
+      "state": {
+        "on": false,
+        "bri": 15,
+        "ct": 2700
+      }
+    },
+    {
+      "key": "hall-door",
+      "name": "Входная дверь",
+      "room": "hall",
+      "ieee": "0x00158d00227d8b91",
+      "nwk": 61549,
+      "vendor": "Aqara",
+      "model": "MCCGQ11LM",
+      "kind": "contact",
+      "router": false,
+      "parent": "hall-light",
+      "lqi": 152,
+      "state": {
+        "open": false,
+        "bat": 90
+      }
+    },
+    {
+      "key": "hall-motion",
+      "name": "Движение прихожей",
+      "room": "hall",
+      "ieee": "0x00158d008a1a58bf",
+      "nwk": 2459,
+      "vendor": "Aqara",
+      "model": "RTCGQ11LM",
+      "kind": "motion",
+      "router": false,
+      "parent": "hall-light",
+      "lqi": 140,
+      "state": {
+        "occ": false,
+        "lux": 38,
+        "bat": 66
+      }
+    },
+    {
+      "key": "hall-switch",
+      "name": "Выключатель у входа",
+      "room": "hall",
+      "ieee": "0x000b57ff3b6896f9",
+      "nwk": 34509,
+      "vendor": "IKEA",
+      "model": "E1743",
+      "kind": "remote",
+      "router": false,
+      "parent": "hall-light",
+      "lqi": 131,
+      "state": {
+        "bat": 44
+      }
+    },
+    {
+      "key": "tech-leak",
+      "name": "Протечка у бойлера",
+      "room": "tech",
+      "ieee": "0x00158d0094ddd7ab",
+      "nwk": 31375,
+      "vendor": "Aqara",
+      "model": "SJCGQ11LM",
+      "kind": "leak",
+      "router": false,
+      "parent": "hall-light",
+      "lqi": 101,
+      "state": {
+        "leak": false,
+        "bat": 79
+      }
+    },
+    {
+      "key": "bath-floor",
+      "name": "Теплый пол ванной",
+      "room": "bath",
+      "ieee": "0xa4c13800a5515e0b",
+      "nwk": 64919,
+      "vendor": "Tuya",
+      "model": "TS0601",
+      "kind": "floor",
+      "router": true,
+      "parent": "hall-light",
+      "lqi": 112,
+      "state": {
+        "sp": 24,
+        "t": 23.6,
+        "heat": true
+      }
+    },
+    {
+      "key": "bath-leak",
+      "name": "Протечка ванной",
+      "room": "bath",
+      "ieee": "0x00158d00340999b4",
+      "nwk": 19942,
+      "vendor": "Aqara",
+      "model": "SJCGQ11LM",
+      "kind": "leak",
+      "router": false,
+      "parent": "bath-floor",
+      "lqi": 88,
+      "state": {
+        "leak": false,
+        "bat": 8
+      }
+    },
+    {
+      "key": "bath-fan",
+      "name": "Вытяжка",
+      "room": "bath",
+      "ieee": "0x00124b00af095d58",
+      "nwk": 47122,
+      "vendor": "Sonoff",
+      "model": "ZBMINI",
+      "kind": "relay",
+      "router": true,
+      "parent": "c",
+      "lqi": 120,
+      "state": {
+        "on": false
+      }
+    },
+    {
+      "key": "sauna-door",
+      "name": "Дверь сауны",
+      "room": "sauna",
+      "ieee": "0x00158d008038ebf0",
+      "nwk": 26082,
+      "vendor": "Aqara",
+      "model": "MCCGQ11LM",
+      "kind": "contact",
+      "router": false,
+      "parent": "bath-fan",
+      "lqi": 97,
+      "state": {
+        "open": false,
+        "bat": 83
+      }
+    },
+    {
+      "key": "bed-light",
+      "name": "Свет спальни",
+      "room": "bed",
+      "ieee": "0x000b57ffe386477d",
+      "nwk": 44689,
+      "vendor": "IKEA",
+      "model": "LED1545G12",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "living-light",
+      "lqi": 110,
+      "state": {
+        "on": false,
+        "bri": 60,
+        "ct": 2700
+      }
+    },
+    {
+      "key": "bed-trv",
+      "name": "Термоголовка спальни",
+      "room": "bed",
+      "ieee": "0x847127ff61c02af9",
+      "nwk": 29133,
+      "vendor": "Danfoss",
+      "model": "014G2461",
+      "kind": "trv",
+      "router": false,
+      "parent": "bed-light",
+      "lqi": 95,
+      "state": {
+        "sp": 19,
+        "t": 19.4,
+        "bat": 58
+      },
+      "ota": {
+        "installed": "1.12",
+        "latest": "1.16"
+      }
+    },
+    {
+      "key": "bed-blind",
+      "name": "Шторы спальни",
+      "room": "bed",
+      "ieee": "0x000b57ff4be4b796",
+      "nwk": 17160,
+      "vendor": "IKEA",
+      "model": "E1757",
+      "kind": "blind",
+      "router": false,
+      "parent": "bed-light",
+      "lqi": 102,
+      "state": {
+        "pos": 100,
+        "bat": 62
+      }
+    },
+    {
+      "key": "bed-clim",
+      "name": "Климат спальни",
+      "room": "bed",
+      "ieee": "0x00124b0004f278be",
+      "nwk": 42672,
+      "vendor": "Sonoff",
+      "model": "SNZB-02",
+      "kind": "clim",
+      "router": false,
+      "parent": "bed-light",
+      "lqi": 99,
+      "state": {
+        "t": 19.6,
+        "h": 41,
+        "bat": 73
+      }
+    },
+    {
+      "key": "kids-light",
+      "name": "Свет детской",
+      "room": "kids",
+      "ieee": "0x000b57ff33a85c6d",
+      "nwk": 23129,
+      "vendor": "IKEA",
+      "model": "LED1545G12",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "living-light",
+      "lqi": 104,
+      "state": {
+        "on": false,
+        "bri": 80,
+        "ct": 4000
+      },
+      "ota": {
+        "installed": "2.3.087",
+        "latest": "2.3.093"
+      }
+    },
+    {
+      "key": "kids-clim",
+      "name": "Климат детской",
+      "room": "kids",
+      "ieee": "0x00158d00105711ae",
+      "nwk": 33472,
+      "vendor": "Aqara",
+      "model": "WSDCGQ11LM",
+      "kind": "clim",
+      "router": false,
+      "parent": "kids-light",
+      "lqi": 109,
+      "state": {
+        "t": 21,
+        "h": 40,
+        "bat": 69
+      }
+    },
+    {
+      "key": "office-light",
+      "name": "Свет кабинета",
+      "room": "office",
+      "ieee": "0x00124b007f7f2cb8",
+      "nwk": 28474,
+      "vendor": "Sonoff",
+      "model": "ZBMINI",
+      "kind": "relay_light",
+      "router": true,
+      "parent": "kids-light",
+      "lqi": 92,
+      "state": {
+        "on": true
+      }
+    },
+    {
+      "key": "office-plug",
+      "name": "Розетка ПК",
+      "room": "office",
+      "ieee": "0xa4c138008d3bb258",
+      "nwk": 59858,
+      "vendor": "Tuya",
+      "model": "TS011F",
+      "kind": "plug",
+      "router": true,
+      "parent": "office-light",
+      "lqi": 85,
+      "state": {
+        "on": true,
+        "w": 86,
+        "kwh": 412.7
+      }
+    },
+    {
+      "key": "office-window",
+      "name": "Окно кабинета",
+      "room": "office",
+      "ieee": "0x00158d00cb84d208",
+      "nwk": 39498,
+      "vendor": "Aqara",
+      "model": "MCCGQ11LM",
+      "kind": "contact",
+      "router": false,
+      "parent": "office-plug",
+      "lqi": 38,
+      "state": {
+        "open": true,
+        "bat": 35
+      }
+    },
+    {
+      "key": "office-clim",
+      "name": "Климат кабинета",
+      "room": "office",
+      "ieee": "0x00124b007fb3ed21",
+      "nwk": 48749,
+      "vendor": "Sonoff",
+      "model": "SNZB-02",
+      "kind": "clim",
+      "router": false,
+      "parent": "office-light",
+      "lqi": 77,
+      "state": {
+        "t": 18.2,
+        "h": 47,
+        "bat": 61
+      }
+    },
+    {
+      "key": "office-trv",
+      "name": "Термоголовка кабинета",
+      "room": "office",
+      "ieee": "0x847127ff9310d720",
+      "nwk": 14210,
+      "vendor": "Danfoss",
+      "model": "014G2461",
+      "kind": "trv",
+      "router": false,
+      "parent": "office-plug",
+      "lqi": 81,
+      "state": {
+        "sp": 7,
+        "t": 18.4,
+        "bat": 70
+      }
+    },
+    {
+      "key": "up-light",
+      "name": "Свет холла",
+      "room": "uphall",
+      "ieee": "0x000b57ffa2de8e51",
+      "nwk": 49629,
+      "vendor": "IKEA",
+      "model": "LED1545G12",
+      "kind": "light_ct",
+      "router": true,
+      "parent": "living-light",
+      "lqi": 118,
+      "state": {
+        "on": false,
+        "bri": 50,
+        "ct": 2700
+      }
+    },
+    {
+      "key": "up-motion",
+      "name": "Движение холла",
+      "room": "uphall",
+      "ieee": "0x00158d00b59c336d",
+      "nwk": 54001,
+      "vendor": "Aqara",
+      "model": "RTCGQ11LM",
+      "kind": "motion",
+      "router": false,
+      "parent": "up-light",
+      "lqi": 106,
+      "state": {
+        "occ": false,
+        "lux": 85,
+        "bat": 74
+      }
+    },
+    {
+      "key": "wc-leak",
+      "name": "Протечка санузла",
+      "room": "wc",
+      "ieee": "0x00158d00caecde31",
+      "nwk": 8261,
+      "vendor": "Aqara",
+      "model": "SJCGQ11LM",
+      "kind": "leak",
+      "router": false,
+      "parent": "up-light",
+      "lqi": 93,
+      "state": {
+        "leak": false,
+        "bat": 77
+      }
+    },
+    {
+      "key": "ward-light",
+      "name": "Свет гардероба",
+      "room": "ward",
+      "ieee": "0x00124b000a517c9e",
+      "nwk": 24488,
+      "vendor": "Sonoff",
+      "model": "ZBMINI",
+      "kind": "relay_light",
+      "router": true,
+      "parent": "up-light",
+      "lqi": 0,
+      "state": {
+        "on": false
+      },
+      "offline": true
+    },
+    {
+      "key": "living-rgb",
+      "name": "Светодиодная лента",
+      "room": "living",
+      "ieee": "0x0017880108a4c3e1",
+      "nwk": 31877,
+      "vendor": "Philips",
+      "model": "929002994901",
+      "kind": "light_rgb",
+      "router": true,
+      "parent": "living-light",
+      "lqi": 168,
+      "state": {
+        "on": true,
+        "bri": 55,
+        "color": "#ff8a3d"
+      }
+    },
+    {
+      "key": "hall-2gang",
+      "name": "Выключатель прихожей",
+      "room": "hall",
+      "ieee": "0xa4c138c2e9a0d417",
+      "nwk": 20514,
+      "vendor": "Tuya",
+      "model": "TS0012",
+      "kind": "relay2",
+      "router": true,
+      "parent": "c",
+      "lqi": 141,
+      "state": {
+        "on_l1": true,
+        "on_l2": false
+      }
+    }
+  ],
+  "hub": [
+    {
+      "key": "sauna-ctrl",
+      "name": "Каменка",
+      "room": "sauna",
+      "kind": "sauna",
+      "model": "Контроллер сауны ESP32",
+      "vendor": "DIY",
+      "caps": [
+        {
+          "id": "on",
+          "type": "bool",
+          "access": "rw"
+        },
+        {
+          "id": "t",
+          "type": "num",
+          "unit": "°C",
+          "access": "r"
+        },
+        {
+          "id": "target",
+          "type": "num",
+          "unit": "°C",
+          "access": "rw",
+          "min": 40,
+          "max": 100,
+          "step": 1
+        }
+      ],
+      "state": {
+        "on": true,
+        "t": 54.2,
+        "target": 80
+      }
+    },
+    {
+      "key": "tech-meter",
+      "name": "Счетчик ввода",
+      "room": "tech",
+      "kind": "meter",
+      "model": "HAN считыватель ESP32",
+      "vendor": "DIY",
+      "caps": [
+        {
+          "id": "w",
+          "type": "num",
+          "unit": "W",
+          "access": "r"
+        },
+        {
+          "id": "kwh",
+          "type": "num",
+          "unit": "kWh",
+          "access": "r"
+        },
+        {
+          "id": "v",
+          "type": "num",
+          "unit": "V",
+          "access": "r"
+        }
+      ],
+      "state": {
+        "w": 8020,
+        "kwh": 24518.6,
+        "v": 231
+      }
+    }
+  ],
+  "ha": [
+    {
+      "key": "tech-boiler",
+      "id": "ha-esphome-boiler",
+      "node": "esphome-boiler",
+      "name": "Бойлер",
+      "room": "tech",
+      "state": {
+        "on": false,
+        "w": 0
+      }
+    }
+  ],
+  "mapping": [
+    {
+      "id": "garage-temp",
+      "name": "Датчик гаража",
+      "kind": "clim",
+      "caps": [
+        {
+          "id": "t",
+          "type": "num",
+          "unit": "°C",
+          "topic": "garage/sensor/tele",
+          "path": "DS18B20.Temperature"
+        }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "evening",
+      "name": "Вечер",
+      "icon": "sun",
+      "actions": {
+        "@living-light": {
+          "on": true,
+          "bri": 40
+        },
+        "@living-lamp": {
+          "on": true,
+          "bri": 30
+        },
+        "@kitchen-light": {
+          "on": true
+        }
+      }
+    },
+    {
+      "id": "movie",
+      "name": "Кино",
+      "icon": "play",
+      "actions": {
+        "@living-light": {
+          "on": false
+        },
+        "@living-lamp": {
+          "on": true,
+          "bri": 10
+        }
+      }
+    },
+    {
+      "id": "night",
+      "name": "Ночь",
+      "icon": "moon",
+      "actions": {
+        "@living-light": {
+          "on": false
+        },
+        "@living-lamp": {
+          "on": false
+        },
+        "@kitchen-light": {
+          "on": false
+        },
+        "@office-light": {
+          "on": false
+        },
+        "@bed-trv": {
+          "sp": 19
+        }
+      }
+    },
+    {
+      "id": "away",
+      "name": "Никого нет",
+      "icon": "shield",
+      "actions": {
+        "@living-light": {
+          "on": false
+        },
+        "@living-lamp": {
+          "on": false
+        },
+        "@ward-light": {
+          "on": false
+        },
+        "@kitchen-light": {
+          "on": false
+        },
+        "@office-light": {
+          "on": false
+        },
+        "@living-trv": {
+          "sp": 17
+        },
+        "@bed-trv": {
+          "sp": 17
+        }
+      }
+    },
+    {
+      "id": "morning",
+      "name": "Утро",
+      "icon": "blind",
+      "actions": {
+        "@bed-blind": {
+          "pos": 100
+        },
+        "@kitchen-light": {
+          "on": true
+        },
+        "@living-trv": {
+          "sp": 21.5
+        }
+      }
+    }
+  ],
+  "flows": [
+    {
+      "id": "kitchen",
+      "name": "Кухня по движению",
+      "mode": "restart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "k1",
+            "block": "state",
+            "x": 24,
+            "y": 70,
+            "params": {
+              "device": "@kitchen-motion",
+              "cap": "occ",
+              "to": true
+            }
+          },
+          {
+            "id": "k2",
+            "block": "compare",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "device": "@kitchen-motion",
+              "cap": "lux",
+              "op": "lt",
+              "value": 40
+            }
+          },
+          {
+            "id": "k3",
+            "block": "command",
+            "x": 436,
+            "y": 30,
+            "params": {
+              "device": "@kitchen-light",
+              "values": {
+                "on": true
+              }
+            }
+          },
+          {
+            "id": "k4",
+            "block": "wait",
+            "x": 642,
+            "y": 30,
+            "params": {
+              "device": "@kitchen-motion",
+              "cap": "occ",
+              "to": false,
+              "timeout": 600
+            }
+          },
+          {
+            "id": "k5",
+            "block": "command",
+            "x": 848,
+            "y": 30,
+            "params": {
+              "device": "@kitchen-light",
+              "values": {
+                "on": false
+              }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "k1",
+            "out": 0,
+            "to": "k2",
+            "in": 0
+          },
+          {
+            "from": "k2",
+            "out": 0,
+            "to": "k3",
+            "in": 0
+          },
+          {
+            "from": "k3",
+            "out": 0,
+            "to": "k4",
+            "in": 0
+          },
+          {
+            "from": "k4",
+            "out": 0,
+            "to": "k5",
+            "in": 0
+          },
+          {
+            "from": "k4",
+            "out": 1,
+            "to": "k5",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "night",
+      "name": "Ночной проход",
+      "mode": "restart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "t1",
+            "block": "state",
+            "x": 24,
+            "y": 80,
+            "params": {
+              "device": "@hall-motion",
+              "cap": "occ",
+              "to": true
+            }
+          },
+          {
+            "id": "t2",
+            "block": "time_window",
+            "x": 230,
+            "y": 80,
+            "params": {
+              "from": "23:00",
+              "to": "06:30"
+            }
+          },
+          {
+            "id": "t3",
+            "block": "command",
+            "x": 436,
+            "y": 40,
+            "params": {
+              "device": "@hall-light",
+              "values": {
+                "on": true,
+                "bri": 15
+              }
+            }
+          },
+          {
+            "id": "t4",
+            "block": "delay",
+            "x": 642,
+            "y": 40,
+            "params": {
+              "seconds": 120
+            }
+          },
+          {
+            "id": "t5",
+            "block": "command",
+            "x": 848,
+            "y": 40,
+            "params": {
+              "device": "@hall-light",
+              "values": {
+                "on": false
+              }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "t1",
+            "out": 0,
+            "to": "t2",
+            "in": 0
+          },
+          {
+            "from": "t2",
+            "out": 0,
+            "to": "t3",
+            "in": 0
+          },
+          {
+            "from": "t3",
+            "out": 0,
+            "to": "t4",
+            "in": 0
+          },
+          {
+            "from": "t4",
+            "out": 0,
+            "to": "t5",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "sauna",
+      "name": "Сауна готова",
+      "mode": "single",
+      "graph": {
+        "nodes": [
+          {
+            "id": "s1",
+            "block": "threshold",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "device": "@sauna-ctrl",
+              "cap": "t",
+              "op": "above",
+              "value": 75
+            }
+          },
+          {
+            "id": "s2",
+            "block": "compare",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "device": "@sauna-door",
+              "cap": "open",
+              "op": "eq",
+              "value": false
+            }
+          },
+          {
+            "id": "s3",
+            "block": "fi.valo.telegram:message",
+            "x": 436,
+            "y": 10,
+            "params": {
+              "text": "Сауна готова"
+            }
+          },
+          {
+            "id": "s4",
+            "block": "notify",
+            "x": 436,
+            "y": 150,
+            "params": {
+              "text": "Сауна готова",
+              "level": "info"
+            }
+          },
+          {
+            "id": "s5",
+            "block": "state",
+            "x": 24,
+            "y": 320,
+            "params": {
+              "device": "@sauna-ctrl",
+              "cap": "on",
+              "to": true
+            }
+          },
+          {
+            "id": "s6",
+            "block": "delay",
+            "x": 230,
+            "y": 320,
+            "params": {
+              "seconds": 10800
+            }
+          },
+          {
+            "id": "s7",
+            "block": "command",
+            "x": 436,
+            "y": 320,
+            "params": {
+              "device": "@sauna-ctrl",
+              "values": {
+                "on": false
+              }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "s1",
+            "out": 0,
+            "to": "s2",
+            "in": 0
+          },
+          {
+            "from": "s2",
+            "out": 0,
+            "to": "s3",
+            "in": 0
+          },
+          {
+            "from": "s2",
+            "out": 0,
+            "to": "s4",
+            "in": 0
+          },
+          {
+            "from": "s5",
+            "out": 0,
+            "to": "s6",
+            "in": 0
+          },
+          {
+            "from": "s6",
+            "out": 0,
+            "to": "s7",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "office",
+      "name": "Окно и отопление кабинета",
+      "mode": "restart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "o1",
+            "block": "state",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "device": "@office-window",
+              "cap": "open",
+              "to": true
+            }
+          },
+          {
+            "id": "o2",
+            "block": "delay",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "seconds": 120
+            }
+          },
+          {
+            "id": "o3",
+            "block": "compare",
+            "x": 436,
+            "y": 60,
+            "params": {
+              "device": "@office-window",
+              "cap": "open",
+              "op": "eq",
+              "value": true
+            }
+          },
+          {
+            "id": "o4",
+            "block": "command",
+            "x": 642,
+            "y": 40,
+            "params": {
+              "device": "@office-trv",
+              "values": {
+                "sp": 7
+              }
+            }
+          },
+          {
+            "id": "o5",
+            "block": "state",
+            "x": 24,
+            "y": 240,
+            "params": {
+              "device": "@office-window",
+              "cap": "open",
+              "to": false
+            }
+          },
+          {
+            "id": "o6",
+            "block": "command",
+            "x": 230,
+            "y": 240,
+            "params": {
+              "device": "@office-trv",
+              "values": {
+                "sp": 21
+              }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "o1",
+            "out": 0,
+            "to": "o2",
+            "in": 0
+          },
+          {
+            "from": "o2",
+            "out": 0,
+            "to": "o3",
+            "in": 0
+          },
+          {
+            "from": "o3",
+            "out": 0,
+            "to": "o4",
+            "in": 0
+          },
+          {
+            "from": "o5",
+            "out": 0,
+            "to": "o6",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "leak",
+      "name": "Протечка",
+      "mode": "parallel",
+      "graph": {
+        "nodes": [
+          {
+            "id": "l1",
+            "block": "log_event",
+            "x": 24,
+            "y": 140,
+            "params": {
+              "pattern": "device.state",
+              "level": "crit"
+            }
+          },
+          {
+            "id": "l2",
+            "block": "notify",
+            "x": 230,
+            "y": 20,
+            "params": {
+              "text": "Обнаружена протечка",
+              "level": "crit",
+              "push": true
+            }
+          },
+          {
+            "id": "l3",
+            "block": "fi.valo.telegram:message",
+            "x": 230,
+            "y": 150,
+            "params": {
+              "text": "Протечка! Проверьте датчики"
+            }
+          },
+          {
+            "id": "l4",
+            "block": "log",
+            "x": 230,
+            "y": 280,
+            "params": {
+              "text": "Протечка зафиксирована"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "l1",
+            "out": 0,
+            "to": "l2",
+            "in": 0
+          },
+          {
+            "from": "l1",
+            "out": 0,
+            "to": "l3",
+            "in": 0
+          },
+          {
+            "from": "l1",
+            "out": 0,
+            "to": "l4",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "morning",
+      "name": "Утро по будням",
+      "mode": "single",
+      "graph": {
+        "nodes": [
+          {
+            "id": "m1",
+            "block": "schedule",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "cron": "30 6 * * 1-5"
+            }
+          },
+          {
+            "id": "m2",
+            "block": "scene",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "scene": "morning"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "m1",
+            "out": 0,
+            "to": "m2",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "away",
+      "name": "Уход из дома",
+      "mode": "single",
+      "graph": {
+        "nodes": [
+          {
+            "id": "a1",
+            "block": "device_event",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "device": "@hall-switch",
+              "action": "off"
+            }
+          },
+          {
+            "id": "a2",
+            "block": "scene",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "scene": "away"
+            }
+          },
+          {
+            "id": "a3",
+            "block": "compare",
+            "x": 436,
+            "y": 60,
+            "params": {
+              "device": "@office-window",
+              "cap": "open",
+              "op": "eq",
+              "value": true
+            }
+          },
+          {
+            "id": "a4",
+            "block": "notify",
+            "x": 642,
+            "y": 40,
+            "params": {
+              "text": "Окно кабинета открыто",
+              "level": "warn",
+              "push": true
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "a1",
+            "out": 0,
+            "to": "a2",
+            "in": 0
+          },
+          {
+            "from": "a2",
+            "out": 0,
+            "to": "a3",
+            "in": 0
+          },
+          {
+            "from": "a3",
+            "out": 0,
+            "to": "a4",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "terrace",
+      "name": "Свет террасы на закате",
+      "mode": "single",
+      "graph": {
+        "nodes": [
+          {
+            "id": "r1",
+            "block": "sun",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "event": "sunset",
+              "offset": -15,
+              "fallback": "16:00"
+            }
+          },
+          {
+            "id": "r2",
+            "block": "command",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "device": "@terrace-light",
+              "values": {
+                "on": true
+              }
+            }
+          },
+          {
+            "id": "r3",
+            "block": "schedule",
+            "x": 24,
+            "y": 220,
+            "params": {
+              "cron": "0 23 * * *"
+            }
+          },
+          {
+            "id": "r4",
+            "block": "command",
+            "x": 230,
+            "y": 220,
+            "params": {
+              "device": "@terrace-light",
+              "values": {
+                "on": false
+              }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "r1",
+            "out": 0,
+            "to": "r2",
+            "in": 0
+          },
+          {
+            "from": "r3",
+            "out": 0,
+            "to": "r4",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "forecast",
+      "name": "Мороз ночью",
+      "mode": "single",
+      "graph": {
+        "nodes": [
+          {
+            "id": "v1",
+            "block": "schedule",
+            "x": 24,
+            "y": 60,
+            "params": {
+              "cron": "0 21 * * *"
+            }
+          },
+          {
+            "id": "v2",
+            "block": "fi.valo.fmi:frost_expected",
+            "x": 230,
+            "y": 60,
+            "params": {
+              "hours": 12
+            }
+          },
+          {
+            "id": "v3",
+            "block": "notify",
+            "x": 436,
+            "y": 40,
+            "params": {
+              "text": "Ночью ожидается мороз",
+              "level": "warn"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "from": "v1",
+            "out": 0,
+            "to": "v2",
+            "in": 0
+          },
+          {
+            "from": "v2",
+            "out": 0,
+            "to": "v3",
+            "in": 0
+          }
+        ]
+      }
+    }
+  ],
+  "dashboards": [
+    {
+      "id": "main",
+      "name": "Моя панель",
+      "widgets": [
+        {
+          "type": "lights",
+          "room": "living"
+        },
+        {
+          "type": "thermo",
+          "device": "@living-trv"
+        },
+        {
+          "type": "sensor",
+          "device": "@living-air"
+        },
+        {
+          "type": "scenes"
+        },
+        {
+          "type": "ext",
+          "ext": "fi.valo.energy",
+          "key": "today"
+        },
+        {
+          "type": "leaks"
+        },
+        {
+          "type": "sensor",
+          "device": "@terrace-temp"
+        },
+        {
+          "type": "doors"
+        }
+      ]
+    },
+    {
+      "id": "kitchen",
+      "name": "Кухонный планшет",
+      "widgets": [
+        {
+          "type": "lights",
+          "room": "kitchen"
+        },
+        {
+          "type": "scenes"
+        },
+        {
+          "type": "sensor",
+          "device": "@kitchen-motion"
+        },
+        {
+          "type": "ext",
+          "ext": "fi.valo.energy",
+          "key": "today"
+        }
+      ]
+    },
+    {
+      "id": "energy",
+      "name": "Энергия",
+      "widgets": [
+        {
+          "type": "ext",
+          "ext": "fi.valo.energy",
+          "key": "today"
+        },
+        {
+          "type": "sensor",
+          "device": "@tech-meter"
+        },
+        {
+          "type": "plug",
+          "device": "@kitchen-plug"
+        },
+        {
+          "type": "plug",
+          "device": "@office-plug"
+        }
+      ]
+    },
+    {
+      "id": "widgets",
+      "name": "Обзор виджетов",
+      "widgets": [
+        {
+          "type": "clock"
+        },
+        {
+          "type": "plug",
+          "device": "0x00158d00199e293e"
+        },
+        {
+          "type": "sensor",
+          "device": "0x00158d00f9fb822a"
+        },
+        {
+          "type": "device",
+          "device": "0x000b57ff0185ac51"
+        },
+        {
+          "type": "attention"
+        },
+        {
+          "type": "battery"
+        },
+        {
+          "type": "power",
+          "size": "wide"
+        },
+        {
+          "type": "chart",
+          "device": "tech-meter",
+          "cap": "w",
+          "hours": 24,
+          "size": "wide"
+        },
+        {
+          "type": "value",
+          "device": "0x00124b003f75a05e",
+          "cap": "t"
+        },
+        {
+          "type": "room",
+          "room": "living",
+          "size": "wide"
+        },
+        {
+          "type": "ext",
+          "ext": "fi.valo.openmeteo",
+          "key": "now"
+        },
+        {
+          "type": "ext",
+          "ext": "fi.valo.timers",
+          "key": "timers"
+        }
+      ]
+    }
+  ],
+  "extensions": [
+    {
+      "id": "fi.valo.telegram",
+      "version": "2.0.1"
+    },
+    {
+      "id": "dev.local.simulator"
+    },
+    {
+      "id": "fi.valo.fmi",
+      "settings": {
+        "source": "demo"
+      }
+    },
+    {
+      "id": "io.github.lumikki.presence",
+      "settings": {
+        "timeout": 10
+      }
+    },
+    {
+      "id": "fi.valo.energy"
+    },
+    {
+      "id": "fi.valo.openmeteo",
+      "settings": {
+        "source": "demo"
+      }
+    },
+    {
+      "id": "fi.valo.calendar"
+    },
+    {
+      "id": "fi.valo.timers"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Кухонный планшет",
+      "scope": "control",
+      "rooms": [
+        "kitchen"
+      ],
+      "days": 365
+    },
+    {
+      "name": "Grafana",
+      "scope": "read",
+      "days": 90
+    }
+  ],
+  "joiner": {
+    "key": "new-leak",
+    "ieee": "0x00158d0012ab34cd",
+    "nwk": 51203,
+    "vendor": "Aqara",
+    "model": "SJCGQ11LM",
+    "kind": "leak",
+    "router": false,
+    "parent": "kitchen-plug",
+    "lqi": 124,
+    "state": {
+      "leak": false,
+      "bat": 100
+    }
+  },
+  "ghost": {
+    "topic": "homeassistant/sensor/garage_temp/config",
+    "lwt": "tasmota/garage/LWT",
+    "config": {
+      "name": "Garage temperature",
+      "uniq_id": "garage_temp_ds18b20",
+      "stat_t": "tasmota/garage/SENSOR",
+      "val_tpl": "{{ value_json.DS18B20.Temperature }}",
+      "dev_cla": "temperature",
+      "unit_of_meas": "°C",
+      "avty_t": "tasmota/garage/LWT",
+      "pl_avail": "Online",
+      "pl_not_avail": "Offline",
+      "dev": {
+        "ids": [
+          "tasmota_garage_old"
+        ],
+        "name": "Tasmota garage",
+        "mf": "Tasmota",
+        "mdl": "Sonoff Basic"
+      },
+      "o": {
+        "name": "Tasmota"
+      }
+    }
+  },
+  "kinds": {
+    "kitchen-light": "light",
+    "terrace-light": "light",
+    "office-light": "light",
+    "ward-light": "light",
+    "bath-floor": "floor",
+    "tech-boiler": "boiler"
+  },
+  "cameras": [
+    {
+      "name": "Двор",
+      "room": "terrace",
+      "pattern": "yard"
+    },
+    {
+      "name": "Прихожая",
+      "room": "hall",
+      "pattern": "door"
+    }
+  ]
+}

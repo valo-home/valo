@@ -1,0 +1,17 @@
+{
+  "id": "io.github.saunalab.sauna",
+  "version": "1.2.0",
+  "trust": "community",
+  "module": "sauna",
+  "author": "saunalab",
+  "icon": "flame",
+  "level": "isolated",
+  "name": {"uk": "Сауна", "en": "Sauna", "ru": "Сауна", "ja": "サウナ", "fr": "Sauna", "de": "Sauna", "es": "Sauna"},
+  "description": {"uk": "Прогрів кам'янки, подія готовності і віджет з прогресом", "en": "Stove heating, ready event and a progress widget", "ru": "Прогрев каменки, событие готовности и виджет с прогрессом", "ja": "ストーブの加熱、準備完了イベント、進捗ウィジェット", "fr": "Chauffe du poêle, événement prêt et widget de progression", "de": "Ofenaufheizung, Bereit-Ereignis und Fortschritts-Widget", "es": "Calentamiento de la estufa, evento listo y widget de progreso"},
+  "perms": ["devices.read", "devices.virtual", "ui.widget"],
+  "settings": [{"key": "device", "type": "device", "default": "sauna-ctrl"}, {"key": "ready", "type": "number", "default": 75}],
+  "blocks": [
+    {"key": "ready", "kind": "trig", "icon": "flame", "name": {"uk": "Сауна готова", "en": "Sauna is ready", "ru": "Сауна готова", "ja": "サウナ準備完了", "fr": "Sauna prêt", "de": "Sauna ist bereit", "es": "Sauna lista"}}
+  ],
+  "widgets": [{"key": "sauna", "level": "isolated", "entry": "sauna.html", "name": {"uk": "Сауна", "en": "Sauna", "ru": "Сауна", "ja": "サウナ", "fr": "Sauna", "de": "Sauna", "es": "Sauna"}}]
+}

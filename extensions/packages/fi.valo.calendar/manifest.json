@@ -1,0 +1,59 @@
+{
+  "id": "fi.valo.calendar",
+  "version": "1.0.3",
+  "trust": "official",
+  "module": "workdays",
+  "author": "Valo",
+  "icon": "calendar",
+  "level": "declarative",
+  "name": {"uk": "Календар і робочі дні", "en": "Calendar and workdays", "ru": "Календарь и рабочие дни", "ja": "カレンダーと勤務日", "fr": "Calendrier et jours ouvrés", "de": "Kalender und Arbeitstage", "es": "Calendario y días laborables"},
+  "description": {
+    "uk": "Свята України та Фінляндії, робочі і вихідні дні, відпустки, події з календаря ICS (Google, Nextcloud) для сценаріїв",
+    "en": "Holidays of Ukraine and Finland, workdays and days off, vacations, events from an ICS calendar (Google, Nextcloud) for flows",
+    "ru": "Праздники Украины и Финляндии, рабочие и выходные дни, отпуска, события из календаря ICS (Google, Nextcloud) для сценариев",
+    "ja": "ウクライナとフィンランドの祝日、勤務日と休日、休暇、ICS カレンダー (Google、Nextcloud) の予定をフローに",
+    "fr": "Jours fériés d'Ukraine et de Finlande, jours ouvrés et de repos, congés, événements d'un calendrier ICS (Google, Nextcloud) pour les scénarios",
+    "de": "Feiertage der Ukraine und Finnlands, Arbeits- und freie Tage, Urlaub, Termine aus einem ICS-Kalender (Google, Nextcloud) für Abläufe",
+    "es": "Festivos de Ucrania y Finlandia, días laborables y libres, vacaciones, eventos de un calendario ICS (Google, Nextcloud) para flujos"
+  },
+  "perms": ["network.outbound:*", "devices.virtual", "ui.page", "ui.widget"],
+  "runtime": {"memory": 96, "cpu": 20},
+  "settings": [
+    {"key": "country", "type": "select", "options": ["FI", "UA", "none"], "default": "FI"},
+    {"key": "holidays_off", "type": "select", "options": ["auto", "yes", "no"], "default": "auto"},
+    {"key": "extra_off", "type": "textarea", "default": ""},
+    {"key": "extra_work", "type": "textarea", "default": ""},
+    {"key": "ics_url", "type": "secret", "default": ""}
+  ],
+  "blocks": [
+    {"key": "workday", "kind": "cond", "icon": "calendar", "name": {"uk": "Робочий день", "en": "Workday", "ru": "Рабочий день", "ja": "勤務日", "fr": "Jour ouvré", "de": "Arbeitstag", "es": "Día laborable"}, "params": [{"key": "day", "type": "select", "options": ["today", "tomorrow"], "default": "today"}]},
+    {"key": "holiday", "kind": "cond", "icon": "calendar", "name": {"uk": "Свято", "en": "Public holiday", "ru": "Праздник", "ja": "祝日", "fr": "Jour férié", "de": "Feiertag", "es": "Festivo"}, "params": [{"key": "day", "type": "select", "options": ["today", "tomorrow"], "default": "today"}]},
+    {"key": "in_event", "kind": "cond", "icon": "calendar", "name": {"uk": "Зараз подія календаря", "en": "Calendar event now", "ru": "Сейчас событие календаря", "ja": "現在カレンダーの予定中", "fr": "Événement en cours", "de": "Termin läuft gerade", "es": "Evento de calendario ahora"}, "params": [{"key": "contains", "type": "text", "required": false, "default": ""}]},
+    {"key": "event_on", "kind": "cond", "icon": "calendar", "name": {"uk": "Подія в день", "en": "Event on day", "ru": "Событие в день", "ja": "その日の予定", "fr": "Événement le jour", "de": "Termin am Tag", "es": "Evento en el día"}, "params": [{"key": "day", "type": "select", "options": ["today", "tomorrow"], "default": "today"}, {"key": "contains", "type": "text", "required": false, "default": ""}]},
+    {"key": "event_start", "kind": "trig", "icon": "calendar", "name": {"uk": "Початок події", "en": "Event starts", "ru": "Начало события", "ja": "予定の開始", "fr": "Début d'événement", "de": "Terminbeginn", "es": "Inicio de evento"}},
+    {"key": "event_end", "kind": "trig", "icon": "calendar", "name": {"uk": "Кінець події", "en": "Event ends", "ru": "Конец события", "ja": "予定の終了", "fr": "Fin d'événement", "de": "Terminende", "es": "Fin de evento"}}
+  ],
+  "pages": [{"key": "calendar", "icon": "calendar", "level": "declarative", "name": {"uk": "Календар", "en": "Calendar", "ru": "Календарь", "ja": "カレンダー", "fr": "Calendrier", "de": "Kalender", "es": "Calendario"}}],
+  "widgets": [{"key": "today", "level": "declarative", "kind": "calendar", "name": {"uk": "Календар сьогодні", "en": "Calendar today", "ru": "Календарь сегодня", "ja": "今日のカレンダー", "fr": "Calendrier du jour", "de": "Kalender heute", "es": "Calendario hoy"}}],
+  "templates": [
+    {"key": "holiday_tomorrow", "name": {"uk": "Завтра свято", "ru": "Завтра праздник", "en": "Holiday tomorrow"}, "graph": {"nodes": [
+      {"id": "t", "block": "schedule", "params": {"cron": "0 20 * * *"}, "x": 24, "y": 60},
+      {"id": "c", "block": "fi.valo.calendar:holiday", "params": {"day": "tomorrow"}, "x": 240, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Завтра праздник: {holiday}", "level": "info", "push": true}, "x": 456, "y": 40}
+    ], "edges": [{"from": "t", "out": 0, "to": "c", "in": 0}, {"from": "c", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "workday_morning", "name": {"uk": "Ранок робочого дня", "ru": "Утро рабочего дня", "en": "Workday morning"}, "graph": {"nodes": [
+      {"id": "t", "block": "schedule", "params": {"cron": "30 6 * * *"}, "x": 24, "y": 60},
+      {"id": "c", "block": "fi.valo.calendar:workday", "params": {"day": "today"}, "x": 240, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Рабочий день {day}. Добавьте после условия команды утреннего сценария", "level": "info", "push": false}, "x": 456, "y": 40}
+    ], "edges": [{"from": "t", "out": 0, "to": "c", "in": 0}, {"from": "c", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "vacation", "name": {"uk": "Початок відпустки з календаря", "ru": "Начало отпуска из календаря", "en": "Vacation start from calendar"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.calendar:event_start", "params": {}, "x": 24, "y": 60},
+      {"id": "c", "block": "fi.valo.calendar:in_event", "params": {"contains": "Отпуск"}, "x": 240, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Начался отпуск: {title}. Включите режим отсутствия", "level": "info", "push": true}, "x": 456, "y": 40}
+    ], "edges": [{"from": "t", "out": 0, "to": "c", "in": 0}, {"from": "c", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "reminder", "name": {"uk": "Нагадування про подію", "ru": "Напоминание о событии", "en": "Event reminder"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.calendar:event_start", "params": {}, "x": 24, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Началось: {title}", "level": "info", "push": true}, "x": 260, "y": 60}
+    ], "edges": [{"from": "t", "out": 0, "to": "n", "in": 0}]}}
+  ]
+}

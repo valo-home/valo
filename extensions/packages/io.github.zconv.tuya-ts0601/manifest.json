@@ -1,0 +1,13 @@
+{
+  "id": "io.github.zconv.tuya-ts0601",
+  "version": "1.0.3",
+  "trust": "community",
+  "type": "z2m-converter",
+  "converter": "tuya_ts0601_floor.mjs",
+  "author": "zconv",
+  "icon": "zig",
+  "level": "none",
+  "name": {"uk": "Конвертер Tuya TS0601", "en": "Tuya TS0601 converter", "ru": "Конвертер Tuya TS0601", "ja": "Tuya TS0601 コンバーター", "fr": "Convertisseur Tuya TS0601", "de": "Tuya TS0601 Konverter", "es": "Convertidor Tuya TS0601"},
+  "description": {"uk": "Зовнішній конвертер Zigbee2MQTT для варіанта термостата теплої підлоги", "en": "Zigbee2MQTT external converter for a floor heating thermostat variant", "ru": "Внешний конвертер Zigbee2MQTT для варианта термостата теплого пола", "ja": "床暖房サーモスタットの派生モデル向け Zigbee2MQTT 外部コンバーター", "fr": "Convertisseur externe Zigbee2MQTT pour une variante de thermostat de plancher chauffant", "de": "Externer Zigbee2MQTT-Konverter für eine Fußbodenheizungs-Thermostatvariante", "es": "Convertidor externo de Zigbee2MQTT para una variante de termostato de suelo radiante"},
+  "perms": ["z2m.converter"]
+}

@@ -1,0 +1,468 @@
+{
+  "id": "fi.valo.telegram",
+  "version": "3.1.0",
+  "trust": "official",
+  "module": "telegram_ext",
+  "author": "Valo",
+  "icon": "send",
+  "level": "declarative",
+  "name": {
+    "uk": "Сповіщення Telegram",
+    "en": "Telegram notifications",
+    "ru": "Telegram уведомления",
+    "ja": "Telegram 通知",
+    "fr": "Notifications Telegram",
+    "de": "Telegram-Benachrichtigungen",
+    "es": "Notificaciones de Telegram"
+  },
+  "description": {
+    "uk": "Повідомлення в Telegram: отримувачі, шаблони з даними подій, кнопки дій, команди /status і /devices",
+    "en": "Telegram messages: recipients, templates with event data, action buttons, /status and /devices commands",
+    "ru": "Сообщения в Telegram: получатели, шаблоны с данными событий, кнопки действий, команды /status и /devices",
+    "ja": "サイレント時間付きの Telegram チャットへのメッセージ",
+    "fr": "Messages vers des discussions Telegram avec heures silencieuses",
+    "de": "Nachrichten an Telegram-Chats mit Ruhezeiten",
+    "es": "Mensajes a chats de Telegram con horas de silencio"
+  },
+  "perms": [
+    "network.outbound:api.telegram.org",
+    "notifications.send",
+    "devices.read",
+    "devices.control",
+    "media.read",
+    "media.write"
+  ],
+  "services": [
+    "notify.telegram"
+  ],
+  "runtime": {
+    "memory": 128,
+    "cpu": 30
+  },
+  "settings": [
+    {
+      "key": "token",
+      "type": "secret",
+      "default": ""
+    },
+    {
+      "key": "recipients",
+      "type": "textarea",
+      "default": ""
+    },
+    {
+      "key": "admins",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "quiet",
+      "type": "text",
+      "default": "23:00-07:00"
+    },
+    {
+      "key": "dedupe",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "key": "commands",
+      "type": "select",
+      "options": [
+        "on",
+        "off"
+      ],
+      "default": "on"
+    },
+    {
+      "key": "link",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "blocks": [
+    {
+      "key": "message",
+      "kind": "act",
+      "icon": "send",
+      "name": {
+        "uk": "Повідомлення в Telegram",
+        "en": "Telegram message",
+        "ru": "Сообщение в Telegram",
+        "ja": "Telegram メッセージ",
+        "fr": "Message Telegram",
+        "de": "Telegram-Nachricht",
+        "es": "Mensaje de Telegram"
+      },
+      "params": [
+        {
+          "key": "to",
+          "type": "text",
+          "required": false,
+          "default": ""
+        },
+        {
+          "key": "text",
+          "type": "text"
+        },
+        {
+          "key": "silent",
+          "type": "bool",
+          "required": false,
+          "default": false
+        },
+        {
+          "key": "device",
+          "type": "device",
+          "required": false
+        },
+        {
+          "key": "b1_label",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "b1_values",
+          "type": "values",
+          "required": false
+        },
+        {
+          "key": "b2_label",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "b2_values",
+          "type": "values",
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "media",
+      "kind": "act",
+      "icon": "camera",
+      "name": {
+        "uk": "Знімок або кліп у Telegram",
+        "en": "Snapshot or clip to Telegram",
+        "ru": "Снимок или клип в Telegram",
+        "ja": "Telegram にスナップショットまたはクリップ",
+        "fr": "Instantané ou clip vers Telegram",
+        "de": "Schnappschuss oder Clip an Telegram",
+        "es": "Instantánea o clip a Telegram"
+      },
+      "params": [
+        {
+          "key": "to",
+          "type": "text",
+          "required": false,
+          "default": ""
+        },
+        {
+          "key": "text",
+          "type": "text",
+          "required": false,
+          "default": "{label}: {name}, {time}"
+        },
+        {
+          "key": "camera",
+          "type": "camera",
+          "required": false
+        },
+        {
+          "key": "media",
+          "type": "select",
+          "options": [
+            "photo_now",
+            "from_flow",
+            "last_media",
+            "record_clip"
+          ],
+          "default": "photo_now"
+        },
+        {
+          "key": "seconds",
+          "type": "duration",
+          "required": false,
+          "default": 15
+        },
+        {
+          "key": "silent",
+          "type": "bool",
+          "required": false,
+          "default": false
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "key": "telegram",
+      "icon": "send",
+      "level": "declarative",
+      "name": {
+        "uk": "Telegram",
+        "ru": "Telegram",
+        "en": "Telegram",
+        "de": "Telegram",
+        "fr": "Telegram",
+        "es": "Telegram",
+        "ja": "Telegram"
+      }
+    }
+  ],
+  "templates": [
+    {
+      "key": "alarm",
+      "name": {
+        "uk": "Тривога: протікання, дим, чадний газ у Telegram",
+        "ru": "Тревога: протечка, дым, угарный газ в Telegram",
+        "en": "Alarm: leak, smoke, CO to Telegram"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "log_event",
+            "params": {
+              "pattern": "device.state",
+              "level": "crit"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "m",
+            "block": "fi.valo.telegram:message",
+            "params": {
+              "to": "",
+              "text": "Тревога: {name}, {cap} в помещении {room}. {time}",
+              "silent": false
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "m",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "leak",
+      "name": {
+        "uk": "Протікання вибраного датчика",
+        "ru": "Протечка выбранного датчика",
+        "en": "Leak of a chosen sensor"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "state",
+            "params": {
+              "cap": "leak",
+              "to": true
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "m",
+            "block": "fi.valo.telegram:message",
+            "params": {
+              "to": "",
+              "text": "Протечка: {device}, {room}. {time}",
+              "silent": false
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "m",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "offline",
+      "name": {
+        "uk": "Пристрій не на зв'язку 30 хвилин",
+        "ru": "Устройство не на связи 30 минут",
+        "en": "Device offline for 30 minutes"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "log_event",
+            "params": {
+              "pattern": "device.offline",
+              "level": "warn"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "d",
+            "block": "delay",
+            "params": {
+              "seconds": 1800
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "available",
+            "params": {},
+            "x": 456,
+            "y": 60
+          },
+          {
+            "id": "m",
+            "block": "fi.valo.telegram:message",
+            "params": {
+              "to": "",
+              "text": "{device} не на связи 30 минут ({room})",
+              "silent": true
+            },
+            "x": 672,
+            "y": 90
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "d",
+            "in": 0
+          },
+          {
+            "from": "d",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 1,
+            "to": "m",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "battery",
+      "name": {
+        "uk": "Низький заряд батарей щодня о 10:00",
+        "ru": "Низкий заряд батареек каждый день в 10:00",
+        "en": "Low battery daily at 10:00"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 10 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "expr",
+            "params": {
+              "expr": "low_battery() > 0"
+            },
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "m",
+            "block": "fi.valo.telegram:message",
+            "params": {
+              "to": "",
+              "text": "Пора заменить батарейки: {low_battery}",
+              "silent": true
+            },
+            "x": 456,
+            "y": 40
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 0,
+            "to": "m",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "power",
+      "name": {
+        "uk": "Розетка: потужність вище порогу, кнопка Вимкнути",
+        "ru": "Розетка: мощность выше порога, кнопка Выключить",
+        "en": "Plug power above threshold with Turn off button"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "threshold",
+            "params": {
+              "cap": "w",
+              "op": "above",
+              "value": 2000
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "m",
+            "block": "fi.valo.telegram:message",
+            "params": {
+              "to": "",
+              "text": "{device}: мощность {value} {unit}. {time}",
+              "silent": false,
+              "b1_label": "Выключить",
+              "b1_values": {
+                "on": false
+              }
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "m",
+            "in": 0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "id": "fi.valo.rtsp",
+  "version": "1.0.0",
+  "trust": "official",
+  "module": "rtsp",
+  "author": "Valo",
+  "icon": "camera",
+  "level": "declarative",
+  "name": {
+    "uk": "Камера RTSP",
+    "en": "RTSP camera",
+    "ru": "Камера RTSP",
+    "ja": "RTSP カメラ",
+    "fr": "Caméra RTSP",
+    "de": "RTSP-Kamera",
+    "es": "Cámara RTSP"
+  },
+  "description": {
+    "uk": "Будь-яка IP камера з потоком RTSP: перегляд, знімки, запис за подіями від розпізнавання або сценаріїв",
+    "en": "Any IP camera with an RTSP stream: live view, snapshots, recording on events from detection or automations",
+    "ru": "Любая IP камера с потоком RTSP: просмотр, снимки, запись по событиям от распознавания или сценариев",
+    "ja": "RTSP ストリームを持つ任意の IP カメラ: ライブ映像、スナップショット、認識やオートメーションのイベントによる録画",
+    "fr": "Toute caméra IP avec un flux RTSP : vue en direct, instantanés, enregistrement sur événements de détection ou d'automatisations",
+    "de": "Jede IP-Kamera mit RTSP-Stream: Livebild, Schnappschüsse, Aufnahme bei Ereignissen aus Erkennung oder Automationen",
+    "es": "Cualquier cámara IP con flujo RTSP: vista en directo, instantáneas, grabación por eventos de detección o automatizaciones"
+  },
+  "perms": [
+    "cameras.provide",
+    "network.outbound:lan"
+  ],
+  "runtime": {
+    "memory": 48,
+    "cpu": 10
+  },
+  "camera": {
+    "fields": [
+      {
+        "key": "main",
+        "type": "text",
+        "required": true,
+        "default": "",
+        "name": {
+          "uk": "Основний потік",
+          "en": "Main stream",
+          "ru": "Основной поток",
+          "ja": "メインストリーム",
+          "fr": "Flux principal",
+          "de": "Hauptstream",
+          "es": "Flujo principal"
+        },
+        "hint": {
+          "uk": "Адреса rtsp:// без пароля, наприклад rtsp://192.168.0.50:554/stream1",
+          "en": "rtsp:// address without the password, for example rtsp://192.168.0.50:554/stream1",
+          "ru": "Адрес rtsp:// без пароля, например rtsp://192.168.0.50:554/stream1",
+          "ja": "パスワードなしの rtsp:// アドレス、例 rtsp://192.168.0.50:554/stream1",
+          "fr": "Adresse rtsp:// sans mot de passe, par exemple rtsp://192.168.0.50:554/stream1",
+          "de": "rtsp://-Adresse ohne Passwort, zum Beispiel rtsp://192.168.0.50:554/stream1",
+          "es": "Dirección rtsp:// sin contraseña, por ejemplo rtsp://192.168.0.50:554/stream1"
+        }
+      },
+      {
+        "key": "sub",
+        "type": "text",
+        "default": "",
+        "name": {
+          "uk": "Додатковий потік",
+          "en": "Sub stream",
+          "ru": "Дополнительный поток",
+          "ja": "サブストリーム",
+          "fr": "Flux secondaire",
+          "de": "Nebenstream",
+          "es": "Flujo secundario"
+        },
+        "hint": {
+          "uk": "Потік низької якості для плиток, можна не вказувати",
+          "en": "Low quality stream for tiles, optional",
+          "ru": "Поток низкого качества для плиток, можно не указывать",
+          "ja": "タイル用の低画質ストリーム、任意",
+          "fr": "Flux basse qualité pour les tuiles, facultatif",
+          "de": "Stream niedriger Qualität für Kacheln, optional",
+          "es": "Flujo de baja calidad para mosaicos, opcional"
+        }
+      },
+      {
+        "key": "user",
+        "type": "text",
+        "default": "",
+        "name": {
+          "uk": "Користувач",
+          "en": "User",
+          "ru": "Пользователь",
+          "ja": "ユーザー",
+          "fr": "Utilisateur",
+          "de": "Benutzer",
+          "es": "Usuario"
+        }
+      },
+      {
+        "key": "password",
+        "type": "secret",
+        "default": "",
+        "name": {
+          "uk": "Пароль",
+          "en": "Password",
+          "ru": "Пароль",
+          "ja": "パスワード",
+          "fr": "Mot de passe",
+          "de": "Passwort",
+          "es": "Contraseña"
+        }
+      },
+      {
+        "key": "snapshot",
+        "type": "secret",
+        "default": "",
+        "name": {
+          "uk": "Адреса знімка",
+          "en": "Snapshot address",
+          "ru": "Адрес снимка",
+          "ja": "スナップショットのアドレス",
+          "fr": "Adresse de l'instantané",
+          "de": "Schnappschuss-Adresse",
+          "es": "Dirección de la instantánea"
+        },
+        "hint": {
+          "uk": "http:// адреса JPEG, якщо камера його віддає. Без неї кадр береться з потоку",
+          "en": "http:// JPEG address if the camera provides one. Without it the frame is taken from the stream",
+          "ru": "http:// адрес JPEG, если камера его отдает. Без него кадр берется из потока",
+          "ja": "カメラが提供する場合の http:// JPEG アドレス。なければストリームから取得",
+          "fr": "Adresse http:// JPEG si la caméra en fournit une. Sinon l'image est prise du flux",
+          "de": "http://-JPEG-Adresse, falls die Kamera eine bietet. Sonst wird das Bild aus dem Stream genommen",
+          "es": "Dirección http:// JPEG si la cámara la ofrece. Si no, el fotograma se toma del flujo"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "langs": ["ru", "uk", "en"],
+  "sections": [
+    {"key": "start", "title": {"ru": "Начало", "uk": "Початок", "en": "Getting started"}, "pages": ["start", "concepts"]},
+    {"key": "home", "title": {"ru": "Дом", "uk": "Дім", "en": "Home"}, "pages": ["home", "boards", "devices", "cameras", "assistant"]},
+    {"key": "auto", "title": {"ru": "Автоматизация", "uk": "Автоматизація", "en": "Automation"}, "pages": ["flows", "scenes"]},
+    {"key": "ext", "title": {"ru": "Расширения", "uk": "Розширення", "en": "Extensions"}, "pages": ["extensions"]},
+    {"key": "system", "title": {"ru": "Система", "uk": "Система", "en": "System"}, "pages": ["zigbee", "mqtt", "log", "system"]},
+    {"key": "dev", "title": {"ru": "Для разработчиков", "uk": "Для розробників", "en": "For developers"}, "pages": ["ext-dev", "architecture"]}
+  ]
+}

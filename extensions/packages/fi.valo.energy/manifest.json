@@ -1,0 +1,45 @@
+{
+  "id": "fi.valo.energy",
+  "version": "1.0.4",
+  "trust": "official",
+  "module": "energy",
+  "author": "Valo",
+  "icon": "bolt",
+  "level": "declarative",
+  "name": {"uk": "Облік енергії", "en": "Energy usage", "ru": "Учет энергии", "ja": "エネルギー使用量", "fr": "Consommation d'énergie", "de": "Energieverbrauch", "es": "Consumo de energía"},
+  "description": {
+    "uk": "Споживання за день, місяць і рік по кожній розетці та лічильнику, вартість за вашим тарифом, щоденний звіт",
+    "en": "Usage per day, month and year for every plug and meter, cost by your tariff, daily report",
+    "ru": "Потребление за день, месяц и год по каждой розетке и счетчику, стоимость по вашему тарифу, ежедневный отчет",
+    "ja": "プラグとメーターごとの日・月・年の使用量、料金に基づく費用、日次レポート",
+    "fr": "Consommation par jour, mois et année pour chaque prise et compteur, coût selon votre tarif, rapport quotidien",
+    "de": "Verbrauch pro Tag, Monat und Jahr je Steckdose und Zähler, Kosten nach Ihrem Tarif, Tagesbericht",
+    "es": "Consumo por día, mes y año de cada enchufe y medidor, coste según su tarifa, informe diario"
+  },
+  "perms": ["devices.read", "devices.virtual", "ui.page", "ui.widget"],
+  "runtime": {"memory": 96, "cpu": 20},
+  "settings": [
+    {"key": "fixed_price", "type": "number", "default": 0.12},
+    {"key": "transfer", "type": "number", "default": 0.05},
+    {"key": "main_meter", "type": "device", "default": ""},
+    {"key": "exclude", "type": "text", "default": ""}
+  ],
+  "blocks": [
+    {"key": "day_closed", "kind": "trig", "icon": "bolt", "name": {"uk": "Підсумок дня", "en": "Day summary", "ru": "Итог дня", "ja": "1日の集計", "fr": "Bilan du jour", "de": "Tagesbilanz", "es": "Resumen del día"}},
+    {"key": "usage_above", "kind": "cond", "icon": "bolt", "name": {"uk": "Споживання вище порогу", "en": "Usage above threshold", "ru": "Потребление выше порога", "ja": "使用量がしきい値超過", "fr": "Consommation au-dessus du seuil", "de": "Verbrauch über Schwelle", "es": "Consumo sobre el umbral"}, "params": [{"key": "span", "type": "select", "options": ["today", "yesterday", "month", "year"], "default": "today"}, {"key": "value", "type": "number", "default": 10}]},
+    {"key": "cost_above", "kind": "cond", "icon": "bolt", "name": {"uk": "Вартість вище порогу", "en": "Cost above threshold", "ru": "Стоимость выше порога", "ja": "費用がしきい値超過", "fr": "Coût au-dessus du seuil", "de": "Kosten über Schwelle", "es": "Coste sobre el umbral"}, "params": [{"key": "span", "type": "select", "options": ["today", "yesterday", "month", "year"], "default": "month"}, {"key": "value", "type": "number", "default": 50}]}
+  ],
+  "pages": [{"key": "usage", "icon": "bolt", "level": "declarative", "name": {"uk": "Облік енергії", "en": "Energy usage", "ru": "Учет энергии", "ja": "エネルギー使用量", "fr": "Consommation", "de": "Energieverbrauch", "es": "Consumo"}}],
+  "widgets": [{"key": "today", "level": "declarative", "kind": "meter", "name": {"uk": "Енергія сьогодні", "en": "Energy today", "ru": "Энергия сегодня", "ja": "今日のエネルギー", "fr": "Énergie aujourd'hui", "de": "Energie heute", "es": "Energía hoy"}}],
+  "templates": [
+    {"key": "daily", "name": {"uk": "Щоденний звіт про енергію", "ru": "Ежедневный отчет об энергии", "en": "Daily energy report"}, "graph": {"nodes": [
+      {"id": "t", "block": "fi.valo.energy:day_closed", "params": {}, "x": 24, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Энергия за {day}: {kwh} кВт·ч, {cost} {currency}. Больше всего: {top}", "level": "info", "push": true}, "x": 260, "y": 60}
+    ], "edges": [{"from": "t", "out": 0, "to": "n", "in": 0}]}},
+    {"key": "budget", "name": {"uk": "Перевищено місячний бюджет", "ru": "Превышен месячный бюджет", "en": "Monthly budget exceeded"}, "graph": {"nodes": [
+      {"id": "t", "block": "schedule", "params": {"cron": "0 20 * * *"}, "x": 24, "y": 60},
+      {"id": "c", "block": "fi.valo.energy:cost_above", "params": {"span": "month", "value": 50}, "x": 240, "y": 60},
+      {"id": "n", "block": "notify", "params": {"text": "Стоимость электроэнергии за месяц выше бюджета", "level": "warn", "push": true}, "x": 456, "y": 40}
+    ], "edges": [{"from": "t", "out": 0, "to": "c", "in": 0}, {"from": "c", "out": 0, "to": "n", "in": 0}]}}
+  ]
+}

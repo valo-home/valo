@@ -1,0 +1,51 @@
+[
+  {
+    "source": "packages/fi.valo.telegram",
+    "older": {
+      "2.0.1": "packages/fi.valo.telegram@2.0.1",
+      "2.1.0": "packages/fi.valo.telegram@2.1.0"
+    }
+  },
+  {
+    "source": "packages/dev.local.simulator"
+  },
+  {
+    "source": "packages/io.github.lumikki.presence"
+  },
+  {
+    "source": "packages/io.github.saunalab.sauna"
+  },
+  {
+    "source": "packages/fi.valo.fmi"
+  },
+  {
+    "source": "packages/io.github.zconv.tuya-ts0601"
+  },
+  {
+    "source": "packages/fi.valo.energy"
+  },
+  {
+    "source": "packages/fi.valo.openmeteo"
+  },
+  {
+    "source": "packages/fi.valo.calendar"
+  },
+  {
+    "source": "packages/fi.valo.timers"
+  },
+  {
+    "source": "packages/fi.valo.safety"
+  },
+  {
+    "source": "packages/fi.valo.plugguard"
+  },
+  {
+    "source": "packages/fi.valo.thingino"
+  },
+  {
+    "source": "packages/fi.valo.rtsp"
+  },
+  {
+    "source": "packages/fi.valo.vision"
+  }
+]

@@ -1,0 +1,155 @@
+{
+  "device_offline": {
+    "uk": "{name} не відповідає",
+    "en": "{name} is not responding",
+    "ru": "{name} не отвечает",
+    "ja": "{name} が応答しません",
+    "fr": "{name} ne répond pas",
+    "de": "{name} antwortet nicht",
+    "es": "{name} no responde"
+  },
+  "battery_low": {
+    "uk": "Батарея {value}% у {name}",
+    "en": "Battery {value}% on {name}",
+    "ru": "Батарея {value}% у {name}",
+    "ja": "{name} のバッテリー {value}%",
+    "fr": "Batterie {value}% sur {name}",
+    "de": "Batterie {value}% bei {name}",
+    "es": "Batería {value}% en {name}"
+  },
+  "leak": {
+    "uk": "Протікання, {name}",
+    "en": "Water leak, {name}",
+    "ru": "Протечка, {name}",
+    "ja": "漏水, {name}",
+    "fr": "Fuite d'eau, {name}",
+    "de": "Wasserleck, {name}",
+    "es": "Fuga de agua, {name}"
+  },
+  "smoke": {
+    "uk": "Дим, {name}",
+    "en": "Smoke, {name}",
+    "ru": "Дым, {name}",
+    "ja": "煙, {name}",
+    "fr": "Fumée, {name}",
+    "de": "Rauch, {name}",
+    "es": "Humo, {name}"
+  },
+  "command_timeout": {
+    "uk": "{name} не підтвердив команду",
+    "en": "{name} did not confirm the command",
+    "ru": "{name} не подтвердило команду",
+    "ja": "{name} がコマンドを確認しませんでした",
+    "fr": "{name} n'a pas confirmé la commande",
+    "de": "{name} hat den Befehl nicht bestätigt",
+    "es": "{name} no confirmó el comando"
+  },
+  "ext_error": {
+    "uk": "Розширення {name} падає під час запуску",
+    "en": "Extension {name} crashes on start",
+    "ru": "Расширение {name} падает при запуске",
+    "ja": "拡張機能 {name} が起動時に停止します",
+    "fr": "L'extension {name} plante au démarrage",
+    "de": "Erweiterung {name} stürzt beim Start ab",
+    "es": "La extensión {name} falla al iniciar"
+  },
+  "ext_update": {
+    "uk": "Доступне оновлення {name} {version}",
+    "en": "Update available for {name}, {version}",
+    "ru": "Доступно обновление {name} {version}",
+    "ja": "{name} の更新 {version} があります",
+    "fr": "Mise à jour disponible pour {name}, {version}",
+    "de": "Update für {name} verfügbar, {version}",
+    "es": "Actualización disponible para {name}, {version}"
+  },
+  "backup_failed": {
+    "uk": "Резервну копію не створено",
+    "en": "Backup was not created",
+    "ru": "Резервная копия не создана",
+    "ja": "バックアップを作成できませんでした",
+    "fr": "La sauvegarde n'a pas été créée",
+    "de": "Die Sicherung wurde nicht erstellt",
+    "es": "No se creó la copia de seguridad"
+  },
+  "z2m_offline": {
+    "uk": "Zigbee2MQTT не на зв'язку",
+    "en": "Zigbee2MQTT is offline",
+    "ru": "Zigbee2MQTT не на связи",
+    "ja": "Zigbee2MQTT がオフラインです",
+    "fr": "Zigbee2MQTT est hors ligne",
+    "de": "Zigbee2MQTT ist offline",
+    "es": "Zigbee2MQTT está desconectado"
+  },
+  "flow_failed": {
+    "uk": "Сценарій {name} завершився з помилкою",
+    "en": "Automation {name} failed",
+    "ru": "Сценарий {name} завершился с ошибкой",
+    "ja": "オートメーション {name} が失敗しました",
+    "fr": "L'automatisation {name} a échoué",
+    "de": "Automatisierung {name} ist fehlgeschlagen",
+    "es": "La automatización {name} falló"
+  },
+  "ota_available": {
+    "uk": "Оновлення прошивки Zigbee, {count}",
+    "en": "Zigbee firmware updates, {count}",
+    "ru": "Обновления прошивки Zigbee, {count}",
+    "ja": "Zigbee ファームウェア更新, {count}",
+    "fr": "Mises à jour du firmware Zigbee, {count}",
+    "de": "Zigbee-Firmware-Updates, {count}",
+    "es": "Actualizaciones de firmware Zigbee, {count}"
+  },
+  "flow_notify": {
+    "uk": "{text}",
+    "en": "{text}",
+    "ru": "{text}",
+    "ja": "{text}",
+    "fr": "{text}",
+    "de": "{text}",
+    "es": "{text}"
+  },
+  "co": {
+    "uk": "Чадний газ, {name}",
+    "en": "Carbon monoxide, {name}",
+    "ru": "Угарный газ, {name}",
+    "ja": "一酸化炭素, {name}",
+    "fr": "Monoxyde de carbone, {name}",
+    "de": "Kohlenmonoxid, {name}",
+    "es": "Monóxido de carbono, {name}"
+  },
+  "gas": {
+    "uk": "Витік газу, {name}",
+    "en": "Gas leak, {name}",
+    "ru": "Утечка газа, {name}",
+    "ja": "ガス漏れ, {name}",
+    "fr": "Fuite de gaz, {name}",
+    "de": "Gasleck, {name}",
+    "es": "Fuga de gas, {name}"
+  },
+  "media_low_space": {
+    "uk": "Мало місця для записів: вільно {free} ГБ, потрібно {min} ГБ. Відео не записується",
+    "en": "Low space for recordings: {free} GB free, {min} GB required. Video is not recorded",
+    "ru": "Мало места для записей: свободно {free} ГБ, нужно {min} ГБ. Видео не записывается",
+    "ja": "録画の空き容量不足: 空き {free} GB、必要 {min} GB。動画は記録されません",
+    "fr": "Espace insuffisant pour les enregistrements : {free} Go libres, {min} Go requis. La vidéo n'est pas enregistrée",
+    "de": "Wenig Platz für Aufnahmen: {free} GB frei, {min} GB nötig. Video wird nicht aufgenommen",
+    "es": "Poco espacio para grabaciones: {free} GB libres, se necesitan {min} GB. No se graba vídeo"
+  },
+  "camera_offline": {
+    "uk": "Камера {name} без зв'язку вже {min} хв",
+    "en": "Camera {name} has been offline for {min} min",
+    "ru": "Камера {name} без связи уже {min} мин",
+    "de": "Kamera {name} ist seit {min} min offline",
+    "fr": "La caméra {name} est hors ligne depuis {min} min",
+    "es": "La cámara {name} lleva {min} min sin conexión",
+    "ja": "カメラ {name} が {min} 分オフラインです"
+  },
+  "camera_online": {
+    "uk": "Камера {name} знову на зв'язку",
+    "en": "Camera {name} is online again",
+    "ru": "Камера {name} снова на связи",
+    "de": "Kamera {name} ist wieder online",
+    "fr": "La caméra {name} est de nouveau en ligne",
+    "es": "La cámara {name} vuelve a estar en línea",
+    "ja": "カメラ {name} がオンラインに復帰しました"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "fi.valo.telegram",
+  "version": "2.1.0",
+  "trust": "official",
+  "module": "telegram_ext",
+  "author": "Valo",
+  "icon": "send",
+  "level": "declarative",
+  "name": {"uk": "Сповіщення Telegram", "en": "Telegram notifications", "ru": "Telegram уведомления", "ja": "Telegram 通知", "fr": "Notifications Telegram", "de": "Telegram-Benachrichtigungen", "es": "Notificaciones de Telegram"},
+  "description": {
+    "uk": "Повідомлення в чати Telegram з тихими годинами",
+    "en": "Messages to Telegram chats with quiet hours",
+    "ru": "Сообщения в чаты Telegram с тихими часами",
+    "ja": "サイレント時間付きの Telegram チャットへのメッセージ",
+    "fr": "Messages vers des discussions Telegram avec heures silencieuses",
+    "de": "Nachrichten an Telegram-Chats mit Ruhezeiten",
+    "es": "Mensajes a chats de Telegram con horas de silencio"
+  },
+  "perms": ["network.outbound:api.telegram.org", "notifications.send"],
+  "services": ["notify.telegram"],
+  "settings": [
+    {"key": "token", "type": "secret", "default": ""},
+    {"key": "chats", "type": "text", "default": ""},
+    {"key": "quiet", "type": "text", "default": "23:00-07:00"}
+  ],
+  "blocks": [
+    {"key": "message", "kind": "act", "icon": "send", "name": {"uk": "Повідомлення в Telegram", "en": "Telegram message", "ru": "Сообщение в Telegram", "ja": "Telegram メッセージ", "fr": "Message Telegram", "de": "Telegram-Nachricht", "es": "Mensaje de Telegram"}, "params": [{"key": "text", "type": "text"}, {"key": "silent", "type": "bool", "default": false}]}
+  ]
+}

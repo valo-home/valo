@@ -1,0 +1,695 @@
+{
+  "internal": {
+    "uk": "Внутрішня помилка сервера",
+    "en": "Internal server error",
+    "ru": "Внутренняя ошибка сервера",
+    "ja": "サーバー内部エラー",
+    "fr": "Erreur interne du serveur",
+    "de": "Interner Serverfehler",
+    "es": "Error interno del servidor"
+  },
+  "validation": {
+    "uk": "Неправильні дані запиту. {detail}",
+    "en": "Invalid request data. {detail}",
+    "ru": "Неверные данные запроса. {detail}",
+    "ja": "リクエストデータが不正です。{detail}",
+    "fr": "Données de requête invalides. {detail}",
+    "de": "Ungültige Anfragedaten. {detail}",
+    "es": "Datos de solicitud no válidos. {detail}"
+  },
+  "not_found": {
+    "uk": "Об'єкт не знайдено",
+    "en": "Object not found",
+    "ru": "Объект не найден",
+    "ja": "対象が見つかりません",
+    "fr": "Objet introuvable",
+    "de": "Objekt nicht gefunden",
+    "es": "Objeto no encontrado"
+  },
+  "unauthorized": {
+    "uk": "Потрібен вхід",
+    "en": "Sign in required",
+    "ru": "Требуется вход",
+    "ja": "サインインが必要です",
+    "fr": "Connexion requise",
+    "de": "Anmeldung erforderlich",
+    "es": "Se requiere iniciar sesión"
+  },
+  "forbidden": {
+    "uk": "Недостатньо прав",
+    "en": "Insufficient permissions",
+    "ru": "Недостаточно прав",
+    "ja": "権限がありません",
+    "fr": "Droits insuffisants",
+    "de": "Unzureichende Berechtigungen",
+    "es": "Permisos insuficientes"
+  },
+  "bad_credentials": {
+    "uk": "Неправильне ім'я користувача або пароль",
+    "en": "Wrong username or password",
+    "ru": "Неверное имя пользователя или пароль",
+    "ja": "ユーザー名またはパスワードが違います",
+    "fr": "Nom d'utilisateur ou mot de passe incorrect",
+    "de": "Falscher Benutzername oder falsches Passwort",
+    "es": "Usuario o contraseña incorrectos"
+  },
+  "rate_limited": {
+    "uk": "Забагато спроб, повторіть за хвилину",
+    "en": "Too many attempts, try again in a minute",
+    "ru": "Слишком много попыток, повторите через минуту",
+    "ja": "試行回数が多すぎます。1分後に再試行してください",
+    "fr": "Trop de tentatives, réessayez dans une minute",
+    "de": "Zu viele Versuche, bitte in einer Minute erneut versuchen",
+    "es": "Demasiados intentos, inténtelo de nuevo en un minuto"
+  },
+  "setup_done": {
+    "uk": "Початкове налаштування вже виконано",
+    "en": "Initial setup is already complete",
+    "ru": "Первичная настройка уже выполнена",
+    "ja": "初期設定は完了しています",
+    "fr": "La configuration initiale est déjà faite",
+    "de": "Die Ersteinrichtung ist bereits abgeschlossen",
+    "es": "La configuración inicial ya está hecha"
+  },
+  "setup_required": {
+    "uk": "Спочатку виконайте початкове налаштування",
+    "en": "Complete the initial setup first",
+    "ru": "Сначала выполните первичную настройку",
+    "ja": "先に初期設定を行ってください",
+    "fr": "Effectuez d'abord la configuration initiale",
+    "de": "Bitte zuerst die Ersteinrichtung durchführen",
+    "es": "Primero complete la configuración inicial"
+  },
+  "username_taken": {
+    "uk": "Ім'я користувача вже зайняте",
+    "en": "Username is already taken",
+    "ru": "Имя пользователя уже занято",
+    "ja": "このユーザー名は使用されています",
+    "fr": "Ce nom d'utilisateur est déjà pris",
+    "de": "Der Benutzername ist bereits vergeben",
+    "es": "El nombre de usuario ya está en uso"
+  },
+  "last_owner": {
+    "uk": "Не можна видалити або понизити останнього власника",
+    "en": "The last owner cannot be removed or demoted",
+    "ru": "Нельзя удалить или понизить последнего владельца",
+    "ja": "最後のオーナーは削除または降格できません",
+    "fr": "Le dernier propriétaire ne peut pas être supprimé ni rétrogradé",
+    "de": "Der letzte Besitzer kann nicht entfernt oder herabgestuft werden",
+    "es": "No se puede eliminar ni degradar al último propietario"
+  },
+  "user_not_found": {
+    "uk": "Користувача не знайдено",
+    "en": "User not found",
+    "ru": "Пользователь не найден",
+    "ja": "ユーザーが見つかりません",
+    "fr": "Utilisateur introuvable",
+    "de": "Benutzer nicht gefunden",
+    "es": "Usuario no encontrado"
+  },
+  "token_not_found": {
+    "uk": "Токен не знайдено",
+    "en": "Token not found",
+    "ru": "Токен не найден",
+    "ja": "トークンが見つかりません",
+    "fr": "Jeton introuvable",
+    "de": "Token nicht gefunden",
+    "es": "Token no encontrado"
+  },
+  "room_not_found": {
+    "uk": "Приміщення не знайдено",
+    "en": "Room not found",
+    "ru": "Помещение не найдено",
+    "ja": "部屋が見つかりません",
+    "fr": "Pièce introuvable",
+    "de": "Raum nicht gefunden",
+    "es": "Habitación no encontrada"
+  },
+  "device_not_found": {
+    "uk": "Пристрій не знайдено",
+    "en": "Device not found",
+    "ru": "Устройство не найдено",
+    "ja": "デバイスが見つかりません",
+    "fr": "Appareil introuvable",
+    "de": "Gerät nicht gefunden",
+    "es": "Dispositivo no encontrado"
+  },
+  "device_exists": {
+    "uk": "Пристрій з таким ідентифікатором уже існує",
+    "en": "A device with this identifier already exists",
+    "ru": "Устройство с таким идентификатором уже существует",
+    "ja": "この識別子のデバイスは既に存在します",
+    "fr": "Un appareil avec cet identifiant existe déjà",
+    "de": "Ein Gerät mit dieser Kennung existiert bereits",
+    "es": "Ya existe un dispositivo con este identificador"
+  },
+  "cap_unknown": {
+    "uk": "У пристрою немає можливості {cap}",
+    "en": "The device has no capability {cap}",
+    "ru": "У устройства нет возможности {cap}",
+    "ja": "デバイスに機能 {cap} がありません",
+    "fr": "L'appareil n'a pas la capacité {cap}",
+    "de": "Das Gerät hat keine Fähigkeit {cap}",
+    "es": "El dispositivo no tiene la capacidad {cap}"
+  },
+  "cap_not_writable": {
+    "uk": "Можливість {cap} не можна змінити",
+    "en": "Capability {cap} is read only",
+    "ru": "Возможность {cap} нельзя изменить",
+    "ja": "機能 {cap} は読み取り専用です",
+    "fr": "La capacité {cap} est en lecture seule",
+    "de": "Die Fähigkeit {cap} ist schreibgeschützt",
+    "es": "La capacidad {cap} es de solo lectura"
+  },
+  "value_invalid": {
+    "uk": "Неприпустиме значення для {cap}",
+    "en": "Invalid value for {cap}",
+    "ru": "Недопустимое значение для {cap}",
+    "ja": "{cap} の値が不正です",
+    "fr": "Valeur invalide pour {cap}",
+    "de": "Ungültiger Wert für {cap}",
+    "es": "Valor no válido para {cap}"
+  },
+  "scene_not_found": {
+    "uk": "Сцену не знайдено",
+    "en": "Scene not found",
+    "ru": "Сцена не найдена",
+    "ja": "シーンが見つかりません",
+    "fr": "Scène introuvable",
+    "de": "Szene nicht gefunden",
+    "es": "Escena no encontrada"
+  },
+  "flow_not_found": {
+    "uk": "Сценарій не знайдено",
+    "en": "Automation not found",
+    "ru": "Сценарий не найден",
+    "ja": "オートメーションが見つかりません",
+    "fr": "Automatisation introuvable",
+    "de": "Automatisierung nicht gefunden",
+    "es": "Automatización no encontrada"
+  },
+  "flow_invalid": {
+    "uk": "Сценарій містить помилку. {detail}",
+    "en": "The automation has an error. {detail}",
+    "ru": "Сценарий содержит ошибку. {detail}",
+    "ja": "オートメーションにエラーがあります。{detail}",
+    "fr": "L'automatisation contient une erreur. {detail}",
+    "de": "Die Automatisierung enthält einen Fehler. {detail}",
+    "es": "La automatización contiene un error. {detail}"
+  },
+  "flow_dead": {
+    "uk": "Блок {block} недоступний, розширення не встановлене або вимкнене",
+    "en": "Block {block} is unavailable, its extension is not installed or disabled",
+    "ru": "Блок {block} недоступен, расширение не установлено или отключено",
+    "ja": "ブロック {block} は利用できません。拡張機能が未インストールまたは無効です",
+    "fr": "Le bloc {block} est indisponible, son extension n'est pas installée ou est désactivée",
+    "de": "Block {block} ist nicht verfügbar, die Erweiterung ist nicht installiert oder deaktiviert",
+    "es": "El bloque {block} no está disponible, su extensión no está instalada o está desactivada"
+  },
+  "flow_ports": {
+    "uk": "Типи портів не збігаються, {src} не можна подати на вхід {dst}",
+    "en": "Port types do not match, {src} cannot feed an input of type {dst}",
+    "ru": "Типы портов не совпадают, {src} нельзя подать на вход типа {dst}",
+    "ja": "ポートの型が一致しません。{src} を {dst} 型の入力に接続できません",
+    "fr": "Les types de ports ne correspondent pas, {src} ne peut pas alimenter une entrée {dst}",
+    "de": "Porttypen passen nicht, {src} kann keinen Eingang vom Typ {dst} speisen",
+    "es": "Los tipos de puertos no coinciden, {src} no puede alimentar una entrada {dst}"
+  },
+  "dashboard_not_found": {
+    "uk": "Панель не знайдено",
+    "en": "Dashboard not found",
+    "ru": "Панель не найдена",
+    "ja": "ダッシュボードが見つかりません",
+    "fr": "Tableau de bord introuvable",
+    "de": "Dashboard nicht gefunden",
+    "es": "Panel no encontrado"
+  },
+  "ext_not_found": {
+    "uk": "Розширення не знайдено",
+    "en": "Extension not found",
+    "ru": "Расширение не найдено",
+    "ja": "拡張機能が見つかりません",
+    "fr": "Extension introuvable",
+    "de": "Erweiterung nicht gefunden",
+    "es": "Extensión no encontrada"
+  },
+  "ext_installed": {
+    "uk": "Розширення вже встановлене",
+    "en": "The extension is already installed",
+    "ru": "Расширение уже установлено",
+    "ja": "拡張機能は既にインストールされています",
+    "fr": "L'extension est déjà installée",
+    "de": "Die Erweiterung ist bereits installiert",
+    "es": "La extensión ya está instalada"
+  },
+  "ext_busy": {
+    "uk": "Для розширення вже виконується операція",
+    "en": "An operation is already running for this extension",
+    "ru": "Для расширения уже выполняется операция",
+    "ja": "この拡張機能では処理が実行中です",
+    "fr": "Une opération est déjà en cours pour cette extension",
+    "de": "Für diese Erweiterung läuft bereits ein Vorgang",
+    "es": "Ya hay una operación en curso para esta extensión"
+  },
+  "ext_no_update": {
+    "uk": "Оновлень для розширення немає",
+    "en": "No update available for the extension",
+    "ru": "Обновлений для расширения нет",
+    "ja": "拡張機能の更新はありません",
+    "fr": "Aucune mise à jour pour l'extension",
+    "de": "Kein Update für die Erweiterung verfügbar",
+    "es": "No hay actualizaciones para la extensión"
+  },
+  "ext_grants": {
+    "uk": "Потрібно підтвердити права {perms}",
+    "en": "Permissions {perms} must be confirmed",
+    "ru": "Нужно подтвердить права {perms}",
+    "ja": "権限 {perms} の承認が必要です",
+    "fr": "Les droits {perms} doivent être confirmés",
+    "de": "Die Berechtigungen {perms} müssen bestätigt werden",
+    "es": "Hay que confirmar los permisos {perms}"
+  },
+  "ext_rpc_timeout": {
+    "uk": "Розширення {ext} не відповіло",
+    "en": "Extension {ext} did not respond",
+    "ru": "Расширение {ext} не ответило",
+    "ja": "拡張機能 {ext} が応答しません",
+    "fr": "L'extension {ext} n'a pas répondu",
+    "de": "Erweiterung {ext} hat nicht geantwortet",
+    "es": "La extensión {ext} no respondió"
+  },
+  "ext_rpc_error": {
+    "uk": "Розширення {ext} повернуло помилку. {detail}",
+    "en": "Extension {ext} returned an error. {detail}",
+    "ru": "Расширение {ext} вернуло ошибку. {detail}",
+    "ja": "拡張機能 {ext} がエラーを返しました。{detail}",
+    "fr": "L'extension {ext} a renvoyé une erreur. {detail}",
+    "de": "Erweiterung {ext} hat einen Fehler gemeldet. {detail}",
+    "es": "La extensión {ext} devolvió un error. {detail}"
+  },
+  "ext_permission": {
+    "uk": "Розширенню не видано право {perm}",
+    "en": "The extension was not granted {perm}",
+    "ru": "Расширению не выдано право {perm}",
+    "ja": "拡張機能に権限 {perm} が付与されていません",
+    "fr": "Le droit {perm} n'a pas été accordé à l'extension",
+    "de": "Der Erweiterung wurde {perm} nicht gewährt",
+    "es": "No se concedió el permiso {perm} a la extensión"
+  },
+  "ext_file_not_found": {
+    "uk": "Файл розширення не знайдено",
+    "en": "Extension file not found",
+    "ru": "Файл расширения не найден",
+    "ja": "拡張機能のファイルが見つかりません",
+    "fr": "Fichier de l'extension introuvable",
+    "de": "Datei der Erweiterung nicht gefunden",
+    "es": "Archivo de la extensión no encontrado"
+  },
+  "mqtt_timeout": {
+    "uk": "Немає відповіді через брокер MQTT",
+    "en": "No response via the MQTT broker",
+    "ru": "Нет ответа через брокер MQTT",
+    "ja": "MQTT ブローカー経由で応答がありません",
+    "fr": "Pas de réponse via le broker MQTT",
+    "de": "Keine Antwort über den MQTT-Broker",
+    "es": "Sin respuesta a través del broker MQTT"
+  },
+  "mqtt_unavailable": {
+    "uk": "Немає зв'язку з брокером MQTT",
+    "en": "No connection to the MQTT broker",
+    "ru": "Нет связи с брокером MQTT",
+    "ja": "MQTT ブローカーに接続できません",
+    "fr": "Pas de connexion au broker MQTT",
+    "de": "Keine Verbindung zum MQTT-Broker",
+    "es": "Sin conexión con el broker MQTT"
+  },
+  "topic_invalid": {
+    "uk": "Неприпустимий топік",
+    "en": "Invalid topic",
+    "ru": "Недопустимый топик",
+    "ja": "トピックが不正です",
+    "fr": "Topic invalide",
+    "de": "Ungültiges Topic",
+    "es": "Topic no válido"
+  },
+  "z2m_error": {
+    "uk": "Zigbee2MQTT повернув помилку. {detail}",
+    "en": "Zigbee2MQTT returned an error. {detail}",
+    "ru": "Zigbee2MQTT вернул ошибку. {detail}",
+    "ja": "Zigbee2MQTT がエラーを返しました。{detail}",
+    "fr": "Zigbee2MQTT a renvoyé une erreur. {detail}",
+    "de": "Zigbee2MQTT hat einen Fehler gemeldet. {detail}",
+    "es": "Zigbee2MQTT devolvió un error. {detail}"
+  },
+  "z2m_offline": {
+    "uk": "Zigbee2MQTT не на зв'язку",
+    "en": "Zigbee2MQTT is offline",
+    "ru": "Zigbee2MQTT не на связи",
+    "ja": "Zigbee2MQTT がオフラインです",
+    "fr": "Zigbee2MQTT est hors ligne",
+    "de": "Zigbee2MQTT ist offline",
+    "es": "Zigbee2MQTT está desconectado"
+  },
+  "not_zigbee": {
+    "uk": "Операція доступна лише для пристроїв Zigbee",
+    "en": "The operation is available only for Zigbee devices",
+    "ru": "Операция доступна только для устройств Zigbee",
+    "ja": "この操作は Zigbee デバイスのみ利用できます",
+    "fr": "L'opération n'est disponible que pour les appareils Zigbee",
+    "de": "Der Vorgang ist nur für Zigbee-Geräte verfügbar",
+    "es": "La operación solo está disponible para dispositivos Zigbee"
+  },
+  "backup_not_found": {
+    "uk": "Резервну копію не знайдено",
+    "en": "Backup not found",
+    "ru": "Резервная копия не найдена",
+    "ja": "バックアップが見つかりません",
+    "fr": "Sauvegarde introuvable",
+    "de": "Sicherung nicht gefunden",
+    "es": "Copia de seguridad no encontrada"
+  },
+  "backup_busy": {
+    "uk": "Резервне копіювання вже виконується",
+    "en": "A backup is already running",
+    "ru": "Резервное копирование уже выполняется",
+    "ja": "バックアップは既に実行中です",
+    "fr": "Une sauvegarde est déjà en cours",
+    "de": "Eine Sicherung läuft bereits",
+    "es": "Ya hay una copia de seguridad en curso"
+  },
+  "backup_invalid": {
+    "uk": "Файл не є резервною копією Valo",
+    "en": "The file is not a Valo backup",
+    "ru": "Файл не является резервной копией Valo",
+    "ja": "このファイルはValoのバックアップではありません",
+    "fr": "Le fichier n'est pas une sauvegarde Valo",
+    "de": "Die Datei ist keine Valo-Sicherung",
+    "es": "El archivo no es una copia de seguridad de Valo"
+  },
+  "backup_too_large": {
+    "uk": "Файл резервної копії завеликий",
+    "en": "The backup file is too large",
+    "ru": "Файл резервной копии слишком большой",
+    "ja": "バックアップファイルが大きすぎます",
+    "fr": "Le fichier de sauvegarde est trop volumineux",
+    "de": "Die Sicherungsdatei ist zu groß",
+    "es": "El archivo de copia es demasiado grande"
+  },
+  "ota_unsupported": {
+    "uk": "{name} не підтримує оновлення прошивки по повітрю",
+    "en": "{name} does not support over-the-air firmware updates",
+    "ru": "{name} не поддерживает обновление прошивки по воздуху",
+    "ja": "{name} は無線ファームウェア更新に対応していません",
+    "fr": "{name} ne prend pas en charge les mises à jour sans fil",
+    "de": "{name} unterstützt keine Firmware-Updates über Funk",
+    "es": "{name} no admite actualizaciones de firmware inalámbricas"
+  },
+  "ai_disabled": {
+    "uk": "ШІ асистент вимкнений або не налаштований",
+    "ru": "ИИ ассистент выключен или не настроен",
+    "en": "The AI assistant is disabled or not configured",
+    "de": "Der KI-Assistent ist deaktiviert oder nicht eingerichtet",
+    "fr": "L'assistant IA est désactivé ou non configuré",
+    "es": "El asistente de IA está desactivado o sin configurar",
+    "ja": "AIアシスタントが無効か未設定です"
+  },
+  "ai_no_key": {
+    "uk": "Не задано ключ API",
+    "ru": "Не задан ключ API",
+    "en": "API key is not set",
+    "de": "API-Schlüssel fehlt",
+    "fr": "Clé API non définie",
+    "es": "Falta la clave API",
+    "ja": "APIキーが未設定です"
+  },
+  "ai_limit": {
+    "uk": "Досягнуто денного ліміту повідомлень ({limit})",
+    "ru": "Достигнут дневной лимит сообщений ({limit})",
+    "en": "Daily message limit reached ({limit})",
+    "de": "Tageslimit für Nachrichten erreicht ({limit})",
+    "fr": "Limite quotidienne de messages atteinte ({limit})",
+    "es": "Límite diario de mensajes alcanzado ({limit})",
+    "ja": "1日のメッセージ上限に達しました ({limit})"
+  },
+  "chat_not_found": {
+    "uk": "Чат не знайдено",
+    "ru": "Чат не найден",
+    "en": "Chat not found",
+    "de": "Chat nicht gefunden",
+    "fr": "Discussion introuvable",
+    "es": "Chat no encontrado",
+    "ja": "チャットが見つかりません"
+  },
+  "chat_busy": {
+    "uk": "Асистент ще відповідає в цьому чаті",
+    "ru": "Ассистент еще отвечает в этом чате",
+    "en": "The assistant is still answering in this chat",
+    "de": "Der Assistent antwortet noch in diesem Chat",
+    "fr": "L'assistant répond encore dans cette discussion",
+    "es": "El asistente aún responde en este chat",
+    "ja": "アシスタントがまだ応答中です"
+  },
+  "action_not_found": {
+    "uk": "Дію не знайдено",
+    "ru": "Действие не найдено",
+    "en": "Action not found",
+    "de": "Aktion nicht gefunden",
+    "fr": "Action introuvable",
+    "es": "Acción no encontrada",
+    "ja": "操作が見つかりません"
+  },
+  "action_done": {
+    "uk": "Дію вже виконано або скасовано",
+    "ru": "Действие уже выполнено или отменено",
+    "en": "The action is already done or cancelled",
+    "de": "Die Aktion ist bereits erledigt oder abgebrochen",
+    "fr": "L'action est déjà effectuée ou annulée",
+    "es": "La acción ya se realizó o se canceló",
+    "ja": "この操作は完了またはキャンセル済みです"
+  },
+  "llm_auth": {
+    "uk": "Провайдер моделі відхилив ключ API",
+    "ru": "Провайдер модели отклонил ключ API",
+    "en": "The model provider rejected the API key",
+    "de": "Der Modellanbieter hat den API-Schlüssel abgelehnt",
+    "fr": "Le fournisseur a refusé la clé API",
+    "es": "El proveedor rechazó la clave API",
+    "ja": "プロバイダーがAPIキーを拒否しました"
+  },
+  "llm_credits": {
+    "uk": "На рахунку провайдера моделі недостатньо коштів",
+    "ru": "На счете провайдера модели недостаточно средств",
+    "en": "Not enough credits with the model provider",
+    "de": "Nicht genug Guthaben beim Modellanbieter",
+    "fr": "Crédits insuffisants chez le fournisseur",
+    "es": "Créditos insuficientes en el proveedor",
+    "ja": "プロバイダーのクレジットが不足しています"
+  },
+  "llm_model": {
+    "uk": "Модель не знайдено у провайдера",
+    "ru": "Модель не найдена у провайдера",
+    "en": "The model was not found at the provider",
+    "de": "Modell beim Anbieter nicht gefunden",
+    "fr": "Modèle introuvable chez le fournisseur",
+    "es": "Modelo no encontrado en el proveedor",
+    "ja": "プロバイダーにモデルが見つかりません"
+  },
+  "llm_rate": {
+    "uk": "Провайдер моделі обмежив частоту запитів, спробуйте пізніше",
+    "ru": "Провайдер модели ограничил частоту запросов, попробуйте позже",
+    "en": "The model provider is rate limiting, try again later",
+    "de": "Der Modellanbieter begrenzt Anfragen, später erneut versuchen",
+    "fr": "Le fournisseur limite les requêtes, réessayez plus tard",
+    "es": "El proveedor limita las solicitudes, inténtelo más tarde",
+    "ja": "プロバイダーがリクエストを制限しています"
+  },
+  "llm_failed": {
+    "uk": "Не вдалося отримати відповідь моделі: {detail}",
+    "ru": "Не удалось получить ответ модели: {detail}",
+    "en": "Could not get a model answer: {detail}",
+    "de": "Keine Modellantwort: {detail}",
+    "fr": "Pas de réponse du modèle : {detail}",
+    "es": "No se obtuvo respuesta del modelo: {detail}",
+    "ja": "モデルの応答を取得できません: {detail}"
+  },
+  "doc_not_found": {
+    "uk": "Сторінку документації не знайдено",
+    "en": "Documentation page not found",
+    "ru": "Страница документации не найдена",
+    "ja": "ドキュメントのページが見つかりません",
+    "fr": "Page de documentation introuvable",
+    "de": "Dokumentationsseite nicht gefunden",
+    "es": "Página de documentación no encontrada"
+  },
+  "media_dir_invalid": {
+    "uk": "Папка має бути всередині сховища",
+    "en": "Folder must be inside the storage root",
+    "ru": "Папка должна быть внутри хранилища",
+    "ja": "フォルダーはストレージのルート内にある必要があります",
+    "fr": "Le dossier doit se trouver dans la racine de stockage",
+    "de": "Der Ordner muss im Speicherstamm liegen",
+    "es": "La carpeta debe estar dentro de la raíz de almacenamiento"
+  },
+  "media_dir_not_writable": {
+    "uk": "Немає прав на запис у {path}",
+    "en": "No write access to {path}",
+    "ru": "Нет прав на запись в {path}",
+    "ja": "{path} に書き込めません",
+    "fr": "Pas de droit d'écriture dans {path}",
+    "de": "Kein Schreibzugriff auf {path}",
+    "es": "Sin permiso de escritura en {path}"
+  },
+  "media_file_missing": {
+    "uk": "Файл запису не знайдено на диску",
+    "en": "Recording file not found on disk",
+    "ru": "Файл записи не найден на диске",
+    "ja": "録画ファイルがディスクにありません",
+    "fr": "Fichier d'enregistrement introuvable sur le disque",
+    "de": "Aufnahmedatei nicht auf der Festplatte gefunden",
+    "es": "Archivo de grabación no encontrado en el disco"
+  },
+  "media_low_space": {
+    "uk": "Мало місця для запису відео",
+    "en": "Not enough space to record video",
+    "ru": "Мало места для записи видео",
+    "ja": "動画を記録する空き容量がありません",
+    "fr": "Pas assez d'espace pour enregistrer la vidéo",
+    "de": "Nicht genug Platz für Videoaufnahmen",
+    "es": "No hay espacio suficiente para grabar vídeo"
+  },
+  "camera_driver_unknown": {
+    "uk": "Драйвер камери {driver} не встановлено",
+    "en": "Camera driver {driver} is not installed",
+    "ru": "Драйвер камеры {driver} не установлен",
+    "ja": "カメラドライバー {driver} がインストールされていません",
+    "fr": "Le pilote de caméra {driver} n'est pas installé",
+    "de": "Kameratreiber {driver} ist nicht installiert",
+    "es": "El controlador de cámara {driver} no está instalado"
+  },
+  "camera_driver_stopped": {
+    "uk": "Драйвер камери {driver} не працює",
+    "en": "Camera driver {driver} is not running",
+    "ru": "Драйвер камеры {driver} не работает",
+    "ja": "カメラドライバー {driver} が動作していません",
+    "fr": "Le pilote de caméra {driver} ne fonctionne pas",
+    "de": "Kameratreiber {driver} läuft nicht",
+    "es": "El controlador de cámara {driver} no está en ejecución"
+  },
+  "camera_field_required": {
+    "uk": "Заповніть поле {field}",
+    "en": "Fill in the field {field}",
+    "ru": "Заполните поле {field}",
+    "ja": "{field} を入力してください",
+    "fr": "Remplissez le champ {field}",
+    "de": "Füllen Sie das Feld {field} aus",
+    "es": "Rellene el campo {field}"
+  },
+  "camera_probe_failed": {
+    "uk": "Камера не відповіла: {detail}",
+    "en": "Camera did not respond: {detail}",
+    "ru": "Камера не ответила: {detail}",
+    "ja": "カメラが応答しません: {detail}",
+    "fr": "La caméra n'a pas répondu : {detail}",
+    "de": "Kamera hat nicht geantwortet: {detail}",
+    "es": "La cámara no respondió: {detail}"
+  },
+  "camera_exists": {
+    "uk": "Камера {name} вже є",
+    "en": "Camera {name} already exists",
+    "ru": "Камера {name} уже есть",
+    "ja": "カメラ {name} は既に存在します",
+    "fr": "La caméra {name} existe déjà",
+    "de": "Kamera {name} existiert bereits",
+    "es": "La cámara {name} ya existe"
+  },
+  "camera_not_found": {
+    "uk": "Камеру не знайдено",
+    "en": "Camera not found",
+    "ru": "Камера не найдена",
+    "ja": "カメラが見つかりません",
+    "fr": "Caméra introuvable",
+    "de": "Kamera nicht gefunden",
+    "es": "Cámara no encontrada"
+  },
+  "camera_unavailable": {
+    "uk": "Камера недоступна",
+    "en": "Camera is unavailable",
+    "ru": "Камера недоступна",
+    "ja": "カメラに接続できません",
+    "fr": "Caméra indisponible",
+    "de": "Kamera nicht erreichbar",
+    "es": "Cámara no disponible"
+  },
+  "range_invalid": {
+    "uk": "Неправильний діапазон файлу",
+    "en": "Invalid file range",
+    "ru": "Неверный диапазон файла",
+    "ja": "無効なファイル範囲",
+    "fr": "Plage de fichier invalide",
+    "de": "Ungültiger Dateibereich",
+    "es": "Rango de archivo no válido"
+  },
+  "camera_feature_unsupported": {
+    "uk": "Драйвер цієї камери не вміє {feature}",
+    "en": "This camera driver does not support {feature}",
+    "ru": "Драйвер этой камеры не умеет {feature}",
+    "de": "Dieser Kameratreiber unterstützt {feature} nicht",
+    "fr": "Le pilote de cette caméra ne gère pas {feature}",
+    "es": "El controlador de esta cámara no admite {feature}",
+    "ja": "このカメラのドライバーは {feature} に対応していません"
+  },
+  "camera_ptz_position_unknown": {
+    "uk": "Камера не повідомила своє положення",
+    "en": "The camera did not report its position",
+    "ru": "Камера не сообщила свое положение",
+    "de": "Die Kamera hat ihre Position nicht gemeldet",
+    "fr": "La caméra n'a pas indiqué sa position",
+    "es": "La cámara no informó su posición",
+    "ja": "カメラが位置を報告しませんでした"
+  },
+  "camera_presets_full": {
+    "uk": "Не більше {n} пресетів на камеру",
+    "en": "No more than {n} presets per camera",
+    "ru": "Не больше {n} пресетов на камеру",
+    "de": "Höchstens {n} Voreinstellungen pro Kamera",
+    "fr": "Pas plus de {n} préréglages par caméra",
+    "es": "No más de {n} preajustes por cámara",
+    "ja": "プリセットは1台あたり {n} 件まで"
+  },
+  "camera_preset_unknown": {
+    "uk": "Пресет {preset} не знайдено",
+    "en": "Preset {preset} not found",
+    "ru": "Пресет {preset} не найден",
+    "de": "Voreinstellung {preset} nicht gefunden",
+    "fr": "Préréglage {preset} introuvable",
+    "es": "Preajuste {preset} no encontrado",
+    "ja": "プリセット {preset} が見つかりません"
+  },
+  "media_zip_too_big": {
+    "uk": "Архів більше {max} ГБ, виберіть менше записів",
+    "en": "The archive is larger than {max} GB, select fewer recordings",
+    "ru": "Архив больше {max} ГБ, выберите меньше записей",
+    "de": "Das Archiv ist größer als {max} GB, weniger Aufnahmen wählen",
+    "fr": "L'archive dépasse {max} Go, sélectionnez moins d'enregistrements",
+    "es": "El archivo supera {max} GB, elija menos grabaciones",
+    "ja": "アーカイブが {max} GB を超えます。選択を減らしてください"
+  },
+  "zigbee_adapter_fixed": {
+    "uk": "Координатор задано у файлі налаштувань ({path}), змініть його там",
+    "en": "The coordinator is set in the settings file ({path}), change it there",
+    "ru": "Координатор задан в файле настроек ({path}), измените его там",
+    "de": "Der Koordinator ist in der Einstellungsdatei gesetzt ({path}), dort ändern",
+    "fr": "Le coordinateur est défini dans le fichier de réglages ({path}), modifiez-le là",
+    "es": "El coordinador está fijado en el archivo de ajustes ({path}), cámbielo allí",
+    "ja": "コーディネーターは設定ファイルで指定されています ({path})。そちらで変更してください"
+  },
+  "zigbee_adapter_unknown": {
+    "uk": "Пристрій {path} не знайдено, вставте стик і оновіть список",
+    "en": "Device {path} not found, plug the stick in and refresh the list",
+    "ru": "Устройство {path} не найдено, вставьте стик и обновите список",
+    "de": "Gerät {path} nicht gefunden, Stick einstecken und Liste aktualisieren",
+    "fr": "Appareil {path} introuvable, branchez la clé et actualisez la liste",
+    "es": "Dispositivo {path} no encontrado, conecte el stick y actualice la lista",
+    "ja": "デバイス {path} が見つかりません。スティックを挿して一覧を更新してください"
+  }
+}

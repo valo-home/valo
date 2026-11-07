@@ -1,0 +1,302 @@
+{
+  "id": "fi.valo.safety",
+  "version": "1.0.2",
+  "trust": "official",
+  "module": "safety",
+  "author": "Valo",
+  "icon": "shield",
+  "level": "declarative",
+  "name": {
+    "uk": "Безпека дому",
+    "en": "Home safety",
+    "ru": "Безопасность дома"
+  },
+  "description": {
+    "uk": "Датчики протікання, диму, чадного і побутового газу в одному місці: тривога, сповіщення, вимкнення приладів при протіканні, нагадування про батареї і перевірку датчиків диму",
+    "en": "Leak, smoke, carbon monoxide and gas sensors in one place: alarm, notifications, switching devices off on a leak, reminders about batteries and smoke detector tests",
+    "ru": "Датчики протечки, дыма, угарного и бытового газа в одном месте: тревога, уведомления, отключение приборов при протечке, напоминания о батареях и проверке датчиков дыма"
+  },
+  "perms": [
+    "devices.read",
+    "devices.control",
+    "notifications.send",
+    "devices.virtual",
+    "ui.page",
+    "ui.widget"
+  ],
+  "runtime": {
+    "memory": 64,
+    "cpu": 15
+  },
+  "settings": [
+    {
+      "key": "shutoff",
+      "type": "devices",
+      "default": "",
+      "name": {
+        "uk": "Вимикати при протіканні",
+        "ru": "Отключать при протечке",
+        "en": "Switch off on a leak"
+      },
+      "caps": [
+        "on"
+      ],
+      "access": "w"
+    },
+    {
+      "key": "test_days",
+      "type": "number",
+      "default": 30,
+      "name": {
+        "uk": "Перевірка датчиків диму, днів",
+        "ru": "Проверка датчиков дыма, дней",
+        "en": "Smoke detector test, days"
+      }
+    },
+    {
+      "key": "exclude",
+      "type": "devices",
+      "default": "",
+      "name": {
+        "uk": "Виключити",
+        "ru": "Исключить",
+        "en": "Exclude"
+      },
+      "caps": [
+        "leak",
+        "smoke",
+        "co",
+        "gas"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "key": "alarm",
+      "kind": "trig",
+      "icon": "warn",
+      "name": {
+        "uk": "Тривога безпеки",
+        "en": "Safety alarm",
+        "ru": "Тревога безопасности"
+      },
+      "params": [
+        {
+          "key": "kind",
+          "type": "select",
+          "options": [
+            "leak",
+            "smoke",
+            "co",
+            "gas"
+          ],
+          "required": false,
+          "default": ""
+        },
+        {
+          "key": "device",
+          "type": "device",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "key": "armed",
+      "kind": "cond",
+      "icon": "shield",
+      "name": {
+        "uk": "Охорону ввімкнено",
+        "en": "Armed",
+        "ru": "Охрана включена"
+      }
+    },
+    {
+      "key": "arm",
+      "kind": "act",
+      "icon": "shield",
+      "name": {
+        "uk": "Поставити на охорону",
+        "en": "Arm",
+        "ru": "Поставить на охрану"
+      }
+    },
+    {
+      "key": "disarm",
+      "kind": "act",
+      "icon": "lock",
+      "name": {
+        "uk": "Зняти з охорони",
+        "en": "Disarm",
+        "ru": "Снять с охраны"
+      }
+    },
+    {
+      "key": "ack",
+      "kind": "act",
+      "icon": "check",
+      "name": {
+        "uk": "Скинути тривогу",
+        "en": "Clear alarm",
+        "ru": "Сбросить тревогу"
+      }
+    }
+  ],
+  "pages": [
+    {
+      "key": "safety",
+      "icon": "shield",
+      "level": "declarative",
+      "name": {
+        "uk": "Безпека",
+        "en": "Safety",
+        "ru": "Безопасность"
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "key": "status",
+      "level": "declarative",
+      "kind": "safety",
+      "name": {
+        "uk": "Безпека дому",
+        "en": "Home safety",
+        "ru": "Безопасность дома"
+      }
+    }
+  ],
+  "templates": [
+    {
+      "key": "leak",
+      "name": {
+        "uk": "Протікання, повідомити всіх",
+        "ru": "Протечка, уведомить всех",
+        "en": "Leak, notify everyone"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "fi.valo.safety:alarm",
+            "params": {
+              "kind": "leak",
+              "device": ""
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Протечка: {name} {room}. Перекройте воду. Отключено: {shutoff}",
+              "level": "crit",
+              "push": true
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "smoke",
+      "name": {
+        "uk": "Дим, увімкнути світло і повідомити",
+        "ru": "Дым, включить свет и уведомить",
+        "en": "Smoke, lights on and notify"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "fi.valo.safety:alarm",
+            "params": {
+              "kind": "smoke",
+              "device": ""
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "n",
+            "block": "notify",
+            "params": {
+              "text": "Дым: {name} {room}. Добавьте команду включения света в коридоре",
+              "level": "crit",
+              "push": true
+            },
+            "x": 260,
+            "y": 60
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "n",
+            "in": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "night",
+      "name": {
+        "uk": "Охорона на ніч",
+        "ru": "Охрана на ночь",
+        "en": "Arm for the night"
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "t",
+            "block": "schedule",
+            "params": {
+              "cron": "0 23 * * *"
+            },
+            "x": 24,
+            "y": 60
+          },
+          {
+            "id": "c",
+            "block": "fi.valo.safety:armed",
+            "params": {},
+            "x": 240,
+            "y": 60
+          },
+          {
+            "id": "a",
+            "block": "fi.valo.safety:arm",
+            "params": {},
+            "x": 456,
+            "y": 100
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "out": 0,
+            "to": "c",
+            "in": 0
+          },
+          {
+            "from": "c",
+            "out": 1,
+            "to": "a",
+            "in": 0
+          }
+        ]
+      }
+    }
+  ]
+}
