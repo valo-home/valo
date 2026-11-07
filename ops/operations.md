@@ -6,7 +6,7 @@ How to install, run, update and maintain a Valo node. User documentation is insi
 
 - a computer that stays on: mini PC, old laptop or server, x86_64 or arm64
 - Ubuntu 22.04 or 24.04 (other Linux with Docker works too)
-- 2 GB RAM minimum, 4 GB recommended with cameras and recognition
+- 4 GB RAM minimum (Valo uses about 1.7 GB when idle), 8 GB recommended with cameras and recognition
 - 10 GB free disk for the system, plus space for camera recordings
 - a Zigbee USB coordinator, for example Sonoff Zigbee 3.0 USB Dongle Plus V2 (ember) or Dongle-P (zstack). Valo works without one, only Zigbee is missing then
 

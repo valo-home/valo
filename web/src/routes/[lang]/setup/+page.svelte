@@ -13,7 +13,8 @@
 	let v = $state(init.v);
 	const local = (() => {
 		try {
-			return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+			const z = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+			return z === 'Europe/Kiev' ? 'Europe/Kyiv' : z;
 		} catch (e) {
 			console.warn('time zone unknown', e?.message);
 			return '';

@@ -33,7 +33,7 @@ No configuration file is needed, passwords are generated on the first start. Det
 
 ### Hardware
 
-- any x86_64 or arm64 computer with 2 GB RAM or more (4 GB with cameras and recognition)
+- any x86_64 or arm64 computer with 4 GB RAM or more (8 GB with cameras and recognition)
 - a Zigbee USB coordinator, for example Sonoff Zigbee 3.0 USB Dongle Plus V2 or Dongle-P, ConBee II
 - optional IP cameras: Sonoff CAM Slim Gen2 and CAM-PT2 with [Thingino](https://thingino.com) firmware, or any RTSP camera
 
