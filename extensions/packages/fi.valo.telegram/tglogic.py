@@ -21,6 +21,7 @@ TEXTS = {
             "Напишіть боту /start у потрібному чаті та вкажіть номер з відповіді"
         ),
         "test_failed": "Помилок доставки: {n}, деталі в Система, Помилки",
+        "test_partial": "Тест надіслано, чатів: {sent}. Помилок доставки: {n}, деталі в журналі розширення",
         "start": "Chat id цього чату: {chat}. Додайте його в налаштування розширення Telegram у Valo, поле Отримувачі",
         "denied": "Немає доступу. Chat id {chat}, user id {user}",
         "help": "/status стан будинку\n/devices пристрої\n/help ця довідка",
@@ -54,6 +55,7 @@ TEXTS = {
             "Бота нет в этом чате или номер чата сменился. Напишите боту /start в нужном чате и укажите номер из ответа"
         ),
         "test_failed": "Ошибок доставки: {n}, подробности в Система, Ошибки",
+        "test_partial": "Тест отправлен, чатов: {sent}. Ошибок доставки: {n}, подробности в журнале расширения",
         "start": "Chat id этого чата: {chat}. Добавьте его в настройки расширения Telegram в Valo, поле Получатели",
         "denied": "Нет доступа. Chat id {chat}, user id {user}",
         "help": "/status состояние дома\n/devices устройства\n/help эта справка",
@@ -91,6 +93,7 @@ TEXTS = {
             "Send /start to the bot in that chat and use the number from the reply"
         ),
         "test_failed": "Delivery errors: {n}, see System, Errors",
+        "test_partial": "Test sent, chats: {sent}. Delivery errors: {n}, see the extension log",
         "start": "Chat id of this chat: {chat}. Add it to the Telegram extension settings in Valo, Recipients field",
         "denied": "Access denied. Chat id {chat}, user id {user}",
         "help": "/status home status\n/devices devices\n/help this help",
@@ -149,6 +152,16 @@ def parse_recipients(text: str) -> list[tuple[str, str]]:
 def rejected_recipients(text: str) -> list[str]:
     """Строки поля Получатели без числового chat id, например @имя. Telegram не дает боту писать по имени."""
     return [part for part, _, chat in _recipient_lines(text) if not re.fullmatch(r"-?\d+", chat)]
+
+
+def test_note(lang: str, res: dict[str, Any]) -> str:
+    """Итог тестовой отправки для страницы Telegram, при частичной доставке и отправленные, и ошибки."""
+    sent, failed = int(res.get("sent") or 0), int(res.get("failed") or 0)
+    if sent and failed:
+        return tr(lang, "test_partial", sent=sent, n=failed)
+    if failed:
+        return tr(lang, "test_failed", n=failed)
+    return tr(lang, "test_sent", n=sent) if sent else tr(lang, "test_none")
 
 
 def delivery_hint(lang: str, error: str) -> str:

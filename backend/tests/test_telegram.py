@@ -37,6 +37,14 @@ def test_chat_not_found_gets_a_hint() -> None:
     assert tg.delivery_hint("de", "chat not found") == tg.tr("en", "not_found")
 
 
+def test_partial_test_delivery_reports_both_sent_and_failed() -> None:
+    note = tg.test_note("ru", {"sent": 1, "failed": 1})
+    assert "чатов: 1" in note and "Ошибок доставки: 1" in note
+    assert tg.test_note("en", {"sent": 0, "failed": 2}) == tg.tr("en", "test_failed", n=2)
+    assert tg.test_note("uk", {"sent": 2, "failed": 0}) == tg.tr("uk", "test_sent", n=2)
+    assert tg.test_note("en", {"sent": 0, "skipped": "empty"}) == tg.tr("en", "test_none")
+
+
 def test_access_rules() -> None:
     rec = [("Я", "111"), ("Семья", "-100222")]
     assert tg.allowed(111, 111, rec, set())

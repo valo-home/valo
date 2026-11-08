@@ -28,6 +28,7 @@ from tglogic import (
     quiet,
     rejected_recipients,
     status_text,
+    test_note,
     tr,
     upload_method,
 )
@@ -502,14 +503,7 @@ def page_blocks(note: str | None = None) -> dict[str, Any]:
 async def page(params: dict) -> dict:
     if params.get("action") == "test":
         res = await send(tr(state["lang"], "test"), level="crit", once=False)
-        lang = state["lang"]
-        if res.get("failed"):
-            note = tr(lang, "test_failed", n=res["failed"])
-        elif res.get("sent"):
-            note = tr(lang, "test_sent", n=res["sent"])
-        else:
-            note = tr(lang, "test_none")
-        return page_blocks(note)
+        return page_blocks(test_note(state["lang"], res))
     return page_blocks()
 
 
