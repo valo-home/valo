@@ -389,7 +389,9 @@ async def status(
         await events.add(
             s, "ext.crashed", "crit", params={"name": x.name, "error": (error or "")[:300], "restarts": x.restarts}
         )
-        await events.notify(s, f"ext:{ext_id}", "crit", "ext_error", {"name": x.name, "restarts": x.restarts}, "ext")
+        await events.notify(
+            s, f"ext:{ext_id}", "crit", "ext_error", {"name": x.name, "restarts": x.restarts}, f"ext/{ext_id}"
+        )
     _changed(s, x)
 
 
@@ -544,7 +546,8 @@ async def core_call(s: AsyncSession, ext_id: str, method: str, params: dict[str,
             params.get("level", "info"),
             "flow_notify",
             {"text": str(params.get("text", ""))},
-            "ext",
+            f"ext/{ext_id}",
+            touch=True,
         )
         return {"ok": True}
     if method == "event":

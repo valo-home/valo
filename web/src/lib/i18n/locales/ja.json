@@ -447,6 +447,7 @@
 	"cam.vis_include": "対象にする",
 	"cam.vis_labels": "認識する対象",
 	"cam.vis_limit": "ゾーンは最大 {zones} 個、1ゾーンの点は最大 {points} 個",
+	"cam.vis_motion_note": "カメラ自身が検知した動きのクリップは、認識がオフでも録画されます。オフにするには、{section}の「{list}」で「{mark}」を外してください",
 	"cam.vis_name": "ゾーン名",
 	"cam.vis_need3": "ゾーン {name} の点が3つ未満です",
 	"cam.vis_no_ext": "カメラ認識拡張機能が未インストールまたは停止中のため、イベントは発生しません",

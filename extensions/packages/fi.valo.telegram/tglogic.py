@@ -12,6 +12,14 @@ TEXTS = {
     "uk": {
         "test_sent": "Тест надіслано, чатів: {n}",
         "test_none": "Не надіслано: немає токена або отримувачів",
+        "rejected": (
+            "Не прийнято в полі Отримувачі: {list}. "
+            "Потрібен числовий chat id, бот повідомить його у відповідь на /start"
+        ),
+        "not_found": (
+            "Бота немає в цьому чаті або номер чату змінився. "
+            "Напишіть боту /start у потрібному чаті та вкажіть номер з відповіді"
+        ),
         "test_failed": "Помилок доставки: {n}, деталі в Система, Помилки",
         "start": "Chat id цього чату: {chat}. Додайте його в налаштування розширення Telegram у Valo, поле Отримувачі",
         "denied": "Немає доступу. Chat id {chat}, user id {user}",
@@ -41,6 +49,10 @@ TEXTS = {
     "ru": {
         "test_sent": "Тест отправлен, чатов: {n}",
         "test_none": "Не отправлено: нет токена или получателей",
+        "rejected": "Не принято в поле Получатели: {list}. Нужен числовой chat id, бот сообщит его в ответ на /start",
+        "not_found": (
+            "Бота нет в этом чате или номер чата сменился. Напишите боту /start в нужном чате и укажите номер из ответа"
+        ),
         "test_failed": "Ошибок доставки: {n}, подробности в Система, Ошибки",
         "start": "Chat id этого чата: {chat}. Добавьте его в настройки расширения Telegram в Valo, поле Получатели",
         "denied": "Нет доступа. Chat id {chat}, user id {user}",
@@ -70,6 +82,14 @@ TEXTS = {
     "en": {
         "test_sent": "Test sent, chats: {n}",
         "test_none": "Not sent: no token or recipients",
+        "rejected": (
+            "Not accepted in the Recipients field: {list}. "
+            "A numeric chat id is needed, the bot replies with it to /start"
+        ),
+        "not_found": (
+            "The bot is not in this chat or the chat number has changed. "
+            "Send /start to the bot in that chat and use the number from the reply"
+        ),
         "test_failed": "Delivery errors: {n}, see System, Errors",
         "start": "Chat id of this chat: {chat}. Add it to the Telegram extension settings in Valo, Recipients field",
         "denied": "Access denied. Chat id {chat}, user id {user}",
@@ -110,17 +130,30 @@ def tr(lang: str, key: str, **params: Any) -> str:
     return (TEXTS.get(lang) or TEXTS["en"])[key].format(**params)
 
 
-def parse_recipients(text: str) -> list[tuple[str, str]]:
-    out: list[tuple[str, str]] = []
+def _recipient_lines(text: str) -> list[tuple[str, str, str]]:
+    out: list[tuple[str, str, str]] = []
     for part in _SPLIT.split(text or ""):
         part = part.strip()
         if not part:
             continue
         name, sep, chat = part.partition("=")
         name, chat = (name.strip(), chat.strip()) if sep else (part, part)
-        if re.fullmatch(r"-?\d+", chat):
-            out.append((name, chat))
+        out.append((part, name, chat))
     return out
+
+
+def parse_recipients(text: str) -> list[tuple[str, str]]:
+    return [(name, chat) for _, name, chat in _recipient_lines(text) if re.fullmatch(r"-?\d+", chat)]
+
+
+def rejected_recipients(text: str) -> list[str]:
+    """Строки поля Получатели без числового chat id, например @имя. Telegram не дает боту писать по имени."""
+    return [part for part, _, chat in _recipient_lines(text) if not re.fullmatch(r"-?\d+", chat)]
+
+
+def delivery_hint(lang: str, error: str) -> str:
+    """Пояснение к ошибке доставки, если ее причина обычно в настройках получателей."""
+    return tr(lang, "not_found") if "chat not found" in error.lower() else ""
 
 
 def parse_ids(text: str) -> set[str]:

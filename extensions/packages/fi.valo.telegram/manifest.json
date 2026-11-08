@@ -1,6 +1,6 @@
 {
   "id": "fi.valo.telegram",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "trust": "official",
   "module": "telegram_ext",
   "author": "Valo",

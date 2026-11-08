@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { page } from '$app/state';
 	import { useApp } from '#lib/app.svelte.js';
 	import Icon from '#lib/components/Icon.svelte';
@@ -66,16 +66,21 @@
 		if (cur) cur = list.find((x) => x.id === cur.id) ?? null;
 	}
 	onMount(() => {
-		load().then(() => {
-			const o = page.url.searchParams.get('open');
-			const x = o && list.find((y) => y.id === o);
-			if (x) open(x);
-		});
+		load().then(() => (loaded = true));
 		const offs = [
 			app.on('ext', (x) => ((list = list.some((y) => y.id === x.id) ? list.map((y) => (y.id === x.id ? x : y)) : [...list, x]), cur?.id === x.id && (cur = x))),
 			app.on('ext_gone', () => load())
 		];
 		return () => offs.forEach((fn) => fn());
+	});
+	let loaded = $state(false);
+	let opened = '';
+	$effect(() => {
+		const o = page.url.searchParams.get('open') ?? '';
+		if (!loaded || o === opened) return;
+		opened = o;
+		const x = o && list.find((y) => y.id === o);
+		if (x) untrack(() => open(x));
 	});
 	const logId = $derived(cur && app.can('admin') ? cur.id : '');
 	$effect(() => {

@@ -447,6 +447,7 @@
 	"cam.vis_include": "Incluir",
 	"cam.vis_labels": "Qué reconocer",
 	"cam.vis_limit": "Hasta {zones} zonas y {points} puntos por zona",
+	"cam.vis_motion_note": "Los clips por movimiento que detecta la propia cámara se graban también sin reconocimiento. Desactívelos en la sección {section}, lista «{list}», marca {mark}",
 	"cam.vis_name": "Nombre de la zona",
 	"cam.vis_need3": "La zona {name} tiene menos de tres puntos",
 	"cam.vis_no_ext": "La extensión Reconocimiento en cámaras no está instalada o está detenida, no aparecerán eventos",

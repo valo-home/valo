@@ -16,6 +16,7 @@ from tglogic import (
     buttons,
     caption,
     clip_ready,
+    delivery_hint,
     devices_text,
     fallback_text,
     flow_media,
@@ -25,6 +26,7 @@ from tglogic import (
     parse_recipients,
     pick,
     quiet,
+    rejected_recipients,
     status_text,
     tr,
     upload_method,
@@ -42,8 +44,12 @@ def token() -> str:
     return str(ext.settings.get("token") or "")
 
 
+def recipients_text() -> str:
+    return str(ext.settings.get("recipients") or ext.settings.get("chats") or "")
+
+
 def recipients() -> list[tuple[str, str]]:
-    return parse_recipients(str(ext.settings.get("recipients") or ext.settings.get("chats") or ""))
+    return parse_recipients(recipients_text())
 
 
 def admins() -> set[str]:
@@ -118,7 +124,8 @@ async def report_failure(error: str) -> None:
     if time.time() - state["fail_at"] > 3600:
         state["fail_at"] = time.time()
         try:
-            await ext.call("notify", {"key": "delivery", "level": "warn", "text": f"Telegram: {error}"})
+            text = " ".join(x for x in (f"Telegram: {error}.", delivery_hint(state["lang"], error)) if x)
+            await ext.call("notify", {"key": "delivery", "level": "warn", "text": text})
         except Exception as e:
             ext.log.warning("core notify failed: %s", e)
 
@@ -174,6 +181,8 @@ async def start() -> None:
     ext.log.info(
         "recipients %s, admins %s, token %s", len(recipients()), len(admins()), "set" if token() else "missing"
     )
+    if bad := rejected_recipients(recipients_text()):
+        ext.log.warning("recipients not accepted, a numeric chat id is needed: %s", ", ".join(bad))
 
 
 @ext.service("notify")
@@ -436,6 +445,8 @@ def page_blocks(note: str | None = None) -> dict[str, Any]:
     blocks: list[dict[str, Any]] = []
     if note:
         blocks.append({"type": "text", "text": note})
+    if bad := rejected_recipients(recipients_text()):
+        blocks.append({"type": "text", "text": tr(state["lang"], "rejected", list=", ".join(bad))})
     blocks.append(
         {
             "type": "stats",

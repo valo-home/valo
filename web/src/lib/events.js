@@ -55,6 +55,7 @@ export function notifText(app, n) {
 export function route(app, r) {
 	if (!r) return app.path('/');
 	const [k, ...rest] = r.split('/');
+	if (k === 'ext' && rest.length) return app.path(`/extensions?open=${encodeURIComponent(rest.join('/'))}`);
 	const map = { devices: '/devices/', flows: '/flows/', ext: '/extensions', zigbee: '/zigbee', system: '/system' };
 	return app.path((map[k] ?? `/${k}`) + rest.map(encodeURIComponent).join('/'));
 }

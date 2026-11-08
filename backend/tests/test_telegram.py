@@ -23,6 +23,20 @@ def test_recipients_and_pick() -> None:
     assert tg.parse_ids("12, x, 34") == {"12", "34"}
 
 
+def test_recipients_by_name_are_reported_not_dropped_silently() -> None:
+    text = "@someone\nСемья=-100222; Сосед=@neighbour, 333"
+    assert tg.parse_recipients(text) == [("Семья", "-100222"), ("333", "333")]
+    assert tg.rejected_recipients(text) == ["@someone", "Сосед=@neighbour"]
+    assert tg.rejected_recipients("Я=111") == []
+    assert "/start" in tg.tr("ru", "rejected", list="@someone")
+
+
+def test_chat_not_found_gets_a_hint() -> None:
+    assert "/start" in tg.delivery_hint("uk", "-5400: 400 Bad Request: chat not found")
+    assert tg.delivery_hint("en", "429 Too Many Requests") == ""
+    assert tg.delivery_hint("de", "chat not found") == tg.tr("en", "not_found")
+
+
 def test_access_rules() -> None:
     rec = [("Я", "111"), ("Семья", "-100222")]
     assert tg.allowed(111, 111, rec, set())

@@ -7,7 +7,7 @@ Sends Valo messages to Telegram. Forwards notifications (leak, smoke, carbon mon
 1. In Telegram message @BotFather, run `/newbot` and keep the token `123456:ABC...`
 2. Send `/start` to your bot. For a family chat add the bot to the group and send `/start` there. The bot replies with the chat id
 3. In Valo: Extensions, Catalog, Telegram, Install. Open the extension and paste the token
-4. Open the Telegram page in the menu. Copy lines like `Family=-100123` from "Chats that messaged the bot" into **Recipients**, one per line or separated by `;`
+4. Open the Telegram page in the menu. Copy lines like `Family=-100123` from "Chats that messaged the bot" into **Recipients**, one per line or separated by `;`. A name like `@user` does not work, Telegram does not let a bot write by name, a numeric chat id is needed. The Telegram page shows such lines as not accepted. The delivery error "chat not found" means the bot is not in the chat or the chat number has changed, for example a group became a supergroup with a number like `-100...`
 5. Optionally list Telegram user ids allowed to press buttons and send commands in **Admins**. Empty means every member of the recipient chats
 6. Save and press "Send test" on the Telegram page
 

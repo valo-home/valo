@@ -1,4 +1,5 @@
 import json
+import pathlib
 
 import httpx
 import pytest
@@ -11,6 +12,8 @@ from app.lib.kv import kv
 
 pytestmark = pytest.mark.anyio
 TG_OLD = ["network.outbound:api.telegram.org", "notifications.send"]
+TG_MANIFEST = pathlib.Path(__file__).resolve().parents[2] / "extensions/packages/fi.valo.telegram/manifest.json"
+TG_VERSION = json.loads(TG_MANIFEST.read_text("utf-8"))["version"]
 TG_NEW = ["devices.read", "devices.control", "media.read", "media.write"]
 
 
@@ -39,6 +42,47 @@ async def test_install_requires_grants(client: httpx.AsyncClient, owner: dict) -
             break
     assert msg and json.loads(msg["data"]) == {"op": "install", "id": "fi.valo.telegram"}
     await ps.aclose()
+
+
+async def test_repeated_extension_notice_links_to_its_card_and_moves_up(client: httpx.AsyncClient, owner: dict) -> None:
+    from datetime import timedelta
+
+    from sqlalchemy import select
+
+    from app.db.base import now
+    from app.db.models import Notification
+
+    async with session() as s:
+        s.add(
+            Extension(
+                id="test.notice",
+                name="Notice",
+                version="1.0.0",
+                trust="local",
+                status="running",
+                enabled=True,
+                manifest={},
+                settings={},
+                grants=["notifications.send"],
+                restarts=0,
+            )
+        )
+        await commit(s)
+    msg = {"key": "delivery", "level": "warn", "text": "chat not found"}
+    async with session() as s:
+        await extensions.core_call(s, "test.notice", "notify", msg)
+        await commit(s)
+    async with session() as s:
+        n = await s.scalar(select(Notification).where(Notification.key == "ext:test.notice:delivery"))
+        assert n.route == "ext/test.notice" and n.dismissed_at is None
+        n.created_at = now() - timedelta(days=1)
+        await commit(s)
+    async with session() as s:
+        await extensions.core_call(s, "test.notice", "notify", msg)
+        await commit(s)
+    async with session() as s:
+        n = await s.scalar(select(Notification).where(Notification.key == "ext:test.notice:delivery"))
+        assert now() - n.created_at < timedelta(minutes=1)
 
 
 async def test_core_call_permissions(client: httpx.AsyncClient, owner: dict) -> None:
@@ -92,7 +136,7 @@ async def test_update_asks_for_new_permissions(client: httpx.AsyncClient, owner:
         x.status = "running"
         await commit(s)
     ext = (await client.get("/api/v1/extensions/fi.valo.telegram", headers=owner)).json()
-    assert ext["update"] == "3.1.0" and ext["newPerms"] == TG_NEW
+    assert ext["update"] == TG_VERSION and ext["newPerms"] == TG_NEW
     r = await client.post("/api/v1/extensions/fi.valo.telegram/update", json={}, headers=owner)
     assert r.status_code == 422 and r.json()["code"] == "ext_grants"
     r = await client.post(

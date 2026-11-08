@@ -42,6 +42,7 @@
 	const zone = $derived(sel >= 0 ? zones[sel] : null);
 	const short = $derived(zones.find((z) => z.points.length < 3));
 	const norm = (d, z) => JSON.stringify({ enabled: !!d?.enabled, labels: [...(d?.labels || ['person', 'car', 'animal'])].sort(), score: d?.score ?? 0.55, zones: z || [] });
+	const motionClips = $derived(!!camera && camera.record?.mode !== 'off' && (!camera.record?.labels?.length || camera.record.labels.includes('motion')));
 	const dirty = $derived(!!camera && norm(det, zones) !== norm(camera.record?.detect, camera.record?.zones));
 
 	onMount(async () => {
@@ -172,6 +173,7 @@
 			<span>{t('cam.vis_enabled')} <Hint k="cam_vision" doc="cameras" /></span>
 		</div>
 		{#if !ready}<p class="sm cvz-warn">{t('cam.vis_no_ext')}</p>{/if}
+		{#if motionClips}<p class="sm dim">{t('cam.vis_motion_note', { section: t('cam.recording'), list: t('cam.rec_labels'), mark: t('cam.l_motion') })}</p>{/if}
 
 		<div class="f">
 			<span>{t('cam.vis_labels')}</span>

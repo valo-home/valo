@@ -211,6 +211,8 @@ The **Camera recognition** extension looks for people, cars, animals, bicycles, 
 
 Detection is enabled on the **Detection and zones** tab: labels and the confidence threshold are chosen there and zones are drawn. A zone is a polygon on the frame, points are placed with a tap and can be dragged, an object belongs to a zone by the place where it stands. An **Include** zone keeps only objects inside such zones, an **Ignore** zone drops objects in it, for example the street behind the fence. A camera has up to 8 zones and up to 16 points per zone. See the extension description for details.
 
+Recognition does not control clips on motion detected by the camera itself. They are recorded with recognition turned off too, if **Motion** is marked in the **Recording** section, list "Events that record a clip". To record clips only for found people, cars and animals, clear this mark.
+
 ## Pan and tilt cameras
 
 A pan and tilt camera, for example Sonoff CAM-PT2 on Thingino, gets arrows and a **To center** button on the video. Under the video

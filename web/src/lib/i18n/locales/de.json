@@ -447,6 +447,7 @@
 	"cam.vis_include": "Einbeziehen",
 	"cam.vis_labels": "Was erkennen",
 	"cam.vis_limit": "Bis zu {zones} Zonen und {points} Punkte pro Zone",
+	"cam.vis_motion_note": "Clips bei Bewegung, die die Kamera selbst erkennt, werden auch ohne Erkennung aufgenommen. Abschalten im Abschnitt {section}, Liste «{list}», Markierung {mark}",
 	"cam.vis_name": "Zonenname",
 	"cam.vis_need3": "Zone {name} hat weniger als drei Punkte",
 	"cam.vis_no_ext": "Die Erweiterung Kameraerkennung ist nicht installiert oder gestoppt, es erscheinen keine Ereignisse",

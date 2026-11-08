@@ -134,8 +134,16 @@ async def chain(s: AsyncSession, event_id: int) -> list[EventOut]:
 
 
 async def notify(
-    s: AsyncSession, key: str, level: str, type: str, params: dict[str, Any], route: str = "", force: bool = False
+    s: AsyncSession,
+    key: str,
+    level: str,
+    type: str,
+    params: dict[str, Any],
+    route: str = "",
+    force: bool = False,
+    touch: bool = False,
 ) -> Notification:
+    """Создать или обновить уведомление по ключу. touch переносит время на сейчас и для еще не снятого уведомления."""
     n = await s.scalar(select(Notification).where(Notification.key == key))
     fresh = n is None or n.dismissed_at is not None
     if n is None:
@@ -143,7 +151,7 @@ async def notify(
         s.add(n)
     else:
         n.level, n.type, n.params, n.route, n.dismissed_at = level, type, params, route, None
-        if fresh:
+        if fresh or touch:
             n.created_at = now()
     await s.flush()
 

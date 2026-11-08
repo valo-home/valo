@@ -447,6 +447,7 @@
 	"cam.vis_include": "Include",
 	"cam.vis_labels": "What to recognise",
 	"cam.vis_limit": "Up to {zones} zones and {points} points per zone",
+	"cam.vis_motion_note": "Clips on motion detected by the camera itself are recorded without recognition too. Turn them off in the {section} section, list «{list}», mark {mark}",
 	"cam.vis_name": "Zone name",
 	"cam.vis_need3": "Zone {name} has fewer than three points",
 	"cam.vis_no_ext": "The Camera recognition extension is not installed or stopped, events will not appear",
