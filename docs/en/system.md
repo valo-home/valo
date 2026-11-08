@@ -11,7 +11,7 @@ The **System** section gathers home settings, users, API tokens, backups, the er
 - The home **Language**. Notification texts are built in it, including external ones, and the names of new extension devices
 - **Days of detailed history**. Older device values are deleted
 - **Levels sent to external delivery**. Notifications of these levels go to external channels, for example Telegram. By default only critical. A **Notification** block with **Send externally** ticked is sent regardless of this setting
-- **Daily backup**. Turns on an automatic backup once a day
+- **Daily backup**. Turns on an automatic backup once a day at night. If the hub was off at night and there has been no backup for more than 26 hours, it is created within an hour after the hub starts
 
 Press **Save** to apply the changes.
 

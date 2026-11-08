@@ -374,3 +374,51 @@ async def test_redis_socket_timeout_outlasts_blocking_waits(client: httpx.AsyncC
     kwargs = kvmod.kv().connection_pool.connection_kwargs
     assert kwargs["socket_timeout"] == kvmod.SOCKET_TIMEOUT > kvmod.BLOCK_MAX
     assert await kvmod.kv().brpop(["test:empty-queue"], timeout=kvmod.BLOCK_MAX) is None
+
+
+async def test_missed_daily_backup_is_caught_up(client: httpx.AsyncClient, owner: dict, monkeypatch) -> None:
+    from datetime import timedelta
+
+    from sqlalchemy import select
+
+    from app.db.base import commit, now, session
+    from app.db.models import Backup
+    from app.domain import events, system
+    from app.domain import tasks as T
+
+    kicked: list[str] = []
+
+    async def fake_kick(name: str, /, **kw) -> None:
+        kicked.append(name)
+
+    monkeypatch.setattr(system.tasks, "kick", fake_kick)
+
+    async def scheduled() -> list[Backup]:
+        async with session() as s:
+            return list((await s.scalars(select(Backup).where(Backup.kind == "scheduled"))).all())
+
+    await T.backups_catchup()
+    first = await scheduled()
+    assert len(first) == 1 and kicked == ["backups.run"]
+    await T.backups_catchup()
+    assert len(await scheduled()) == 1
+    async with session() as s:
+        b = await s.get(Backup, first[0].id)
+        b.status, b.created_at = "ok", now() - timedelta(hours=25)
+        await commit(s)
+    await T.backups_catchup()
+    assert len(await scheduled()) == 1
+    async with session() as s:
+        b = await s.get(Backup, first[0].id)
+        b.created_at = now() - timedelta(hours=27)
+        h = await events.home(s)
+        h.settings = {**h.settings, "autoBackup": False}
+        await commit(s)
+    await T.backups_catchup()
+    assert len(await scheduled()) == 1
+    async with session() as s:
+        h = await events.home(s)
+        h.settings = {**h.settings, "autoBackup": True}
+        await commit(s)
+    await T.backups_catchup()
+    assert len(await scheduled()) == 2 and kicked == ["backups.run", "backups.run"]

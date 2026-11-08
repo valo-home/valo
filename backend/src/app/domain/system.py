@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from importlib.metadata import version
 from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import DATABASE_URL, after, now
@@ -29,6 +29,7 @@ from app.lib.settings import env, env_int
 BACKUP_DIR = pathlib.Path(env("BACKUP_DIR", "/data/backups"))
 BACKUP_KEEP = env_int("BACKUP_KEEP", 7)
 BACKUP_MIRROR = pathlib.Path(env("BACKUP_MIRROR")) if env("BACKUP_MIRROR") else None
+BACKUP_OVERDUE = timedelta(hours=26)
 UPDATE_URL = env("UPDATE_URL")
 _log = log.get("system")
 
@@ -102,6 +103,14 @@ async def backup_create(s: AsyncSession, p: Principal | None, kind: str = "manua
     bid, token = str(b.id), await _once_token()
     after(s, lambda: tasks.kick("backups.run", id=bid, token=token))
     return out(b, BackupOut)
+
+
+async def backup_overdue(s: AsyncSession) -> bool:
+    """Ежедневная копия включена, а копии по расписанию нет дольше BACKUP_OVERDUE, например узел был выключен ночью."""
+    if not (await events.home(s)).settings.get("autoBackup", True):
+        return False
+    last = await s.scalar(select(func.max(Backup.created_at)).where(Backup.kind == "scheduled"))
+    return last is None or now() - last > BACKUP_OVERDUE
 
 
 async def backup_run(s: AsyncSession, backup_id: str) -> None:

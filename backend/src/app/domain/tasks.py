@@ -4,7 +4,7 @@ from typing import Any
 from app.db.base import commit, session
 from app.domain import cameras, devices, events, extensions, flows, scenes, system, zigbee
 from app.lib import log
-from app.lib.errors import notice
+from app.lib.errors import ApplicationError, notice
 from app.lib.kv import beat, kv
 from app.lib.tasks import broker
 
@@ -89,6 +89,20 @@ async def backups_daily() -> None:
         if h.settings.get("autoBackup", True):
             await system.backup_create(s, None, "scheduled")
             await commit(s)
+
+
+@broker.task(task_name="backups.catchup", schedule=[{"cron": "50 * * * *"}])
+async def backups_catchup() -> None:
+    async with session() as s:
+        if not await system.backup_overdue(s):
+            return
+        try:
+            await system.backup_create(s, None, "scheduled")
+        except ApplicationError as e:
+            _log.info("backup_catchup_postponed", code=e.code)
+            return
+        await commit(s)
+        _log.warning("backup_catchup")
 
 
 @broker.task(task_name="backups.run")
