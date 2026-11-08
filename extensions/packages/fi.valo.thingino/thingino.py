@@ -442,18 +442,20 @@ async def actions(params: dict[str, Any]) -> dict[str, Any]:
         posix = tl.tz_posix(tz) or (str(cur.get("tz_data") or "") if tz == cur.get("tz_name") else "")
         if not posix:
             raise tl.CameraError(f"time zone {tz} is unknown")
-        body = {
-            "action": "update",
-            "tz_name": tz,
-            "tz_data": posix,
-            "ntp_server_0": str(extra.get("ntp") or cur.get("ntp_server_0") or "pool.ntp.org"),
-            "ntp_server_1": "" if extra.get("ntp") else str(cur.get("ntp_server_1") or ""),
-            "dhcp_ignore_timezone": "true",
-        }
+        body = tl.time_config(cur, tz, posix, str(extra.get("ntp") or ""))
         res = await cgi(cfg, "/x/json-config-time.cgi", body)
         if not isinstance(res, dict) or res.get("status") != "ok":
             raise tl.CameraError(f"time was not set: {str(res)[:160]}")
-        return {"ok": True, "detail": f"{body['tz_name']}, {body['ntp_server_0']}"}
+        detail = f"{body['tz_name']}, {body['ntp_server_0']}"
+        try:
+            done = await cgi(cfg, "/x/json-sync-time.cgi")
+        except tl.CameraError as e:
+            ext.log.warning("camera %s time saved, but not synchronized now: %s", params.get("camera"), e)
+            return {"ok": True, "detail": f"{detail}, synchronization on the next poll"}
+        if not isinstance(done, dict) or done.get("result") != "success":
+            ext.log.warning("camera %s time not synchronized: %s", params.get("camera"), str(done)[:160])
+            return {"ok": True, "detail": f"{detail}, synchronization on the next poll"}
+        return {"ok": True, "detail": f"{detail}, synchronized"}
     raise tl.CameraError(f"action {name} is not supported")
 
 

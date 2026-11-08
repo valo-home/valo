@@ -687,6 +687,7 @@
 	"e.camera.added": "Добавлена камера {name} ({driver})",
 	"e.camera.clip": "Запись клипа {seconds} с с камеры {name}",
 	"e.camera.configured": "Камера {name}: изменены настройки {keys}",
+	"e.camera.healed": "Камера {name} была на связи без видео, поток перезапущен автоматически",
 	"e.camera.moved": "Камера {name} найдена по новому адресу {new}, был {old}",
 	"e.camera.offline": "Камера {name} без связи {min} мин",
 	"e.camera.online": "Камера {name} снова на связи",

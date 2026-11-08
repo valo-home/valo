@@ -191,8 +191,8 @@ async def ext_push(type: str, level: str, params: dict[str, Any], force: bool = 
 
 
 @broker.task(task_name="cameras.reprobe")
-async def cameras_reprobe(camera: str) -> None:
-    await cameras.reprobe(camera)
+async def cameras_reprobe(camera: str, attempt: int = 0) -> None:
+    await cameras.reprobe(camera, attempt)
 
 
 @broker.task(task_name="cameras.patrol")

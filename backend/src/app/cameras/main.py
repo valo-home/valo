@@ -31,6 +31,8 @@ SEG = 2
 IDLE_KEEP = 40
 PIECE = 600
 NO_VIDEO_AFTER = 30
+HEAL_AFTER = 180
+HEAL_EVERY = 900
 NTP_PORT = int(env("NTP_PORT", "0") or 0)
 NTP_EPOCH = 2208988800
 DEMO_PATTERNS = {"demo-yard": "testsrc2", "demo-door": "smptehdbars"}
@@ -351,6 +353,7 @@ class Service:
         self.low = False
         self.seen: dict[str, tuple[float, int, float]] = {}
         self.vstate: dict[str, tuple[str, float]] = {}
+        self.healed: dict[str, float] = {}
 
     def spawn(self, coro: Any) -> None:
         t = asyncio.ensure_future(coro)
@@ -774,6 +777,9 @@ class Service:
                     self.vstate[cid] = (state, now)
                     if state == "no_video":
                         _log.warning("camera_no_video", camera=cid, buffer_age=age, error=rec.error if rec else "")
+                if state == "no_video" and self.due_heal(cid, now):
+                    self.healed[cid] = now
+                    self.spawn(self.heal(cid))
                 cont = self.continuous.get(cid)
                 await set_json(
                     cameras.VIDEO + cid,
@@ -791,6 +797,16 @@ class Service:
                     },
                     ttl=60,
                 )
+
+    def due_heal(self, cid: str, now: float) -> bool:
+        return now - self.vstate[cid][1] >= HEAL_AFTER and now - self.healed.get(cid, 0.0) >= HEAL_EVERY
+
+    async def heal(self, cid: str) -> None:
+        async with session() as s:
+            how = await cameras.heal(s, cid)
+            await commit(s)
+        if how in ("skipped", "missing"):
+            self.healed[cid] = time.time() - HEAL_EVERY + 60
 
     async def housekeeping(self) -> None:
         while True:
@@ -822,6 +838,7 @@ class Service:
                 stale = await cameras.close_stale(s)
                 await cameras.watch_offline(s)
                 await commit(s)
+                await cameras.keep_time(s)
             if state["low"] != self.low:
                 self.low = state["low"]
                 await self.sync_continuous()

@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from valo_camera import CameraError, rtsp_check, with_auth
 
 TIMEOUT = 8
+POOL = "pool.ntp.org"
 __all__ = ["CameraError", "rtsp_check"]
 
 
@@ -372,3 +373,15 @@ def tz_posix(name: str, base: str = ZONEINFO) -> str:
         return ""
     last = lines[-1].decode(errors="replace").strip() if lines else ""
     return last if last and not last.startswith("TZif") and len(last) < 80 else ""
+
+
+def time_config(cur: dict[str, Any], tz: str, posix: str, ntp: str) -> dict[str, str]:
+    """Настройки времени камеры. Узел Valo первым сервером, публичный пул запасным на случай смены адреса узла."""
+    return {
+        "action": "update",
+        "tz_name": tz,
+        "tz_data": posix,
+        "ntp_server_0": ntp or str(cur.get("ntp_server_0") or POOL),
+        "ntp_server_1": str(cur.get("ntp_server_1") or (POOL if ntp else "")),
+        "dhcp_ignore_timezone": "true",
+    }

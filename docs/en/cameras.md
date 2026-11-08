@@ -113,7 +113,7 @@ The **Camera** tab shows what the driver and the firmware support, so the set di
 - **Image**: brightness, contrast, saturation, sharpness, anti flicker 50 or 60 Hz, mirror and flip
 - **Sound**: microphone. On Thingino firmware 2026-08-14 it can only be viewed, newer firmware can switch it
 - **Stream quality**: resolution and format, frames per second and bitrate of the main and the sub stream. A change restarts the stream on the camera for a few seconds
-- **Time**: the camera time zone, the time server and the clock difference between the camera and Valo. **Sync time** sets the home time zone and the Valo time server on the camera if the time service is enabled, otherwise the NTP pool
+- **Time**: the camera time zone, the time server and the clock difference between the camera and Valo. **Sync time** sets the home time zone and the Valo time server on the camera if the time service is enabled, otherwise the NTP pool. pool.ntp.org stays as a fallback server, and after a change of the home time zone or of the Valo hub address the online cameras are set up again by themselves, usually within a minute
 
 Changed fields are applied with the **Apply changes** button. If the camera did not accept a value, the field is highlighted and the reason is shown under it. **Read from camera** refreshes the values, for example if they were changed in the camera web UI.
 
@@ -137,7 +137,7 @@ Instead of a generic **Connecting** Valo shows the reason
 - **Camera does not answer**: nothing answers at the address. Check the camera power and Wi-Fi
 - **Another device at the address**: the router gave the camera address to another device
 - **Wrong API key** and **Wrong stream password**: the camera answers but does not accept the key or the password, they must be entered on the **Connection** tab
-- **No video**: the camera is online, but no video has arrived for more than 30 seconds. **Restart stream** usually helps
+- **No video**: the camera is online, but no video has arrived for more than 30 seconds. **Restart stream** usually helps. If it lasts 3 minutes, Valo restarts the stream on the camera by itself, or reconnects the video if the driver cannot do that. At most once in 15 minutes, each time with an entry in the log
 - **Camera driver stopped**: the camera extension is disabled or has crashed
 
 ### The camera changed its address

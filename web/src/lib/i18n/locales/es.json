@@ -687,6 +687,7 @@
 	"e.camera.added": "Cámara {name} añadida ({driver})",
 	"e.camera.clip": "Grabando un clip de {seconds} s de {name}",
 	"e.camera.configured": "Cámara {name}: ajustes cambiados {keys}",
+	"e.camera.healed": "La cámara {name} respondía sin vídeo, el flujo se reinició automáticamente",
 	"e.camera.moved": "Cámara {name} encontrada en {new}, antes {old}",
 	"e.camera.offline": "Cámara {name} sin conexión {min} min",
 	"e.camera.online": "Cámara {name} de nuevo en línea",

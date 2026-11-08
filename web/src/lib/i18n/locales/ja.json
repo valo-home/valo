@@ -687,6 +687,7 @@
 	"e.camera.added": "カメラ {name} を追加 ({driver})",
 	"e.camera.clip": "{name} から {seconds} 秒のクリップを記録",
 	"e.camera.configured": "カメラ {name}: 設定変更 {keys}",
+	"e.camera.healed": "カメラ {name} は接続中でしたが映像がなかったため、ストリームを自動で再起動しました",
 	"e.camera.moved": "カメラ {name} を新しいアドレス {new} で発見 (旧 {old})",
 	"e.camera.offline": "カメラ {name} が {min} 分オフライン",
 	"e.camera.online": "カメラ {name} がオンラインに復帰",

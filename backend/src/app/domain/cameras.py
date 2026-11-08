@@ -24,7 +24,9 @@ from app.lib.settings import env
 CHANGED = "cameras:changed"
 EVENTS = "cameras:events"
 JOBS = "cameras:jobs"
+TIME_SET = "cameras:time:"
 PERM = "cameras.provide"
+REPROBE_RETRY = (30.0, 900.0)
 RECORD: dict[str, Any] = {
     "mode": "events",
     "pre": 5,
@@ -672,6 +674,54 @@ async def action(s: AsyncSession, p: Principal, camera_id: str, name: str, param
     return {"ok": bool(res.get("ok", True)), "detail": str(res.get("detail") or "")[:300]}
 
 
+async def heal(s: AsyncSession, camera_id: str) -> str:
+    """Камера на связи, но видео не приходит: перезапустить поток на камере, если драйвер не смог, переподключить."""
+    c = await s.get(Camera, camera_id)
+    if c is None:
+        return "missing"
+    d = await s.get(Device, c.device_id)
+    x = await s.get(Extension, c.driver)
+    if d is None or (c.health or {}).get("reason") != "ok":
+        return "skipped"
+    how = "restart_stream"
+    try:
+        await _dcall(s, c, x, "actions", {"action": how, "params": {}}, timeout=30)
+    except ApplicationError as e:
+        _log.warning("camera_heal_driver_failed", camera=c.id, code=e.code)
+        how = "reconnect"
+        await rtc_reset(c.id)
+    await events.add(s, "camera.healed", "warn", params={"name": d.name, "action": how}, device_id=d.id)
+    _log.warning("camera_healed", camera=c.id, how=how)
+    return how
+
+
+async def keep_time(s: AsyncSession) -> int:
+    """Настроить время камер на узел Valo, если адрес узла или часовой пояс сменились с прошлой настройки."""
+    addr = ntp_server()
+    if not addr:
+        return 0
+    tz = (await events.home(s)).timezone or "UTC"
+    want, n = f"{addr}|{tz}", 0
+    for c, _, x in await _rows(s):
+        if x is None or "actions" not in features(x) or (c.health or {}).get("reason") != "ok":
+            continue
+        key = TIME_SET + c.id
+        if await kv().get(key) in (want, "retry"):
+            continue
+        try:
+            res = await _dcall(
+                s, c, x, "actions", {"action": "sync_time", "params": {"timezone": tz, "ntp": addr}}, timeout=30
+            )
+        except ApplicationError as e:
+            _log.warning("camera_time_not_set", camera=c.id, code=e.code)
+            await kv().set(key, "retry", ex=600)
+            continue
+        await kv().set(key, want)
+        _log.info("camera_time_set", camera=c.id, ntp=addr, tz=tz, detail=str(res.get("detail") or "")[:120])
+        n += 1
+    return n
+
+
 def ntp_server() -> str:
     """Адрес узла Valo в домашней сети для времени камер, если служба времени включена."""
     return env("VALO_NTP_ADDR", "")
@@ -778,7 +828,8 @@ async def reprobe_now(s: AsyncSession, c: Camera, d: Device, x: Extension) -> No
     _changed(s, c.driver)
 
 
-async def reprobe(camera_id: str) -> None:
+async def reprobe(camera_id: str, attempt: int = 0) -> None:
+    """Пересчитать потоки после смены адреса. Если камера еще загружается, попытка повторяется позже."""
     async with session() as s:
         c = await s.get(Camera, camera_id)
         if c is None:
@@ -791,9 +842,16 @@ async def reprobe(camera_id: str) -> None:
         try:
             await reprobe_now(s, c, d, x)
         except ApplicationError as e:
-            _log.warning("camera_reprobe_failed", camera=camera_id, code=e.code)
+            delay = min(REPROBE_RETRY[0] * 2**attempt, REPROBE_RETRY[1])
+            _log.warning("camera_reprobe_failed", camera=camera_id, code=e.code, attempt=attempt, retry_in=delay)
             await rollback(s)
             _changed(s, drv)
+            after(
+                s,
+                lambda: tasks.later(
+                    f"camera_reprobe:{camera_id}", delay, "cameras.reprobe", camera=camera_id, attempt=attempt + 1
+                ),
+            )
         await commit(s)
 
 

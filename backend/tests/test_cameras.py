@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 import sys
@@ -8,10 +9,11 @@ import pytest
 from sqlalchemy import select
 
 from app.db.base import commit, now, session
-from app.db.models import Camera, CameraEvent, Device, Extension, Media
+from app.db.models import Camera, CameraEvent, Device, Event, Extension, Media
 from app.domain import blocks, cameras, extensions, flows, media
 from app.lib import rtc
 from app.lib.errors import ApplicationError
+from app.lib.kv import kv
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "extensions" / "sdk"))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "extensions" / "packages" / "fi.valo.thingino"))
@@ -583,3 +585,97 @@ async def test_moved_camera_reaches_the_driver_with_new_host(
         await commit(s)
     assert res["changed"] is False
     assert [c["method"] for c in driver] == ["camera.sync"]
+
+
+async def test_failed_reprobe_after_move_is_retried(
+    client: httpx.AsyncClient, owner: dict, driver: list, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    body = {"driver": DRIVER, "name": "Slim", "config": {"host": "10.0.0.7", "password": "p"}}
+    assert (await client.post("/api/v1/cameras", json=body, headers=owner)).status_code == 201
+    ok = cameras.extensions.rpc
+
+    async def booting(s: object, ext_id: str, method: str, params: dict, timeout: float = 10) -> dict:
+        if method == "camera.probe":
+            raise ApplicationError("camera_probe_failed", 422, detail="RTSP port does not answer")
+        return await ok(s, ext_id, method, params, timeout)
+
+    monkeypatch.setattr(cameras.extensions, "rpc", booting)
+    async with session() as s:
+        await extensions.core_call(s, DRIVER, "cameras.moved", {"camera": "slim", "host": "10.0.0.1"})
+        await commit(s)
+    await cameras.reprobe("slim")
+    timer = json.loads(await kv().hget("timers:data", "camera_reprobe:slim"))
+    assert timer == {"n": "cameras.reprobe", "k": {"camera": "slim", "attempt": 1}}
+    monkeypatch.setattr(cameras.extensions, "rpc", ok)
+    await cameras.reprobe("slim", 1)
+    async with session() as s:
+        main = (await cameras.sources(s))["slim"]["main"]
+    assert "@10.0.0.1/" in main
+
+
+async def test_online_camera_without_video_gets_its_stream_restarted(
+    client: httpx.AsyncClient, owner: dict, driver: list, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    body = {"driver": DRIVER, "name": "Pt", "config": {"host": "10.0.0.7", "password": "p"}}
+    assert (await client.post("/api/v1/cameras", json=body, headers=owner)).status_code == 201
+    async with session() as s:
+        assert await cameras.heal(s, "pt") == "skipped"
+        c = await s.get(Camera, "pt")
+        c.health = {"reason": "ok"}
+        await commit(s)
+    driver.clear()
+    async with session() as s:
+        assert await cameras.heal(s, "pt") == "restart_stream"
+        await commit(s)
+    assert [(c["method"], c.get("action")) for c in driver] == [("camera.actions", "restart_stream")]
+    resets: list[str] = []
+
+    async def failing(*a: object, **k: object) -> dict:
+        raise ApplicationError("camera_driver_stopped", 503, driver=DRIVER)
+
+    async def reset(cid: str) -> None:
+        resets.append(cid)
+
+    monkeypatch.setattr(cameras.extensions, "rpc", failing)
+    monkeypatch.setattr(cameras, "rtc_reset", reset)
+    async with session() as s:
+        assert await cameras.heal(s, "pt") == "reconnect"
+        await commit(s)
+        evs = (await s.scalars(select(Event).where(Event.type == "camera.healed").order_by(Event.id))).all()
+    assert resets == ["pt"]
+    assert [e.params["action"] for e in evs] == ["restart_stream", "reconnect"]
+
+
+def test_camera_time_keeps_a_public_fallback_server() -> None:
+    cur = {"ntp_server_0": "10.0.0.2", "ntp_server_1": ""}
+    body = tl.time_config(cur, "Europe/Kyiv", "EET-2EEST,M3.5.0/3,M10.5.0/4", "10.0.0.3")
+    assert body["ntp_server_0"] == "10.0.0.3" and body["ntp_server_1"] == "pool.ntp.org"
+    assert tl.time_config({"ntp_server_1": "time.local"}, "UTC", "UTC0", "10.0.0.2")["ntp_server_1"] == "time.local"
+    assert tl.time_config({}, "UTC", "UTC0", "") == {
+        "action": "update",
+        "tz_name": "UTC",
+        "tz_data": "UTC0",
+        "ntp_server_0": "pool.ntp.org",
+        "ntp_server_1": "",
+        "dhcp_ignore_timezone": "true",
+    }
+
+
+async def test_camera_time_follows_the_hub_address(
+    client: httpx.AsyncClient, owner: dict, driver: list, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    body = {"driver": DRIVER, "name": "Pt", "config": {"host": "10.0.0.7", "password": "p"}}
+    assert (await client.post("/api/v1/cameras", json=body, headers=owner)).status_code == 201
+    async with session() as s:
+        (await s.get(Camera, "pt")).health = {"reason": "ok"}
+        await commit(s)
+    monkeypatch.setenv("VALO_NTP_ADDR", "10.0.0.2")
+    driver.clear()
+    async with session() as s:
+        assert await cameras.keep_time(s) == 1
+        assert await cameras.keep_time(s) == 0
+    assert [c["params"]["ntp"] for c in driver if c.get("action") == "sync_time"] == ["10.0.0.2"]
+    monkeypatch.setenv("VALO_NTP_ADDR", "10.0.0.3")
+    async with session() as s:
+        assert await cameras.keep_time(s) == 1
+    assert driver[-1]["params"] == {"timezone": driver[-1]["params"]["timezone"], "ntp": "10.0.0.3"}
