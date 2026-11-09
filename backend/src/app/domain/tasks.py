@@ -204,6 +204,13 @@ async def ext_push(type: str, level: str, params: dict[str, Any], force: bool = 
         await commit(s)
 
 
+@broker.task(task_name="zigbee.offline_alert")
+async def zigbee_offline_alert() -> None:
+    async with session() as s:
+        await zigbee.offline_alert(s)
+        await commit(s)
+
+
 @broker.task(task_name="cameras.reprobe")
 async def cameras_reprobe(camera: str, attempt: int = 0) -> None:
     await cameras.reprobe(camera, attempt)

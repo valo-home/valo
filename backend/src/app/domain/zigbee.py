@@ -16,6 +16,52 @@ from app.lib.settings import settings
 
 _log = log.get("zigbee")
 
+ALERT_MINUTES = 3
+ALERT_MINUTES_MAX = 60
+
+
+def alert_minutes(home_settings: dict[str, Any]) -> int:
+    """Сколько минут Zigbee2MQTT может быть без связи до тревоги, настройка дома z2mAlertMinutes, 0 тревога сразу."""
+    v = home_settings.get("z2mAlertMinutes", ALERT_MINUTES)
+    if not isinstance(v, (int, float)) or isinstance(v, bool):
+        return ALERT_MINUTES
+    return max(0, min(ALERT_MINUTES_MAX, int(v)))
+
+
+async def bridge_state(s: AsyncSession, state: str) -> None:
+    """Смена связи с Zigbee2MQTT. Короткий обрыв только в журнале, тревога после задержки, после тревоги отбой."""
+    if state == "online":
+        await events.add(s, "zigbee.online", "ok")
+        await tasks.cancel("z2m:offline")
+        since, alerted = await kv().getdel("z2m:offline_at"), await kv().getdel("z2m:alerted")
+        await events.resolve(s, "z2m:offline")
+        h = await events.home(s)
+        if alerted and "crit" in h.settings.get("pushLevels", ["crit"]):
+            minutes = max(1, round((time.time() - float(since)) / 60)) if since else alert_minutes(h.settings)
+            _log.info("z2m_back_online", minutes=minutes)
+            after(
+                s,
+                lambda: tasks.kick("ext.push", type="z2m_online", level="info", params={"min": minutes}, force=True),
+            )
+        return
+    await events.add(s, "zigbee.offline", "crit")
+    await kv().set("z2m:offline_at", str(time.time()))
+    delay = alert_minutes((await events.home(s)).settings)
+    if not delay:
+        await offline_alert(s)
+        return
+    _log.warning("z2m_offline_alert_scheduled", minutes=delay)
+    after(s, lambda: tasks.later("z2m:offline", delay * 60, "zigbee.offline_alert"))
+
+
+async def offline_alert(s: AsyncSession) -> None:
+    """Тревога, если Zigbee2MQTT все еще без связи."""
+    if await kv().get("z2m:state") != "offline":
+        return
+    await kv().set("z2m:alerted", "1")
+    _log.warning("z2m_offline_alert")
+    await events.notify(s, "z2m:offline", "crit", "z2m_offline", {}, "zigbee")
+
 
 async def request(path: str, payload: dict[str, Any], timeout: float = 10.0) -> Any:
     if await kv().get("z2m:state") == "offline":

@@ -80,6 +80,15 @@
     "de": "Zigbee2MQTT ist offline",
     "es": "Zigbee2MQTT está desconectado"
   },
+  "z2m_online": {
+    "uk": "Zigbee2MQTT знову на зв'язку, без зв'язку було {min} хв",
+    "en": "Zigbee2MQTT is back online after {min} min",
+    "ru": "Zigbee2MQTT снова на связи, без связи было {min} мин",
+    "ja": "Zigbee2MQTT がオンラインに戻りました。オフライン時間 {min} 分",
+    "fr": "Zigbee2MQTT est de nouveau en ligne après {min} min",
+    "de": "Zigbee2MQTT ist nach {min} Min. wieder online",
+    "es": "Zigbee2MQTT vuelve a estar conectado tras {min} min"
+  },
   "flow_failed": {
     "uk": "Сценарій {name} завершився з помилкою",
     "en": "Automation {name} failed",

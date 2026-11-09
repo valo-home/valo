@@ -1,11 +1,13 @@
 import json
+import time
 
 import httpx
 import pytest
 
 from app.db.base import commit, session
 from app.db.models import Device
-from app.domain import adapters, ingest
+from app.domain import adapters, ingest, zigbee
+from app.lib import tasks
 from app.lib.kv import kv
 
 pytestmark = pytest.mark.anyio
@@ -209,8 +211,65 @@ async def test_bridge_events_and_removal(client: httpx.AsyncClient, owner: dict)
     async with session() as s:
         assert await s.get(Device, LEAK_IEEE) is not None
     await feed("bridge/state", {"state": "offline"})
-    notes = (await client.get("/api/v1/notifications", headers=owner)).json()
-    assert any(n["type"] == "z2m_offline" for n in notes)
+    assert await kv().zscore("timers", "z2m:offline")
+
+
+async def test_z2m_alert_waits_for_configured_minutes_then_reports_recovery(
+    client: httpx.AsyncClient, owner: dict, monkeypatch
+) -> None:
+    pushed: list[dict] = []
+    real_kick = tasks.kick
+
+    async def kick(name: str, /, **kw) -> None:
+        if name == "ext.push":
+            pushed.append(kw)
+            return
+        await real_kick(name, **kw)
+
+    monkeypatch.setattr(tasks, "kick", kick)
+
+    async def z2m_notes() -> list[dict]:
+        notes = (await client.get("/api/v1/notifications", headers=owner)).json()
+        return [n for n in notes if n["type"] == "z2m_offline"]
+
+    await feed("bridge/state", {"state": "online"})
+    await feed("bridge/state", {"state": "offline"})
+    due = await kv().zscore("timers", "z2m:offline")
+    assert due and 170 < due - time.time() <= 180
+    assert not await z2m_notes() and not pushed
+    await feed("bridge/state", {"state": "online"})
+    assert await kv().zscore("timers", "z2m:offline") is None
+    assert not pushed
+    evs = {e["type"] for e in (await client.get("/api/v1/events", headers=owner)).json()}
+    assert {"zigbee.offline", "zigbee.online"} <= evs
+
+    await feed("bridge/state", {"state": "offline"})
+    await kv().set("z2m:offline_at", str(time.time() - 300))
+    await kv().zadd("timers", {"z2m:offline": time.time() - 1})
+    await tasks.pump()
+    assert len(await z2m_notes()) == 1
+    assert [p["type"] for p in pushed] == ["z2m_offline"]
+    await feed("bridge/state", {"state": "online"})
+    assert not await z2m_notes()
+    assert pushed[-1] == {"type": "z2m_online", "level": "info", "params": {"min": 5}, "force": True}
+
+    r = await client.patch("/api/v1/home", headers=owner, json={"settings": {"z2mAlertMinutes": 0}})
+    assert r.status_code == 200
+    pushed.clear()
+    await feed("bridge/state", {"state": "offline"})
+    assert await kv().zscore("timers", "z2m:offline") is None
+    assert len(await z2m_notes()) == 1 and [p["type"] for p in pushed] == ["z2m_offline"]
+    await feed("bridge/state", {"state": "online"})
+    assert pushed[-1]["type"] == "z2m_online"
+
+
+def test_z2m_alert_minutes_setting_is_clamped() -> None:
+    assert zigbee.alert_minutes({}) == 3
+    assert zigbee.alert_minutes({"z2mAlertMinutes": 10}) == 10
+    assert zigbee.alert_minutes({"z2mAlertMinutes": -5}) == 0
+    assert zigbee.alert_minutes({"z2mAlertMinutes": 999}) == 60
+    assert zigbee.alert_minutes({"z2mAlertMinutes": "x"}) == 3
+    assert zigbee.alert_minutes({"z2mAlertMinutes": True}) == 3
 
 
 SMOKE_CO_IEEE = "0xa4c1380000513c0d"

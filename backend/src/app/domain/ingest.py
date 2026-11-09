@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import after
 from app.db.models import Device, Extension
-from app.domain import adapters, devices, events
+from app.domain import adapters, devices, events, zigbee
 from app.domain.common import slug
 from app.lib import log, realtime
 from app.lib.kv import kv, set_json
@@ -27,12 +27,7 @@ async def z2m(s: AsyncSession, sub: str, payload: Any) -> None:
         st = _state(payload)
         prev = await kv().getset("z2m:state", st)
         if prev != st:
-            if st == "online":
-                await events.add(s, "zigbee.online", "ok")
-                await events.resolve(s, "z2m:offline")
-            else:
-                await events.add(s, "zigbee.offline", "crit")
-                await events.notify(s, "z2m:offline", "crit", "z2m_offline", {}, "zigbee")
+            await zigbee.bridge_state(s, st)
             after(s, lambda: realtime.emit("zigbee", {"type": "state", "state": st}, ["zigbee", "all"]))
     elif sub == "bridge/info":
         await set_json("z2m:info", payload)

@@ -14,7 +14,7 @@
 	let tab = $state((admin && page.url.searchParams.get('tab')) || (admin ? 'home' : 'about'));
 	$effect(() => keepTab(tab, admin ? 'home' : 'about'));
 	let errs = $state(null);
-	let home = $state({ ...s.home, settings: { pushLevels: ['crit'], historyDays: 10, autoBackup: true, lang: app.lang, ...s.home.settings } });
+	let home = $state({ ...s.home, settings: { pushLevels: ['crit'], historyDays: 10, z2mAlertMinutes: 3, autoBackup: true, lang: app.lang, ...s.home.settings } });
 	let users = $state([]);
 	const SIZE = 25;
 	const pgs = $state({ users: 0, tokens: 0, backups: 0, errors: 0 });
@@ -75,7 +75,7 @@
 		if (k === 'about') Promise.all([get('/system'), admin ? get('/system/resources') : null, admin ? get('/system/update') : null]).then(([a, b, c]) => ([sys, res, upd] = [a, b, c]));
 	});
 	const saveHome = () =>
-		app.run(() => app.api('PATCH', '/home', { name: home.name, lat: +home.lat, lon: +home.lon, timezone: home.timezone, currency: home.currency, settings: { ...home.settings, historyDays: +home.settings.historyDays } }), t('sys.saved'));
+		app.run(() => app.api('PATCH', '/home', { name: home.name, lat: +home.lat, lon: +home.lon, timezone: home.timezone, currency: home.currency, settings: { ...home.settings, historyDays: +home.settings.historyDays, z2mAlertMinutes: +home.settings.z2mAlertMinutes } }), t('sys.saved'));
 	function editUser(u) {
 		uf = u ? { ...u, password: '' } : { username: '', name: '', password: '', role: 'member', rooms: [], lang: app.lang };
 		sure = '';
@@ -167,6 +167,7 @@
 					<label class="f">{t('setup.currency')}<select class="in" bind:value={home.currency}>{#each ['EUR', 'SEK', 'NOK', 'DKK'] as c}<option>{c}</option>{/each}</select></label>
 					<label class="f">{t('sys.lang')}<select class="in" bind:value={home.settings.lang}>{#each LANGS as l}<option value={l}>{t(`lang.${l}`)}</option>{/each}</select></label>
 					<label class="f">{t('sys.history_days')}<input class="in" type="number" min="1" max="400" bind:value={home.settings.historyDays} /></label>
+					<div class="f"><span><label for="z2m-alert">{t('sys.z2m_alert')}</label> <Hint k="sys_z2m_alert" doc="system" /></span><input id="z2m-alert" class="in" type="number" min="0" max="60" bind:value={home.settings.z2mAlertMinutes} /></div>
 				</div>
 				<div class="f">{t('sys.push_levels')}
 					<div class="seg">{#each ['info', 'warn', 'crit'] as l}<button class:on={home.settings.pushLevels.includes(l)} aria-pressed={!!(home.settings.pushLevels.includes(l))} onclick={() => (home.settings.pushLevels = home.settings.pushLevels.includes(l) ? home.settings.pushLevels.filter((x) => x !== l) : [...home.settings.pushLevels, l])}>{t(`lvl.${l}`)}</button>{/each}</div>

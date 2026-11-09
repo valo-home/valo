@@ -44,7 +44,7 @@ Most notifications close by themselves when the cause goes away. If the problem 
 
 ## What creates notifications
 
-- **critical** a leak, smoke, carbon monoxide, a gas leak, Zigbee2MQTT offline, an extension that keeps crashing, a failed backup
+- **critical** a leak, smoke, carbon monoxide, a gas leak, Zigbee2MQTT offline longer than set in [System](/docs/system), an extension that keeps crashing, a failed backup
 - **warning** an offline device, a device that does not respond to commands, a battery below 15%, an automation that failed
 - an automation with the **Notification** block, at the level set in the block, see [Automations](/docs/flows)
 - an extension with the **Notification delivery** permission
