@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from sqlalchemy import String, cast, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import after, now
-from app.db.models import Event, Home, Notification
-from app.domain.common import Principal, S, out
+from app.db.models import Event, Extension, Home, Notification
+from app.domain.common import ROLES, Principal, S, out
 from app.lib import log, realtime, tasks
 from app.lib.errors import ApplicationError
 from app.lib.kv import kv
@@ -36,6 +36,12 @@ class NotificationOut(S):
     params: dict[str, Any]
     route: str
     created_at: datetime
+    dismissed_at: datetime | None = None
+
+
+class NotificationDetail(NotificationOut):
+    events: list[EventOut] = []
+    log: list[str] = []
 
 
 def rooms(room_id: str | None) -> list[str]:
@@ -180,9 +186,63 @@ async def dismiss(s: AsyncSession, nid: int) -> None:
     after(s, lambda: realtime.emit("notif_gone", {"id": nid}, ["all"]))
 
 
-async def active(s: AsyncSession) -> list[NotificationOut]:
-    st = select(Notification).where(Notification.dismissed_at.is_(None)).order_by(Notification.created_at.desc())
+HISTORY_LIMIT = 300
+RELATED_LIMIT = 30
+RELATED_BEFORE = timedelta(hours=1)
+RELATED_AFTER = timedelta(minutes=10)
+_ROUTE_KINDS = {"zigbee": ("zigbee.",), "system": ("backup.",), "cameras": ("camera.", "media.")}
+
+
+async def active(s: AsyncSession, history: bool = False) -> list[NotificationOut]:
+    """Активные уведомления, с history еще и закрытые, новые сверху."""
+    st = select(Notification).order_by(Notification.created_at.desc())
+    st = st.limit(HISTORY_LIMIT) if history else st.where(Notification.dismissed_at.is_(None))
     return [out(n, NotificationOut) for n in (await s.scalars(st)).all()]
+
+
+async def notification(s: AsyncSession, p: Principal, nid: int) -> NotificationDetail:
+    """Уведомление с записями журнала того же источника около его времени, для расширения еще строки его журнала."""
+    n = await s.get(Notification, nid)
+    if n is None:
+        raise ApplicationError("not_found", 404)
+    k, _, rest = n.route.partition("/")
+    st = select(Event).where(
+        Event.ts >= n.created_at - RELATED_BEFORE, Event.ts <= (n.dismissed_at or now()) + RELATED_AFTER
+    )
+    log: list[str] = []
+    if k == "devices" and rest:
+        st = st.where(Event.device_id == rest)
+    elif k == "flows" and rest:
+        st = st.where(Event.flow_id == rest)
+    elif k == "ext" and rest:
+        x = await s.get(Extension, rest)
+        mine = [Event.actor == f"ext:{rest}"]
+        if x is not None:
+            mine.append(Event.params.op("->>")("name") == x.name)
+        st = st.where(Event.type.startswith("ext."), or_(*mine))
+        if p.level() >= ROLES["admin"]:
+            log = list(reversed(await kv().lrange(f"ext:log:{rest}", 0, RELATED_LIMIT - 1)))
+    elif k in _ROUTE_KINDS:
+        st = st.where(or_(*(Event.type.startswith(x) for x in _ROUTE_KINDS[k])))
+        if k == "cameras" and n.params.get("name"):
+            st = st.where(Event.params.op("->>")("name") == str(n.params["name"]))
+    else:
+        st = st.where(Event.level.in_(("warn", "crit")))
+    if p.rooms:
+        st = st.where(Event.room_id.in_(p.rooms))
+    evs = (await s.scalars(st.order_by(Event.id.desc()).limit(RELATED_LIMIT))).all()
+    return NotificationDetail(
+        id=n.id,
+        key=n.key,
+        level=n.level,
+        type=n.type,
+        params=n.params,
+        route=n.route,
+        created_at=n.created_at,
+        dismissed_at=n.dismissed_at,
+        events=[out(e, EventOut) for e in evs],
+        log=log,
+    )
 
 
 async def home(s: AsyncSession) -> Home:

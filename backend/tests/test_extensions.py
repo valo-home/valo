@@ -83,6 +83,18 @@ async def test_repeated_extension_notice_links_to_its_card_and_moves_up(client: 
     async with session() as s:
         n = await s.scalar(select(Notification).where(Notification.key == "ext:test.notice:delivery"))
         assert now() - n.created_at < timedelta(minutes=1)
+        nid = n.id
+    await kv().lpush("ext:log:test.notice", "send failed: chat not found")
+    d = (await client.get(f"/api/v1/notifications/{nid}", headers=owner)).json()
+    assert d["params"]["text"] == "chat not found" and d["log"] == ["send failed: chat not found"]
+    await client.post(
+        "/api/v1/users",
+        json={"username": "aino", "name": "Aino", "password": "secret123", "role": "member"},
+        headers=owner,
+    )
+    tok = (await client.post("/api/v1/auth/login", json={"username": "aino", "password": "secret123"})).json()["token"]
+    d = (await client.get(f"/api/v1/notifications/{nid}", headers={"Authorization": f"Bearer {tok}"})).json()
+    assert d["params"]["text"] == "chat not found" and d["log"] == []
 
 
 async def test_core_call_permissions(client: httpx.AsyncClient, owner: dict) -> None:

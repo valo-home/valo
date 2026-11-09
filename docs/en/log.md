@@ -38,7 +38,11 @@ A user limited to some rooms sees only the events of those rooms.
 
 ## Notifications
 
-The bell in the top bar shows the number of active notifications. A click opens the **Notifications** panel with critical ones first. Each notification leads to the source of the problem, for example the device or automation page. The **Dismiss** button closes a notification by hand.
+The bell in the top bar shows the number of active notifications. A click opens the **Notifications** panel with critical ones first. A click on the notification text opens its page, the link under the text goes straight to the source of the problem, for example the device or automation page. The **Dismiss** button closes a notification by hand.
+
+The **All notifications** button at the bottom of the panel opens a separate page. The **Active** list shows what needs attention, the **All** list also shows closed notifications with the time they closed.
+
+The notification page shows the full text, level, time, state, source and a **Go to source** button. On the right **Log around this time** lists entries from the same source from an hour before the notification until it closed, for example a Zigbee2MQTT drop and recovery. For an extension notification an administrator also sees the latest lines of that extension log. **Technical data** shows the key, type and parameters of the notification.
 
 Most notifications close by themselves when the cause goes away. If the problem comes back, the notification appears again.
 

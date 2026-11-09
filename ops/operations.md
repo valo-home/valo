@@ -111,7 +111,7 @@ All services have `restart: unless-stopped`, Docker starts them on boot. After a
 | `web` | web interface |
 | `edge` | Caddy, single entry point on `WEB_PORT` |
 | `postgres`, `redis`, `rabbitmq`, `mosquitto` | storage, cache, task queue, MQTT broker |
-| `zigbee2mqtt` | Zigbee coordinator, waits until the adapter is chosen |
+| `zigbee2mqtt` | Zigbee coordinator, waits until the adapter is chosen. The wrapper restarts Zigbee2MQTT when the process is alive but has held no adapter port for 30 s, which happens when the adapter fails and the process hangs while stopping |
 
 ## Diagnostics
 

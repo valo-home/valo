@@ -59,3 +59,16 @@ export function route(app, r) {
 	const map = { devices: '/devices/', flows: '/flows/', ext: '/extensions', zigbee: '/zigbee', system: '/system' };
 	return app.path((map[k] ?? `/${k}`) + rest.map(encodeURIComponent).join('/'));
 }
+
+export function routeName(app, r) {
+	const { t, s } = app;
+	const [k, ...rest] = (r || '').split('/');
+	const id = rest.join('/');
+	if (k === 'devices' && id) return s.devices[id]?.name ?? id;
+	if (k === 'flows' && id) return s.flows.find((x) => x.id === id)?.name ?? id;
+	if (k === 'ext' && id) {
+		const n = s.contrib?.exts?.find((x) => x.id === id)?.name;
+		return `${t('nav.extensions')} · ${(n && typeof n === 'object' ? (n[app.lang] ?? n.en ?? Object.values(n)[0]) : n) || id}`;
+	}
+	return k && t.has(`nav.${k}`) ? t(`nav.${k}`) : t('nav.home');
+}

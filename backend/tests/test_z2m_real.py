@@ -404,3 +404,25 @@ async def test_ota_unsupported_is_refused_locally(client: httpx.AsyncClient, own
     assert not [t for t, _ in published if "ota_update" in t]
     p = (await client.get(f"/api/v1/devices/{PLUG_IEEE}", headers=owner)).json()
     assert p["attrs"]["otaSupported"] is False
+
+
+async def test_notification_page_shows_details_related_log_and_history(client: httpx.AsyncClient, owner: dict) -> None:
+    await feed("bridge/state", {"state": "online"})
+    await client.patch("/api/v1/home", headers=owner, json={"settings": {"z2mAlertMinutes": 0}})
+    await feed("bridge/state", {"state": "offline"})
+    active = (await client.get("/api/v1/notifications", headers=owner)).json()
+    n = next(x for x in active if x["type"] == "z2m_offline")
+    assert n["dismissedAt"] is None
+    d = (await client.get(f"/api/v1/notifications/{n['id']}", headers=owner)).json()
+    assert d["route"] == "zigbee" and d["level"] == "crit"
+    assert [e["type"] for e in d["events"]][:2] == ["zigbee.offline", "zigbee.online"]
+    assert all(e["type"].startswith("zigbee.") for e in d["events"])
+    assert d["log"] == []
+    await feed("bridge/state", {"state": "online"})
+    assert not any(x["id"] == n["id"] for x in (await client.get("/api/v1/notifications", headers=owner)).json())
+    hist = (await client.get("/api/v1/notifications?history=true", headers=owner)).json()
+    closed = next(x for x in hist if x["id"] == n["id"])
+    assert closed["dismissedAt"]
+    d = (await client.get(f"/api/v1/notifications/{n['id']}", headers=owner)).json()
+    assert d["dismissedAt"] and d["events"][0]["type"] == "zigbee.online"
+    assert (await client.get("/api/v1/notifications/999999", headers=owner)).status_code == 404

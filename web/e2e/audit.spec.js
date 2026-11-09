@@ -12,6 +12,7 @@ const PAGES = [
 	['zigbee', '/zigbee', []], ['zigbee-devices', '/zigbee', ['tab:1']], ['zigbee-net', '/zigbee', ['tab:2']],
 	['mqtt', '/mqtt', []], ['mqtt-disc', '/mqtt', ['tab:1']], ['mqtt-map', '/mqtt', ['tab:2']], ['mqtt-clients', '/mqtt', ['tab:3']],
 	['log', '/log', []],
+	['notifications', '/notifications', []], ['notification', '/notifications', ['first-notification']],
 	...['home', 'users', 'tokens', 'backups', 'errors', 'ai', 'about'].map((k, i) => [`sys-${k}`, '/system', [`sub:${i}`]]),
 	['docs', '/docs', []], ['docs-scenes', '/docs/scenes', []], ['docs-arch', '/docs/architecture', []], ['docs-ext', '/docs/ext/fi.valo.safety', []]
 ];
@@ -65,6 +66,7 @@ for (const [cn, w, h, cs, lang] of CONF) {
 					if (a === 'edit') await page.locator('.ph .row .btn').first().click();
 					if (a.startsWith('tab:')) await page.locator('.tabs > button, .tabs .th > button').nth(+a.slice(4)).click();
 					if (a.startsWith('sub:')) await page.locator('.subn button').nth(+a.slice(4)).click();
+					if (a === 'first-notification') await page.locator('#page a.dn').first().click();
 					await page.waitForTimeout(700);
 				}
 				report[name] = { issues: await page.evaluate(probe), errors: errs };

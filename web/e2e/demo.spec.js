@@ -53,10 +53,31 @@ test('login and logout work as plain forms without javascript', async ({ browser
 test('main pages render without console errors', async ({ page }) => {
 	const errors = watchErrors(page);
 	await login(page);
-	for (const p of ['/en/boards', '/en/rooms', '/en/devices', '/en/cameras', '/en/cameras/dvor', '/en/flows', '/en/extensions', '/en/zigbee', '/en/mqtt', '/en/log', '/en/system', '/en/docs', '/en/docs/flows']) {
+	for (const p of ['/en/boards', '/en/rooms', '/en/devices', '/en/cameras', '/en/cameras/dvor', '/en/flows', '/en/extensions', '/en/zigbee', '/en/mqtt', '/en/log', '/en/notifications', '/en/system', '/en/docs', '/en/docs/flows']) {
 		await page.goto(p);
 		await expect(page.locator('#page h1').first()).toBeVisible();
 	}
+	expect(errors.filter((e) => !e.includes('favicon') && !e.includes('e2e browser error probe'))).toEqual([]);
+});
+
+test('bell opens a notification page with details and the list of all notifications', async ({ page }) => {
+	const errors = watchErrors(page);
+	await login(page);
+	await page.goto('/en/devices');
+	await page.getByRole('button', { name: 'Notifications', exact: true }).click();
+	const item = page.locator('dialog[open] a.dn').first();
+	await expect(item).toBeVisible();
+	const text = (await item.textContent()).trim();
+	await item.click();
+	await expect(page).toHaveURL(/\/en\/notifications\/\d+$/);
+	await expect(page.locator('#page h1')).toContainText('Notification');
+	await expect(page.locator('#page')).toContainText(text);
+	await expect(page.getByRole('link', { name: 'Go to source' })).toBeVisible();
+	await page.getByRole('link', { name: 'Back' }).click();
+	await expect(page).toHaveURL(/\/en\/notifications$/);
+	await expect(page.locator('#page a.dn', { hasText: text }).first()).toBeVisible();
+	await page.getByRole('button', { name: 'All', exact: true }).click();
+	await expect(page.locator('#page a.dn').first()).toBeVisible();
 	expect(errors.filter((e) => !e.includes('favicon') && !e.includes('e2e browser error probe'))).toEqual([]);
 });
 

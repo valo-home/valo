@@ -314,8 +314,13 @@ async def event_chain(db_session: Db, event_id: FromPath[int]) -> list[events.Ev
 
 
 @get("/notifications")
-async def notifications(db_session: Db) -> list[events.NotificationOut]:
-    return await events.active(db_session)
+async def notifications(db_session: Db, history: FromQuery[bool] = False) -> list[events.NotificationOut]:
+    return await events.active(db_session, history)
+
+
+@get("/notifications/{nid:int}")
+async def notification(db_session: Db, p: P, nid: FromPath[int]) -> events.NotificationDetail:
+    return await events.notification(db_session, p, nid)
 
 
 @post("/notifications/{nid:int}/dismiss", status_code=204)
@@ -432,6 +437,7 @@ core = Router(
         list_events,
         event_chain,
         notifications,
+        notification,
         dismiss,
         blocks,
         list_flows,
