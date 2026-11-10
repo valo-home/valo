@@ -43,5 +43,9 @@ def camera_of(name: str) -> str | None:
     return base if NAME.match(base) else None
 
 
+_SECRET_QUERY = re.compile(r"(?i)([?&][\w.-]*(?:token|pass|pwd|key|secret|sig|auth)[\w.-]*=)[^&#\s'\"]+")
+
+
 def mask(url: str) -> str:
-    return re.sub(r"//[^/@]*@", "//***@", url)
+    """Скрыть логин и пароль в адресе и секретные параметры запроса (token, password, key и подобные)."""
+    return _SECRET_QUERY.sub(r"\1***", re.sub(r"//[^/@\s]*@", "//***@", url))

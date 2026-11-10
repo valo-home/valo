@@ -160,5 +160,14 @@
     "fr": "La caméra {name} est de nouveau en ligne",
     "es": "La cámara {name} vuelve a estar en línea",
     "ja": "カメラ {name} がオンラインに復帰しました"
+  },
+  "camera_api_key": {
+    "ru": "Камера {name} не отдает снимок с сохраненным ключом или паролем, снимки берутся из видеопотока. Проверьте данные на вкладке Подключение",
+    "uk": "Камера {name} не віддає знімок зі збереженим ключем або паролем, знімки беруться з відеопотоку. Перевірте дані на вкладці Підключення",
+    "en": "Camera {name} refuses snapshots with the saved key or password, snapshots are taken from the video stream. Check the data on the Connection tab",
+    "de": "Kamera {name} verweigert Schnappschüsse mit dem gespeicherten Schlüssel oder Passwort, Schnappschüsse kommen aus dem Videostream. Prüfen Sie die Daten im Tab Verbindung",
+    "fr": "La caméra {name} refuse les instantanés avec la clé ou le mot de passe enregistré, les instantanés sont pris dans le flux vidéo. Vérifiez les données dans l'onglet Connexion",
+    "es": "La cámara {name} rechaza las instantáneas con la clave o contraseña guardada, las instantáneas se toman del flujo de vídeo. Revise los datos en la pestaña Conexión",
+    "ja": "カメラ {name} が保存されたキーまたはパスワードでのスナップショットを拒否しています。スナップショットは映像ストリームから取得します。接続タブで設定を確認してください"
   }
 }

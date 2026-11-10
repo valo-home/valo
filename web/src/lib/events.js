@@ -13,6 +13,36 @@ function human(app, v) {
 	return String(v);
 }
 
+const CAM_FIELDS = {
+	name: 'devs.name',
+	room: 'devs.room',
+	sort: 'cam.sort',
+	config: 'cam.t_connection',
+	'record.mode': 'cam.recording',
+	'record.snapshots': 'cam.rec_snapshots',
+	'record.pre': 'cam.pre',
+	'record.post': 'cam.post',
+	'record.max': 'cam.max',
+	'record.labels': 'cam.rec_labels',
+	'record.stream': 'cam.rec_stream',
+	'record.audio': 'cam.rec_audio',
+	'record.schedule': 'cam.schedule',
+	'record.keep_days': 'cam.keep_days',
+	'record.offline_min': 'cam.offline_min',
+	'record.detect': 'cam.t_vision',
+	'record.zones': 'cam.vis_zones'
+};
+
+function camChange(app, k, v) {
+	const { t } = app;
+	const name = CAM_FIELDS[k] ? t(CAM_FIELDS[k]) : k;
+	if (v == null) return name;
+	if (typeof v === 'boolean') return `${name} ${t(v ? 'v.on' : 'v.off')}`;
+	if (k === 'record.mode' && t.has(`cam.mode_${v}`)) return `${name} ${t(`cam.mode_${v}`).toLowerCase()}`;
+	if (k === 'record.stream') return `${name} ${v === 'sub' ? 'SD' : 'HD'}`;
+	return `${name} ${human(app, v)}`;
+}
+
 export function evText(app, e) {
 	const { t, s } = app;
 	const p = Object.fromEntries(Object.entries(e.params || {}).map(([k, v]) => [k, human(app, v)]));
@@ -27,6 +57,10 @@ export function evText(app, e) {
 		if (d && e.type.startsWith('command.') && e.params.values && typeof e.params.values === 'object') p.values = values(app, e.deviceId, e.params.values);
 	}
 	if (e.type === 'device.moved') for (const k of ['room', 'old']) p[k] = s.rooms.find((r) => r.id === e.params[k])?.name ?? t('devs.no_room');
+	if (e.type === 'camera.updated' && e.params?.changes && typeof e.params.changes === 'object') {
+		p.what = Object.entries(e.params.changes).map(([k, v]) => camChange(app, k, v)).join(', ');
+		if (p.what) return t('e.camera.updated_what', p);
+	}
 	const key = `e.${e.type}`;
 	return t.has(key) ? t(key, p) : [e.type, p.name].filter(Boolean).join(' ');
 }

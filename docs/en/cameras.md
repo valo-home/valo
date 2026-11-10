@@ -96,12 +96,14 @@ The **Camera settings** page opens with a button on the camera page. At the top 
 
 - **General**: name, room and tile order (a smaller number comes first)
 - **Connection**: driver fields. **Test** connects to the camera with the entered values without saving and shows the result. **Save** checks again and saves. Empty password fields keep the saved values
-- **Recording**: mode, margin before and after the event, longest clip, which events record a clip (motion, person, car, animal), the stream to record HD or SD, sound, schedule, retention of continuous recording and the notification about an offline camera, details below
+- **Recording**: mode, margin before and after the event, longest clip, which events record a clip (motion, person, car, animal), the stream to record HD or SD, sound, event snapshots, schedule, retention of continuous recording and the notification about an offline camera, details below
 - **Camera**: settings of the camera itself, the driver reads and changes them, details below
 - **Detection and zones**: enabling detection, labels, threshold and zones on the frame
 - **Pan and tilt**: presets and calibration, only for pan and tilt cameras
 - **Maintenance**: diagnostics, actions and camera information
 - **Removal**: delete the camera and keep the recordings, or delete it together with the recordings
+
+Every save goes to the [log](/docs/log) with the list of changed settings, for example **Camera Yard settings changed: Recording off, Event snapshots off**.
 
 ### Settings of the camera itself
 
@@ -137,6 +139,7 @@ Instead of a generic **Connecting** Valo shows the reason
 - **Camera does not answer**: nothing answers at the address. Check the camera power and Wi-Fi
 - **Another device at the address**: the router gave the camera address to another device
 - **Wrong API key** and **Wrong stream password**: the camera answers but does not accept the key or the password, they must be entered on the **Connection** tab
+- If video works but the camera refuses snapshots with the saved API key or password, Valo takes snapshots from the video stream and shows the notification **Camera refuses snapshots with the saved key or password**. It clears by itself after the first successful snapshot from the camera. The key of a Thingino camera is checked in its web UI, **Settings**, **Web UI**
 - **No video**: the camera is online, but no video has arrived for more than 30 seconds. **Restart stream** usually helps. If it lasts 3 minutes, Valo restarts the stream on the camera by itself, or reconnects the video if the driver cannot do that. At most once in 15 minutes, each time with an entry in the log
 - **Camera driver stopped**: the camera extension is disabled or has crashed
 
@@ -165,7 +168,9 @@ Each camera has its own recording mode.
 
 - **On events** (default). When an event starts, a snapshot is saved immediately, and after the event ends a clip with a margin before and after is saved
 - **Continuous**. Video is recorded without breaks in 10 minute pieces, the pieces start on 10 minute boundaries of the clock. Event clips are saved too
-- **Off**. Only snapshots are saved on events
+- **Off**. No video is recorded. Camera events stay in the list, snapshots are saved for them
+
+The **Event snapshots** switch (on by default) works in every mode. When it is off, motion events are only listed and still run flows, no snapshots are saved for them. To stop events completely, turn off motion detection on the camera itself, **Camera** tab, but then the camera stops reporting motion to flows too. Snapshots with a frame from the detection extension are not controlled by this switch, they stop when detection is turned off
 
 How a clip is formed
 

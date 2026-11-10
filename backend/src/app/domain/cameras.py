@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import after, commit, now, rollback, session
-from app.db.models import Camera, CameraEvent, Device, Extension, Media
+from app.db.models import Camera, CameraEvent, Device, Extension, Media, Notification
 from app.domain import devices, events, extensions, media
 from app.domain.common import Principal, S, iso, slug
 from app.lib import log, realtime, rtc, secretbox, tasks
@@ -38,10 +38,12 @@ RECORD: dict[str, Any] = {
     "keep_days": 7,
     "offline_min": 5,
     "audio": True,
+    "snapshots": True,
     "detect": {"enabled": False, "labels": ["person", "car", "animal"], "score": 0.55},
     "zones": [],
 }
 MODES = ("off", "events", "continuous")
+SHOWN = ("mode", "snapshots", "audio", "stream")
 DETECT_LABELS = ("person", "car", "animal", "bicycle", "motorcycle", "truck", "bus")
 _HHMM = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
 LABEL_CAP = {"motion": "occ"}
@@ -56,6 +58,8 @@ ACTIONS_ADMIN = ("reboot", "restart_stream", "sync_time")
 FIELD_TYPES = ("bool", "int", "select", "text", "info")
 _log = log.get("cameras")
 _stills: dict[str, tuple[float, bytes]] = {}
+_key_ok: dict[str, tuple[bool, float]] = {}
+KEY_RECHECK = 300
 
 
 class DriverOut(S):
@@ -208,8 +212,8 @@ def norm_record(raw: dict[str, Any] | None, base: dict[str, Any] | None = None) 
             r[k] = _num(v, 10, 600)
         elif k == "labels":
             r["labels"] = _labels(v)
-        elif k == "audio":
-            r["audio"] = bool(v)
+        elif k in ("audio", "snapshots"):
+            r[k] = bool(v)
         elif k == "stream" and v in ("main", "sub"):
             r["stream"] = v
         elif k == "keep_days":
@@ -527,15 +531,27 @@ async def create(s: AsyncSession, p: Principal, data: CameraIn) -> CameraOut:
 async def update(s: AsyncSession, p: Principal, camera_id: str, data: CameraPatch) -> CameraOut:
     p.need("admin")
     c, d, x = await _load(s, p, camera_id)
+    changes: dict[str, Any] = {}
     if data.name is not msgspec.UNSET and data.name.strip():
+        if d.name != data.name.strip()[:120]:
+            changes["name"] = None
         d.name = data.name.strip()[:120]
         d.attrs = {**(d.attrs or {}), "nameSet": True}
     if data.room_id is not msgspec.UNSET:
+        if d.room_id != (data.room_id or None):
+            changes["room"] = None
         d.room_id = data.room_id or None
     if data.sort is not msgspec.UNSET:
+        if c.sort != int(data.sort):
+            changes["sort"] = None
         c.sort = int(data.sort)
     if data.record is not msgspec.UNSET:
-        c.record = norm_record(data.record, c.record)
+        old = norm_record(c.record)
+        new = norm_record(data.record, old)
+        for k, v in new.items():
+            if old.get(k) != v:
+                changes[f"record.{k}"] = v if k in SHOWN else None
+        c.record = new
     if data.config is not msgspec.UNSET:
         if x is None:
             raise ApplicationError("camera_driver_unknown", 422, driver=c.driver)
@@ -547,7 +563,16 @@ async def update(s: AsyncSession, p: Principal, camera_id: str, data: CameraPatc
         info = res.get("info") if isinstance(res.get("info"), dict) else {}
         c.info = {k: v for k, v in info.items() if isinstance(v, (str, int, float, bool))}
         d.caps = _caps(res)
-    await events.add(s, "camera.updated", actor=p.actor, params={"name": d.name}, device_id=d.id, room_id=d.room_id)
+        changes["config"] = None
+    _log.info("camera_updated", camera=c.id, changes=sorted(changes))
+    await events.add(
+        s,
+        "camera.updated",
+        actor=p.actor,
+        params={"name": d.name, **({"changes": changes} if changes else {})},
+        device_id=d.id,
+        room_id=d.room_id,
+    )
     snapshot = devices.view(d)
     after(s, lambda: realtime.emit("device", snapshot, devices.rooms_of(d)))
     _changed(s, c.driver)
@@ -1079,33 +1104,78 @@ def _still_url(c: Camera, sub: bool) -> str:
     return str(secretbox.open_(raw)) if raw else ""
 
 
+async def _jpeg(cl: httpx.AsyncClient, url: str, **kw: Any) -> bytes:
+    r = await cl.get(url, **kw)
+    r.raise_for_status()
+    if not r.content.startswith(b"\xff\xd8"):
+        raise ValueError(f"not a jpeg, {r.headers.get('content-type')}")
+    return r.content
+
+
+async def api_key_state(c: Camera, ok: bool) -> None:
+    """Уведомление, если камера отвечает, но отклоняет доступ к снимкам, и отбой после первого удачного снимка."""
+    last = _key_ok.get(c.id)
+    if last and last[0] is ok and time.monotonic() - last[1] < KEY_RECHECK:
+        return
+    _key_ok[c.id] = (ok, time.monotonic())
+    key = f"camera_api_key:{c.id}"
+    try:
+        async with session() as s:
+            active = await s.scalar(
+                select(Notification.id).where(Notification.key == key, Notification.dismissed_at.is_(None))
+            )
+            if ok:
+                if active:
+                    await events.resolve(s, key)
+            elif not active:
+                d = await s.get(Device, c.device_id)
+                name = d.name if d else c.id
+                _log.warning("camera_api_key_rejected", camera=c.id)
+                await events.notify(s, key, "warn", "camera_api_key", {"name": name}, f"cameras/{c.id}")
+                await events.add(s, "camera.api_key", "warn", params={"name": name}, device_id=c.device_id)
+            await commit(s)
+    except Exception as e:
+        _log.error("camera_api_key_state_failed", camera=c.id, error=str(e), exc_info=True)
+
+
 async def still(c: Camera, sub: bool = True, fresh: bool = False, local: bool = False) -> bytes:
+    """Кадр с камеры. Если камера отвечает, но не отдает снимок (например ключ API отклонен), кадр берется из потока."""
     key = f"{c.id}:{int(sub)}"
     hit = _stills.get(key)
     if hit and not fresh and time.monotonic() - hit[0] < 8:
         return hit[1]
     url = _still_url(c, sub)
-    try:
-        async with httpx.AsyncClient(timeout=8) as cl:
-            if url:
-                r = await cl.get(url)
-            else:
-                r = await cl.get(
+    data = b""
+    async with httpx.AsyncClient(timeout=8) as cl:
+        if url:
+            try:
+                data = await _jpeg(cl, url)
+                await api_key_state(c, True)
+            except httpx.HTTPStatusError as e:
+                _log.warning("camera_still_failed", camera=c.id, via="camera", error=rtc.mask(str(e)))
+                if e.response.status_code in (401, 403):
+                    await api_key_state(c, False)
+            except ValueError as e:
+                _log.warning("camera_still_failed", camera=c.id, via="camera", error=rtc.mask(str(e)))
+            except httpx.HTTPError as e:
+                _log.warning("camera_still_failed", camera=c.id, via="camera", error=rtc.mask(str(e)))
+                raise ApplicationError("camera_unavailable", 503) from e
+        if not data:
+            try:
+                data = await _jpeg(
+                    cl,
                     rtc.api("/api/frame.jpeg", local),
                     params={"src": rtc.stream(c.id, sub and bool(c.streams.get("streams", {}).get("sub")))},
                     headers={"Authorization": rtc.auth_header()},
                 )
-        r.raise_for_status()
-        if not r.content.startswith(b"\xff\xd8"):
-            raise ValueError(f"not a jpeg, {r.headers.get('content-type')}")
-    except (httpx.HTTPError, ValueError) as e:
-        _log.warning("camera_still_failed", camera=c.id, via="camera" if url else "go2rtc", error=rtc.mask(str(e)))
-        raise ApplicationError("camera_unavailable", 503) from e
-    _stills[key] = (time.monotonic(), r.content)
+            except (httpx.HTTPError, ValueError) as e:
+                _log.warning("camera_still_failed", camera=c.id, via="go2rtc", error=rtc.mask(str(e)))
+                raise ApplicationError("camera_unavailable", 503) from e
+    _stills[key] = (time.monotonic(), data)
     if len(_stills) > 64:
         for k in sorted(_stills, key=lambda k: _stills[k][0])[:16]:
             _stills.pop(k, None)
-    return r.content
+    return data
 
 
 async def preview(s: AsyncSession, p: Principal, camera_id: str, full: bool = False) -> bytes:

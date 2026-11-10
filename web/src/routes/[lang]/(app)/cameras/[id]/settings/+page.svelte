@@ -355,6 +355,11 @@
 							</div>
 						{/if}
 					{/if}
+					<div class="f">
+						<span>{t('cam.rec_snapshots')}</span>
+						<Toggle on={rec.snapshots} label={t('cam.rec_snapshots')} disabled={!admin} onclick={() => (rec.snapshots = !rec.snapshots)} />
+						<small class="dim">{t('cam.rec_snapshots_hint')}</small>
+					</div>
 					<label class="f cs-short"><span>{t('cam.offline_min')}</span><input class="in" type="number" min="0" max="1440" bind:value={rec.offline_min} disabled={!admin} /></label>
 					<small class="dim">{t('cam.offline_min_hint')}</small>
 					{#if admin}<div><button class="btn pri" onclick={saveRecord} disabled={busy === 'record'}>{t('a.save')}</button></div>{/if}

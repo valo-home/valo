@@ -679,3 +679,92 @@ async def test_camera_time_follows_the_hub_address(
     async with session() as s:
         assert await cameras.keep_time(s) == 1
     assert driver[-1]["params"] == {"timezone": driver[-1]["params"]["timezone"], "ntp": "10.0.0.3"}
+
+
+def test_mask_hides_query_secrets_and_credentials() -> None:
+    err = "Client error '401 Unauthorized' for url 'http://10.0.0.5/x/ch0.jpg?token=abc123&w=1'"
+    assert rtc.mask(err) == "Client error '401 Unauthorized' for url 'http://10.0.0.5/x/ch0.jpg?token=***&w=1'"
+    assert rtc.mask("http://h/a?user=x&password=p1&API_KEY=z") == "http://h/a?user=x&password=***&API_KEY=***"
+    assert rtc.mask("rtsp://u:p@h/ch0 http://h/s.jpg?key=1") == "rtsp://***@h/ch0 http://h/s.jpg?key=***"
+    assert (
+        rtc.mask("http://h/a?access_token=1&api-key=2&sig=3&w=640")
+        == "http://h/a?access_token=***&api-key=***&sig=***&w=640"
+    )
+
+
+async def test_event_snapshots_switch_and_changes_in_log(client: httpx.AsyncClient, owner: dict, driver: list) -> None:
+    await client.post(
+        "/api/v1/cameras", json={"driver": DRIVER, "name": "Yard", "config": {"host": "h"}}, headers=owner
+    )
+    assert cameras.norm_record(None)["snapshots"] is True
+    r = await client.patch("/api/v1/cameras/yard", json={"record": {"mode": "off", "snapshots": 0}}, headers=owner)
+    assert r.status_code == 200 and r.json()["record"]["snapshots"] is False and r.json()["record"]["mode"] == "off"
+    r = await client.patch("/api/v1/cameras/yard", json={"record": {"mode": "off", "pre": 7}}, headers=owner)
+    async with session() as s:
+        rows = (await s.scalars(select(Event).where(Event.type == "camera.updated").order_by(Event.id))).all()
+        assert rows[-2].params["changes"] == {"record.mode": "off", "record.snapshots": False}
+        assert rows[-1].params["changes"] == {"record.pre": None}
+        assert (await cameras.sources(s))["yard"]["record"]["snapshots"] is False
+
+
+async def test_still_falls_back_to_stream_when_camera_rejects_key(
+    client: httpx.AsyncClient, owner: dict, driver: list, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    await client.post(
+        "/api/v1/cameras", json={"driver": DRIVER, "name": "Gate", "config": {"host": "h"}}, headers=owner
+    )
+    camera_code = {"v": 401}
+    seen: list[str] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req.url.path)
+        if req.url.path.endswith("/x/ch0.jpg"):
+            if camera_code["v"] != 200:
+                return httpx.Response(camera_code["v"])
+            return httpx.Response(200, content=b"\xff\xd8camera")
+        return httpx.Response(200, content=b"\xff\xd8stream")
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(cameras.httpx, "AsyncClient", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    async with session() as s:
+        c = await s.get(Camera, "gate")
+    assert await cameras.still(c, sub=False, fresh=True) == b"\xff\xd8stream"
+    assert seen[-1].endswith("/api/frame.jpeg")
+    cameras._key_ok.clear()
+    assert await cameras.still(c, sub=False, fresh=True) == b"\xff\xd8stream"
+    async with session() as s:
+        logged = (await s.scalars(select(Event).where(Event.type == "camera.api_key"))).all()
+        assert len(logged) == 1
+    notes = (await client.get("/api/v1/notifications", headers=owner)).json()
+    assert any(n["type"] == "camera_api_key" and n["params"]["name"] == "Gate" for n in notes)
+    camera_code["v"] = 200
+    assert await cameras.still(c, sub=False, fresh=True) == b"\xff\xd8camera"
+    notes = (await client.get("/api/v1/notifications", headers=owner)).json()
+    assert not any(n["type"] == "camera_api_key" for n in notes)
+    camera_code["v"] = 500
+    assert await cameras.still(c, sub=False, fresh=True) == b"\xff\xd8stream"
+    assert not any(
+        n["type"] == "camera_api_key" for n in (await client.get("/api/v1/notifications", headers=owner)).json()
+    )
+
+
+async def test_video_service_skips_event_snapshot_when_switched_off() -> None:
+    from app.cameras import main as cm
+
+    svc = cm.Service()
+    shots: list[int] = []
+
+    async def snap(cid: str, eid: int | None, label: str, origin: str) -> None:
+        shots.append(eid or 0)
+
+    svc.snapshot = snap
+    svc.cams = {
+        "a": {"record": cameras.norm_record({"mode": "off"})},
+        "b": {"record": cameras.norm_record({"snapshots": False})},
+    }
+    await svc.on_event({"camera": "a", "event": 1, "phase": "start", "source": "driver"})
+    await svc.on_event({"camera": "b", "event": 2, "phase": "start", "source": "driver"})
+    await svc.on_event({"camera": "a", "event": 3, "phase": "start", "source": "ext:fi.valo.vision"})
+    for t in list(svc.tasks):
+        await t
+    assert shots == [1] and set(svc.open) == {1, 2, 3}

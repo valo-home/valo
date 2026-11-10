@@ -55,7 +55,7 @@
 	const labels = $derived([...new Set(['motion', ...events.map((e) => e.label)])]);
 	const tlDay = $derived(day || today());
 	const recMode = $derived(
-		cam ? (cam.record.mode === 'events' ? t('cam.rec_events', { pre: cam.record.pre, post: cam.record.post }) : cam.record.mode === 'continuous' ? t('cam.rec_continuous', { n: cam.record.keep_days }) : t('cam.rec_off')) : ''
+		cam ? (cam.record.mode === 'events' ? t('cam.rec_events', { pre: cam.record.pre, post: cam.record.post }) : cam.record.mode === 'continuous' ? t('cam.rec_continuous', { n: cam.record.keep_days }) : t(cam.record.snapshots === false ? 'cam.rec_none' : 'cam.rec_off')) : ''
 	);
 
 	async function load() {

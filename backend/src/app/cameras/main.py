@@ -675,7 +675,10 @@ class Service:
         at = float(msg.get("at") or time.time())
         if phase in ("start", "once"):
             if not str(msg.get("source") or "").startswith("ext:"):
-                self.spawn(self.snapshot(cid, eid, label, "event"))
+                if self.cams.get(cid, {}).get("record", {}).get("snapshots", True):
+                    self.spawn(self.snapshot(cid, eid, label, "event"))
+                else:
+                    _log.info("event_snapshot_off", camera=cid, event_id=eid)
             if phase == "once":
                 self.spawn(self.finalize(cid, eid, at, at, label, "event"))
             else:
